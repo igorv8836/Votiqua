@@ -1,5 +1,7 @@
 package org.example.votiqua.data.repository
 
+import com.example.common.NetworkException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import org.example.votiqua.domain.model.UserModel
 import org.example.votiqua.domain.repository.AuthRepository
@@ -40,6 +42,8 @@ internal class AuthRepositoryImpl() : AuthRepository {
     }
 
     override suspend fun getUser(): Result<UserModel> {
+        delay(5_000)
+        return Result.failure(NetworkException.Unauthorized("Вы не авторизованы"))
         return Result.success(
             UserModel(
                 email = "email",

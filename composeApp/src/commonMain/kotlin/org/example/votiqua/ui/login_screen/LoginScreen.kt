@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.orbit_mvi.compose.collectAsState
 import com.example.orbit_mvi.compose.collectSideEffect
+import org.example.votiqua.ui.common.AppPaddings
 import org.example.votiqua.ui.common.PasswordOutlinedTextField
 import org.example.votiqua.ui.navigation.navigateToMain
 import org.example.votiqua.ui.navigation.navigateToRegister
@@ -30,9 +31,9 @@ import votiqua.composeapp.generated.resources.compose_multiplatform
 @Composable
 internal fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
-    navController: NavController
+    navController: NavController,
+    snackBarHostState: SnackbarHostState,
 ) {
-    val snackBarHostState = remember { SnackbarHostState() }
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect {
@@ -42,7 +43,7 @@ internal fun LoginScreen(
             }
 
             is LoginEffect.ShowSuccessLogin -> {
-                snackBarHostState.showSnackbar(it.message)
+                snackBarHostState.showSnackbar(it.message, duration = SnackbarDuration.Short)
                 navController.navigateToMain()
             }
 
@@ -55,7 +56,6 @@ internal fun LoginScreen(
     LoginScreen(
         state = state,
         onEvent = viewModel::onEvent,
-        snackBarHostState = snackBarHostState,
         navigateToRegister = { email ->
             navController.navigateToRegister(email)
         }
@@ -66,7 +66,6 @@ internal fun LoginScreen(
 internal fun LoginScreen(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
-    snackBarHostState: SnackbarHostState,
     navigateToRegister: (String) -> Unit
 ) {
     var showRecoveryDialog by remember { mutableStateOf(false) }
@@ -79,102 +78,99 @@ internal fun LoginScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize().verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(it).verticalScroll(rememberScrollState())
+                .padding(
+                    vertical = AppPaddings.VERTICAL_PADDING,
+                    horizontal = AppPaddings.HORIZONTAL_PADDING,
+                )
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(resource = Res.drawable.compose_multiplatform),
+                contentDescription = "App Icon",
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .size(240.dp)
+            )
+
+
+            OutlinedTextField(
+                value = emailField,
+                supportingText = {
+                    if (state.emailErrorText != null){
+                        Text(state.emailErrorText)
+                    }
+                },
+                isError = state.emailErrorText != null,
+                onValueChange = { it1 -> emailField = it1 },
+                label = { Text("Введите почту") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Icon(Icons.Default.Email, contentDescription = "email")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp, bottom = 8.dp)
+            )
+
+            PasswordOutlinedTextField(
+                text = passwordField,
+                passwordErrorText = state.passwordErrorText ?: "",
+                modifier = Modifier.fillMaxWidth()
+            ){ it1 ->
+                passwordField = it1
+            }
+
+            TextButton(
+                onClick = { showRecoveryDialog = true },
+            ) {
+                Text("Забыли пароль?")
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
             Column(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(resource = Res.drawable.compose_multiplatform),
-                    contentDescription = "App Icon",
+                Button(
+                    enabled = !state.isLoading,
+                    onClick = { onEvent(LoginEvent.Login(emailField, passwordField)) },
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier
-                        .padding(top = 24.dp)
-                        .size(240.dp)
-                )
-
-
-                OutlinedTextField(
-                    value = emailField,
-                    supportingText = {
-                        if (state.emailErrorText != null){
-                            Text(state.emailErrorText)
-                        }
-                    },
-                    isError = state.emailErrorText != null,
-                    onValueChange = { it1 -> emailField = it1 },
-                    label = { Text("Введите почту") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    leadingIcon = {
-                        Icon(Icons.Default.Email, contentDescription = "email")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp, bottom = 8.dp)
-                )
-
-                PasswordOutlinedTextField(
-                    text = passwordField,
-                    passwordErrorText = state.passwordErrorText ?: "",
-                    modifier = Modifier.fillMaxWidth()
-                ){ it1 ->
-                    passwordField = it1
-                }
-
-                TextButton(
-                    onClick = { showRecoveryDialog = true },
+                        .fillMaxWidth(0.75f)
+                        .padding(bottom = 8.dp)
                 ) {
-                    Text("Забыли пароль?")
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button(
-                        enabled = !state.isLoading,
-                        onClick = { onEvent(LoginEvent.Login(emailField, passwordField)) },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier
-                            .fillMaxWidth(0.75f)
-                            .padding(bottom = 8.dp)
-                    ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator()
-                        } else {
-                            Text("Войти")
-                        }
-                    }
-
-                    Button(
-                        onClick = { navigateToRegister(emailField) },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier.fillMaxWidth(0.75f)
-                    ) {
-                        Text("Зарегистрироваться")
+                    if (state.isLoading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text("Войти")
                     }
                 }
 
+                Button(
+                    onClick = { navigateToRegister(emailField) },
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth(0.75f)
+                ) {
+                    Text("Зарегистрироваться")
+                }
             }
-        }
 
+        }
     }
 }
 

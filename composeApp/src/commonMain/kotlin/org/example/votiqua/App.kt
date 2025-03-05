@@ -1,7 +1,11 @@
 package org.example.votiqua
 
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +16,7 @@ import org.example.votiqua.ui.navigation.MainScreenRoute
 import org.example.votiqua.ui.navigation.RegisterRoute
 import org.example.votiqua.ui.navigation.SplashRoute
 import org.example.votiqua.ui.register_screen.RegisterScreen
+import org.example.votiqua.ui.splash_screen.SplashScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -21,21 +26,31 @@ fun App() {
         val navController = rememberNavController()
         val bottomNavController = rememberNavController()
 
+        val snackBarHostState = remember { SnackbarHostState() }
 
-        NavHost(navController = navController, startDestination = LoginRoute) {
-            composable<LoginRoute> {
-                LoginScreen(navController = navController)
-            }
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        ) {
+            NavHost(navController = navController, startDestination = SplashRoute) {
+                composable<LoginRoute> {
+                    LoginScreen(
+                        navController = navController,
+                        snackBarHostState = snackBarHostState,
+                    )
+                }
 
-            composable<RegisterRoute> {
-                RegisterScreen(navController, it.toRoute<RegisterRoute>().email)
-            }
+                composable<RegisterRoute> {
+                    RegisterScreen(navController, it.toRoute<RegisterRoute>().email)
+                }
 
-            composable<SplashRoute> {
-            }
+                composable<SplashRoute> {
+                    SplashScreen(navController = navController)
+                }
 
-            composable<MainScreenRoute> {
+                composable<MainScreenRoute> {
+                }
             }
         }
+
     }
 }
