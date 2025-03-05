@@ -11,9 +11,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.example.votiqua.ui.login_screen.LoginScreen
+import org.example.votiqua.ui.main_screen.HomeScreen
 import org.example.votiqua.ui.navigation.LoginRoute
 import org.example.votiqua.ui.navigation.MainScreenRoute
 import org.example.votiqua.ui.navigation.RegisterRoute
+import org.example.votiqua.ui.navigation.SearchScreenRoute
 import org.example.votiqua.ui.navigation.SplashRoute
 import org.example.votiqua.ui.register_screen.RegisterScreen
 import org.example.votiqua.ui.splash_screen.SplashScreen
@@ -48,6 +50,11 @@ fun App() {
                 }
 
                 composable<MainScreenRoute> {
+                    HomeScreen(navController)
+                }
+
+                composable<SearchScreenRoute> {
+
                 }
             }
         }
