@@ -34,7 +34,6 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
-        val desktopTest by getting
 
         androidMain.dependencies {
             implementation(compose.preview)
@@ -61,8 +60,11 @@ kotlin {
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.orbit.core)
 
             implementation(project(":shared"))
+            implementation(project(":orbit_mvi"))
+            implementation(project(":core:common"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
