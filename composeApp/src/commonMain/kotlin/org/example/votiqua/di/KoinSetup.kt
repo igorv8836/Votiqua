@@ -3,6 +3,8 @@ package org.example.votiqua.di
 import com.example.common.commonModule
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import org.example.votiqua.data.dataModule
+import org.example.votiqua.ui.uiModule
 import org.koin.core.Koin
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
@@ -13,6 +15,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
         appDeclaration()
         modules(
             commonModule(),
+            dataModule(),
+            uiModule(),
         )
 
     }
