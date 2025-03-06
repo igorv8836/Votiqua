@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import org.example.votiqua.ui.login_screen.LoginScreen
 import org.example.votiqua.ui.register_screen.RegisterScreen
 import org.example.votiqua.ui.splash_screen.SplashScreen
+import org.example.votiqua.ui.voting_screen.VotingScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -27,7 +28,13 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable<MainScreenRoute> {
-            MainScreen()
+            MainScreen(navController)
+        }
+
+        composable<VotingRoute> {
+            VotingScreen(
+                navController = navController,
+            )
         }
     }
 }

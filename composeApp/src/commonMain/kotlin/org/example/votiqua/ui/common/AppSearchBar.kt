@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.example.votiqua.ui.main_screen.mockPolls
@@ -42,11 +41,11 @@ fun AppSearchBar(
     navController: NavController,
     onQueryChanged: (String) -> Unit = { },
 ) {
-    var textFieldValue by rememberSaveable { mutableStateOf(TextFieldValue("")) }
+    var textFieldValue by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     val suggestions = mockPolls.map { it.title }
-    val filteredSuggestions = suggestions.filter { it.contains(textFieldValue.text, ignoreCase = true) }
+    val filteredSuggestions = suggestions.filter { it.contains(textFieldValue, ignoreCase = true) }
 
     Box(
         modifier = Modifier
@@ -61,16 +60,16 @@ fun AppSearchBar(
             inputField = {
                 SearchBarDefaults.InputField(
                     onQueryChange = {
-                        textFieldValue = TextFieldValue(it)
+                        textFieldValue = it
                     },
-                    query = textFieldValue.text,
+                    query = textFieldValue,
                     onSearch = {
                         expanded = false
-                        onQueryChanged(textFieldValue.text)
+                        onQueryChanged(textFieldValue)
                                },
                     expanded = expanded,
                     onExpandedChange = { if (!isMainScreen) expanded = it else navController.navigateToSearch() },
-                    placeholder = { Text("Найдите голосование по названию") },
+                    placeholder = { Text("Найдите голосование") },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 )
             },
@@ -90,8 +89,8 @@ fun AppSearchBar(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier =
                             Modifier.clickable {
-                                textFieldValue = TextFieldValue(resultText)
-                                onQueryChanged(textFieldValue.text)
+                                textFieldValue = resultText
+                                onQueryChanged(textFieldValue)
                                 expanded = false
                             }
                                 .fillMaxWidth()

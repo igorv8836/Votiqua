@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.example.votiqua.ui.common.AppPaddings
 import org.example.votiqua.ui.common.AppSearchBar
-import org.example.votiqua.ui.main_screen.PollCard
+import org.example.votiqua.ui.common.PollCard
 import org.example.votiqua.ui.main_screen.mockPolls
 
 @Composable
@@ -42,7 +42,7 @@ fun SearchScreen(navController: NavController) {
                 )
             }
             items(filteredPolls) { item ->
-                PollCard(item)
+                PollCard(item, navController)
             }
         }
     }

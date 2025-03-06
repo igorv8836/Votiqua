@@ -46,8 +46,15 @@ data object NotificationsRoute : ScreenRoute
 @Serializable
 data object ProfileRoute : ScreenRoute
 
+@Serializable
+data object VotingRoute : ScreenRoute
+
 fun NavController.navigateToHome() = navigate(HomeRoute)
 fun NavController.navigateToMyPolls() = navigate(MyPollsRoute)
 fun NavController.navigateToCreate() = navigate(PollCreateRoute)
 fun NavController.navigateToNotifications() = navigate(NotificationsRoute)
 fun NavController.navigateToProfile() = navigate(ProfileRoute)
+fun NavController.navigateToVoting() = navigate(VotingRoute) {
+    launchSingleTop = true
+    restoreState = true
+}
