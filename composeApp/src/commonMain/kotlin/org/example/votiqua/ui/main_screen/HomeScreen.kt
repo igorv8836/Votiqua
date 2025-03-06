@@ -1,64 +1,53 @@
 package org.example.votiqua.ui.main_screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.example.votiqua.ui.navigation.navigateToSearch
+import org.example.votiqua.ui.common.AppPaddings
+import org.example.votiqua.ui.common.AppSearchBar
+
+val mockPolls = listOf(
+    Poll("Открытие Голосование", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
+    Poll("Выбор Подарка", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+    Poll("Пикник Место", "2023-10-15", 75, "Открыто", "Выбор места для пикника", "Отдых", "2023-08-01"),
+    Poll("Тема Вечеринки", "2023-09-25", 30, "Закрыто", "Выбор темы вечеринки", "Развлечения", "2023-07-01"),
+    Poll("Новый Логотип", "2023-08-20", 120, "Открыто", "Выбор нового логотипа", "Работа", "2023-06-01"),
+    Poll("Благотворительная Акция", "2023-07-10", 200, "Закрыто", "Выбор благотворительной акции", "Благотворительность", "2023-05-01")
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,113 +58,27 @@ fun HomeScreen(
     var isExpanded by remember { mutableStateOf(false) }
     val notifications = listOf("Новое голосование доступно", "Ваше голосование завершено")
     val activePolls = listOf(
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР")
+        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
+        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
     )
     val myPolls = listOf(
-        Poll("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок")
+        Poll("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год", "Праздники", "2023-09-01"),
+        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01")
     )
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Главная") },
-                    label = { Text("Главная") },
-                    selected = true,
-                    onClick = { /*TODO*/ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.List, contentDescription = "Мои голосования") },
-                    label = { Text("Мои голосования") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Создать") },
-                    label = { Text("Создать") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Уведомления") },
-                    label = { Text("Уведомления") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Профиль") },
-                    label = { Text("Профиль") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-            }
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(innerPadding).padding(
+                    horizontal = AppPaddings.HORIZONTAL_PADDING,
+                    vertical = AppPaddings.VERTICAL_PADDING,
+                )
                 .verticalScroll(rememberScrollState())
         ) {
-            SearchBarSample(true, navController = navController)
+            AppSearchBar(true, navController = navController)
             NotificationBlock(notifications)
             PollsBlock("Активные голосования", activePolls)
             PollsBlock("Мои голосования", myPolls)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBarSample(
-    isMainScreen: Boolean,
-    navController: NavController,
-) {
-    val textFieldState = rememberTextFieldState()
-    var expanded by rememberSaveable { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .semantics { isTraversalGroup = true }
-            .padding(16.dp)
-//            .clickable(enabled = isMainScreen, onClick = { navController.navigateToSearch() }),
-    ) {
-        SearchBar(
-            modifier = Modifier.align(Alignment.TopCenter).semantics { traversalIndex = 0f }.fillMaxWidth(),
-            inputField = {
-                SearchBarDefaults.InputField(
-                    onQueryChange = { textFieldState.setTextAndPlaceCursorAtEnd(it) },
-                    query = textFieldState.text.toString(),
-                    onSearch = { expanded = false },
-                    expanded = expanded,
-                    onExpandedChange = { if (!isMainScreen) expanded = it else navController.navigateToSearch() },
-                    placeholder = { Text("Hinted search text") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-        ) {
-            Column {
-                repeat(7) { idx ->
-                    val resultText = "Suggestion $idx"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier =
-                            Modifier.clickable {
-                                textFieldState.setTextAndPlaceCursorAtEnd(resultText)
-                                expanded = false
-                            }
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
-            }
         }
     }
 }
@@ -294,9 +197,19 @@ fun PollCard(poll: Poll) {
                 )
             }
 
-            // Adding a description of the poll after the InfoChips
             Text(
                 text = poll.description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = "Создано: ${poll.creationDate}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "Категория: ${poll.category}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -360,10 +273,13 @@ private fun InfoChip(
     }
 }
 
+@Stable
 data class Poll(
     val title: String,
     val endDate: String,
     val participants: Int,
     val status: String,
     val description: String,
+    val category: String,
+    val creationDate: String,
 )
