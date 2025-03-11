@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.example.votiqua.ui.main_screen.HomeScreen
-import org.example.votiqua.ui.search_screen.SearchScreen
 
 @Composable
 fun MainScreen(
@@ -26,7 +25,7 @@ fun MainScreen(
             navController = bottomNavController,
             startDestination = HomeRoute,
             modifier = Modifier.padding(it)
-                    .systemBarsPadding()
+                .systemBarsPadding()
                 .navigationBarsPadding()
         ) {
             composable<HomeRoute> {
@@ -50,10 +49,6 @@ fun MainScreen(
 
             composable<ProfileRoute> {
                 Text("ProfileRoute")
-            }
-
-            composable<SearchScreenRoute> {
-                SearchScreen(bottomNavController)
             }
         }
     }

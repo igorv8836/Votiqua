@@ -49,6 +49,9 @@ data object ProfileRoute : ScreenRoute
 @Serializable
 data object VotingRoute : ScreenRoute
 
+@Serializable
+data object ManagePollRoute : ScreenRoute
+
 fun NavController.navigateToHome() = navigate(HomeRoute)
 fun NavController.navigateToMyPolls() = navigate(MyPollsRoute)
 fun NavController.navigateToCreate() = navigate(PollCreateRoute)
@@ -58,3 +61,5 @@ fun NavController.navigateToVoting() = navigate(VotingRoute) {
     launchSingleTop = true
     restoreState = true
 }
+fun NavController.navigateToManagingPoll() = navigate(ManagePollRoute)
+
