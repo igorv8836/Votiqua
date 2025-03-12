@@ -2,6 +2,7 @@ package org.example.votiqua.ui.manage_poll_screen
 
 import androidx.lifecycle.ViewModel
 import com.example.orbit_mvi.viewmodel.container
+import org.example.votiqua.domain.model.Participant
 import org.example.votiqua.domain.model.poll.Poll
 import org.example.votiqua.domain.model.poll.PollOption
 import org.example.votiqua.domain.repository.PollRepository
@@ -12,7 +13,24 @@ internal class ManagePollViewModel(
     private val pollRepository: PollRepository,
 ) : ContainerHost<ManagePollState, ManagePollSideEffect>, ViewModel() {
 
-    override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState())
+    override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState()) {
+        val participants = (0..30).map {
+            Participant(
+                it,
+                "Person $it",
+//                null,
+                "https://avatars.mds.yandex.net/i?id=9785f59e5d941e55882930681a09a53932226e63-11376477-images-thumbs&n=13",
+                it % 3 == 0,
+                it.toString()
+            )
+        }
+
+        intent {
+            reduce {
+                state.copy(saved = false, participants = participants)
+            }
+        }
+    }
 
     init {
         loadPoll(1)
@@ -80,6 +98,7 @@ data class ManagePollState(
     val pollId: Int = -1,
     val title: String = "",
     val anonymous: Boolean = false,
+    val participants: List<Participant> = emptyList(),
     val isOpen: Boolean = false,
     val link: String = "link",
     val description: String = "",

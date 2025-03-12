@@ -51,10 +51,12 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
-            implementation(libs.coil.compose.core)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.mp)
-            implementation(libs.coil.network.ktor)
+//            implementation(libs.coil.compose.core)
+//            implementation(libs.coil.compose)
+//            implementation(libs.coil.mp)
+//            implementation(libs.coil.network.ktor)
+
+            implementation("com.github.skydoves:landscapist-coil3:2.4.7")
 
             implementation(libs.navigation.compose)
 

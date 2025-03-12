@@ -1,4 +1,4 @@
-package org.example.votiqua.ui.manage_poll_screen
+package org.example.votiqua.ui.manage_poll_screen.elements
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState

@@ -3,7 +3,6 @@ package org.example.votiqua.ui.common
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,8 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil3.CoilImage
 import org.example.votiqua.domain.model.Participant
 
 @Composable
@@ -38,10 +39,12 @@ fun ParticipantItem(participant: Participant) {
             modifier = Modifier.size(40.dp)
         ) {
             if (participant.avatarUrl != null) {
-                AsyncImage(
-                    model = participant.avatarUrl,
-                    contentDescription = participant.name,
-                    modifier = Modifier.fillMaxSize()
+                CoilImage(
+                    imageModel = { participant.avatarUrl },
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                    )
                 )
             } else {
                 Icon(

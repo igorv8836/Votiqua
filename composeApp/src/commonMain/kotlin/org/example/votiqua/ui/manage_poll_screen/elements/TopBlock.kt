@@ -1,4 +1,4 @@
-package org.example.votiqua.ui.manage_poll_screen
+package org.example.votiqua.ui.manage_poll_screen.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.example.votiqua.ui.manage_poll_screen.ManagePollState
 
 @Composable
 internal fun TopBlock(
