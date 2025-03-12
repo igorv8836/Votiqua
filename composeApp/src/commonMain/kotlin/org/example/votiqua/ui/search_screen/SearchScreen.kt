@@ -21,7 +21,8 @@ import org.example.votiqua.ui.main_screen.mockPolls
 @Composable
 fun SearchScreen(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
-    val filteredPolls = mockPolls.filter { searchQuery.isNotEmpty() && it.title.contains(searchQuery, ignoreCase = true) }
+    val filteredPolls = mockPolls
+        .filter { searchQuery.isNotEmpty() && it.title.contains(searchQuery, ignoreCase = true) }
 
     Column(
         modifier = Modifier.padding(
@@ -29,9 +30,14 @@ fun SearchScreen(navController: NavController) {
             horizontal = AppPaddings.HORIZONTAL_PADDING,
         )
     ) {
-        AppSearchBar(false, navController = navController, onQueryChanged = { query ->
-            searchQuery = query
-        })
+        AppSearchBar(
+            false,
+            navController = navController,
+            onQueryChanged = { query ->
+                searchQuery = query
+            }
+        )
+
 
         LazyColumn {
             item {

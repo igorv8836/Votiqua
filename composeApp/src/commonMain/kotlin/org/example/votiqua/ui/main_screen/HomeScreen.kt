@@ -63,7 +63,7 @@ fun HomeScreen(
                 )
                 .verticalScroll(rememberScrollState())
         ) {
-            AppSearchBar(true, navController = bottomNavController)
+            AppSearchBar(true, navController = mainNavController)
             NotificationBlock(notifications)
             PollsBlock("Активные голосования", activePolls, mainNavController)
             PollsBlock("Мои голосования", myPolls, mainNavController)

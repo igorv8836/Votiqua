@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.example.votiqua.ui.main_screen.Poll
-import org.example.votiqua.ui.navigation.navigateToVoting
+import org.example.votiqua.ui.navigation.navigateToPollViewer
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -43,7 +43,7 @@ fun PollCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigateToVoting()
+                navController.navigateToPollViewer()
             },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f)

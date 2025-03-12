@@ -9,10 +9,11 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.SearchBar
@@ -70,7 +71,16 @@ fun AppSearchBar(
                     expanded = expanded,
                     onExpandedChange = { if (!isMainScreen) expanded = it else navController.navigateToSearch() },
                     placeholder = { Text("Найдите голосование") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    leadingIcon = {
+                        IconButton(onClick = {
+                            if (!isMainScreen) navController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = if (!isMainScreen) Icons.AutoMirrored.Filled.ArrowBack else Icons.Default.Search,
+                                contentDescription = "Назад или поиск"
+                            )
+                        }
+                    },
                 )
             },
             expanded = expanded,
@@ -84,8 +94,6 @@ fun AppSearchBar(
                 filteredSuggestions.forEach { resultText ->
                     ListItem(
                         headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier =
                             Modifier.clickable {

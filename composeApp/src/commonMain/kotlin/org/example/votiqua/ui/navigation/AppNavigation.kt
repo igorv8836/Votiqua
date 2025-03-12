@@ -7,14 +7,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import org.example.votiqua.ui.login_screen.LoginScreen
 import org.example.votiqua.ui.manage_poll_screen.ManagePollScreen
+import org.example.votiqua.ui.poll_viewer_screen.PollViewerScreen
 import org.example.votiqua.ui.register_screen.RegisterScreen
+import org.example.votiqua.ui.search_screen.SearchScreen
 import org.example.votiqua.ui.splash_screen.SplashScreen
-import org.example.votiqua.ui.voting_screen.VotingScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = ManagePollRoute) {
+    NavHost(navController = navController, startDestination = MainScreenRoute) {
         composable<LoginRoute> {
             LoginScreen(
                 navController = navController,
@@ -33,17 +34,31 @@ fun AppNavigation(navController: NavHostController) {
             MainScreen(navController)
         }
 
-        composable<VotingRoute> {
-            VotingScreen(
-                navController = navController,
-            )
-        }
-
         composable<ManagePollRoute> {
             ManagePollScreen(
                 viewModel = koinViewModel(),
-                onClose = {},
-                onDeleted = {}
+                onClose = {
+                    navController.popBackStack()
+                },
+                onDeleted = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<SearchScreenRoute> {
+            SearchScreen(navController)
+        }
+
+        composable<PollViewerRoute> {
+            PollViewerScreen(
+                viewModel = koinViewModel(),
+                onClose = {
+                    navController.popBackStack()
+                },
+                onEdit = {
+                    navController.navigateToManagingPoll()
+                }
             )
         }
     }

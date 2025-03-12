@@ -9,7 +9,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun MyApp() {
-    AppTheme {
+    AppTheme(darkTheme = false) {
         val navController = rememberNavController()
 
         AppNavigation(navController)
