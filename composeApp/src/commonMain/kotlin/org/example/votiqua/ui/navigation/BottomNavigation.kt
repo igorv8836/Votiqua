@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -12,6 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.example.votiqua.ui.main_screen.HomeScreen
+import org.example.votiqua.ui.notifications_screen.NotificationsScreen
+import org.example.votiqua.ui.poll_list_screen.PollListScreen
+import org.example.votiqua.ui.profile_screen.ProfileScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MainScreen(
@@ -19,7 +22,12 @@ fun MainScreen(
 ) {
     val bottomNavController = rememberNavController()
     Scaffold(
-        bottomBar = { BottomNavigationBar(bottomNavController) },
+        bottomBar = {
+            BottomNavigationBar(
+                navController = bottomNavController,
+                mainNavController = mainNavController,
+            )
+        },
     ) {
         NavHost(
             navController = bottomNavController,
@@ -36,19 +44,24 @@ fun MainScreen(
             }
 
             composable<MyPollsRoute> {
-                Text("MyPollsRoute")
+                PollListScreen(
+                    navController = mainNavController
+                )
             }
 
-            composable<PollCreateRoute> {
-                Text("PollCreateRoute")
+            composable<BottomPollCreateRoute> {
+                mainNavController.navigateToCreate()
             }
 
             composable<NotificationsRoute> {
-                Text("NotificationsRoute")
+                NotificationsScreen()
             }
 
             composable<ProfileRoute> {
-                Text("ProfileRoute")
+                ProfileScreen(
+                    viewModel = koinViewModel(),
+                    navController = mainNavController,
+                )
             }
         }
     }

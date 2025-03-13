@@ -2,10 +2,14 @@ package org.example.votiqua.ui.main_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -27,15 +31,32 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.example.votiqua.ui.common.AppPaddings
 import org.example.votiqua.ui.common.AppSearchBar
+import org.example.votiqua.ui.common.Dimens
 import org.example.votiqua.ui.common.PollCard
 
 val mockPolls = listOf(
-    Poll("Открытие Голосование", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
+    Poll(
+        "Открытие Голосование",
+        "2023-12-31",
+        100,
+        "Открыто",
+        "Голосование в честь открытия",
+        "Праздники",
+        "2023-09-01"
+    ),
     Poll("Выбор Подарка", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
     Poll("Пикник Место", "2023-10-15", 75, "Открыто", "Выбор места для пикника", "Отдых", "2023-08-01"),
     Poll("Тема Вечеринки", "2023-09-25", 30, "Закрыто", "Выбор темы вечеринки", "Развлечения", "2023-07-01"),
     Poll("Новый Логотип", "2023-08-20", 120, "Открыто", "Выбор нового логотипа", "Работа", "2023-06-01"),
-    Poll("Благотворительная Акция", "2023-07-10", 200, "Закрыто", "Выбор благотворительной акции", "Благотворительность", "2023-05-01")
+    Poll(
+        "Благотворительная Акция",
+        "2023-07-10",
+        200,
+        "Закрыто",
+        "Выбор благотворительной акции",
+        "Благотворительность",
+        "2023-05-01"
+    )
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,16 +78,13 @@ fun HomeScreen(
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding).padding(
-                    horizontal = AppPaddings.HORIZONTAL_PADDING,
-                    vertical = AppPaddings.VERTICAL_PADDING,
-                )
+                .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
             AppSearchBar(true, navController = mainNavController)
             NotificationBlock(notifications)
-            PollsBlock("Активные голосования", activePolls, mainNavController)
-            PollsBlock("Мои голосования", myPolls, mainNavController)
+            PollsBlock("Открытые голосования", activePolls, mainNavController, isHorizontal = true)
+            PollsBlock("Недавно открытые", myPolls, mainNavController)
         }
     }
 }
@@ -76,7 +94,10 @@ fun NotificationBlock(notifications: List<String>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(
+                horizontal = AppPaddings.HORIZONTAL_PADDING,
+            )
+            .padding(top = 16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -99,7 +120,7 @@ fun NotificationBlock(notifications: List<String>) {
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             notifications.forEach { notification ->
                 Card(
                     modifier = Modifier
@@ -135,14 +156,43 @@ fun NotificationBlock(notifications: List<String>) {
 }
 
 @Composable
-fun PollsBlock(title: String, polls: List<Poll>, navController: NavController) {
-    Column(modifier = Modifier.padding(vertical = 16.dp)) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
-        polls.forEach { poll ->
-            PollCard(poll, navController)
+fun PollsBlock(
+    title: String,
+    polls: List<Poll>,
+    navController: NavController,
+    isHorizontal: Boolean = false
+) {
+    Column(
+        modifier = Modifier.padding(top = Dimens.large)
+    ) {
+        Text(
+            title,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = AppPaddings.HORIZONTAL_PADDING)
+        )
+        if (isHorizontal) {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = AppPaddings.HORIZONTAL_PADDING),
+                horizontalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                items(polls) { poll ->
+                    PollCard(
+                        poll = poll,
+                        navController = navController,
+                        modifier = Modifier.width(240.dp)
+                    )
+                }
+            }
+        } else {
+            Column(modifier = Modifier.padding(horizontal = AppPaddings.HORIZONTAL_PADDING)) {
+                polls.forEach { poll ->
+                    PollCard(poll, navController)
+                }
+            }
         }
     }
 }
+
 
 @Stable
 data class Poll(

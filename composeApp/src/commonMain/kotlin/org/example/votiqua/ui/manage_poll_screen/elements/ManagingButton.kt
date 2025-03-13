@@ -45,8 +45,8 @@ fun ManagingButton(
     )
     val iconSize by animateDpAsState(
         targetValue = when {
-            isPressed -> 28.dp
-            else -> 36.dp
+            isPressed -> 14.dp
+            else -> 28.dp
         }, label = ""
     )
 
@@ -86,7 +86,7 @@ fun ManagingButton(
             )
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = backgroundColor
             )
         }

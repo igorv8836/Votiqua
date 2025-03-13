@@ -52,6 +52,10 @@ fun AppSearchBar(
         modifier = Modifier
             .wrapContentSize()
             .semantics { isTraversalGroup = true }
+            .padding(
+                horizontal = AppPaddings.HORIZONTAL_PADDING,
+                vertical = AppPaddings.VERTICAL_PADDING,
+            )
     ) {
         SearchBar(
             modifier = Modifier

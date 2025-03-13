@@ -28,6 +28,7 @@ import org.example.votiqua.ui.manage_poll_screen.elements.TopBlock
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ManagePollScreen(
+    isCreating: Boolean,
     viewModel: ManagePollViewModel,
     onClose: () -> Unit,
     onDeleted: () -> Unit
@@ -46,7 +47,7 @@ internal fun ManagePollScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Редактировать голосование") },
+                title = { Text(if (!isCreating) "Редактирование" else "Создание") },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
@@ -87,10 +88,12 @@ internal fun ManagePollScreen(
                 onOptionAdded = viewModel::addOption
             )
 
-            ParticipantsBlock(
-                participants = state.participants,
-                anonymous = state.anonymous,
-            )
+            if (!isCreating) {
+                ParticipantsBlock(
+                    participants = state.participants,
+                    anonymous = state.anonymous,
+                )
+            }
         }
     }
 }

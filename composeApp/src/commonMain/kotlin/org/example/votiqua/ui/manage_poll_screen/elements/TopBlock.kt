@@ -68,7 +68,7 @@ internal fun TopBlock(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             ManagingButton(
                 icon = Icons.Default.PlayArrow,
@@ -86,7 +86,7 @@ internal fun TopBlock(
 
             ManagingButton(
                 icon = if (state.anonymous) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                text = if (state.anonymous) "Анонимное" else "Открытое",
+                text = if (state.anonymous) "Анонимное" else "Неанонимное",
                 isAbled = !state.votesExist,
                 onClick = onAnonClicked
             )

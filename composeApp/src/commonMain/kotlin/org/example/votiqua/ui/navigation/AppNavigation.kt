@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import org.example.votiqua.ui.login_screen.LoginScreen
 import org.example.votiqua.ui.manage_poll_screen.ManagePollScreen
 import org.example.votiqua.ui.poll_viewer_screen.PollViewerScreen
+import org.example.votiqua.ui.profile_screen.FavoritesScreen
 import org.example.votiqua.ui.register_screen.RegisterScreen
 import org.example.votiqua.ui.search_screen.SearchScreen
 import org.example.votiqua.ui.splash_screen.SplashScreen
@@ -36,6 +37,20 @@ fun AppNavigation(navController: NavHostController) {
 
         composable<ManagePollRoute> {
             ManagePollScreen(
+                isCreating = false,
+                viewModel = koinViewModel(),
+                onClose = {
+                    navController.popBackStack()
+                },
+                onDeleted = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<PollCreateRoute> {
+            ManagePollScreen(
+                isCreating = true,
                 viewModel = koinViewModel(),
                 onClose = {
                     navController.popBackStack()
@@ -60,6 +75,10 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigateToManagingPoll()
                 }
             )
+        }
+
+        composable<FavouriteScreenRoute> {
+            FavoritesScreen(navController)
         }
     }
 }

@@ -14,8 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,8 +24,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -37,9 +41,12 @@ import org.example.votiqua.ui.navigation.navigateToPollViewer
 fun PollCard(
     poll: Poll,
     navController: NavController,
+    modifier: Modifier = Modifier,
+    isLiked: Boolean = false,
 ) {
+    var isLiked by mutableStateOf(isLiked)
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
@@ -105,13 +112,13 @@ fun PollCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { /*TODO: Add action*/ },
+                    onClick = { isLiked = !isLiked },
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        Icons.Default.Info,
-                        contentDescription = "Подробнее",
-                        tint = MaterialTheme.colorScheme.primary
+                        Icons.Filled.Favorite,
+                        contentDescription = "Понравилось",
+                        tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(

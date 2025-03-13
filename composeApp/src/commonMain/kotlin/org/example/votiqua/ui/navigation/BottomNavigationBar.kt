@@ -19,17 +19,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 data class BottomNavItem<T : Any>(val title:String, val icon: ImageVector, val route: T)
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    navController: NavController,
+    mainNavController: NavController,
+) {
     val items = listOf(
         BottomNavItem("Main", Icons.Default.Home, HomeRoute),
         BottomNavItem("Votes", Icons.Default.List, MyPollsRoute),
-        BottomNavItem("Create", Icons.Default.Add, PollCreateRoute),
+        BottomNavItem("Create", Icons.Default.Add, BottomPollCreateRoute),
         BottomNavItem("Notifications", Icons.Default.Notifications, NotificationsRoute),
         BottomNavItem("Profile", Icons.Default.Person, ProfileRoute)
     )
-    NavigationBar(
-//        windowInsets = NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Horizontal)
-    ) {
+    NavigationBar {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
         items.forEach { item ->
@@ -37,12 +38,16 @@ fun BottomNavigationBar(navController: NavController) {
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
                 onClick = {
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
+                    if (item.route is BottomPollCreateRoute) {
+                        mainNavController.navigateToCreate()
+                    } else {
+                        navController.navigate(item.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 }
             )
         }
     }
-} 
+}

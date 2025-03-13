@@ -13,8 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.example.votiqua.ui.common.AppPaddings
 import org.example.votiqua.ui.common.AppSearchBar
+import org.example.votiqua.ui.common.Dimens
 import org.example.votiqua.ui.common.PollCard
 import org.example.votiqua.ui.main_screen.mockPolls
 
@@ -25,10 +25,7 @@ fun SearchScreen(navController: NavController) {
         .filter { searchQuery.isNotEmpty() && it.title.contains(searchQuery, ignoreCase = true) }
 
     Column(
-        modifier = Modifier.padding(
-            vertical = AppPaddings.VERTICAL_PADDING,
-            horizontal = AppPaddings.HORIZONTAL_PADDING,
-        )
+        modifier = Modifier
     ) {
         AppSearchBar(
             false,
@@ -39,7 +36,9 @@ fun SearchScreen(navController: NavController) {
         )
 
 
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = Dimens.medium)
+        ) {
             item {
                 Text(
                     text = "Найденные голосования",

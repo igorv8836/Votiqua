@@ -38,6 +38,9 @@ data object HomeRoute : ScreenRoute
 data object MyPollsRoute : ScreenRoute
 
 @Serializable
+data object BottomPollCreateRoute : ScreenRoute
+
+@Serializable
 data object PollCreateRoute : ScreenRoute
 
 @Serializable
@@ -52,6 +55,9 @@ data object ManagePollRoute : ScreenRoute
 @Serializable
 data object PollViewerRoute : ScreenRoute
 
+@Serializable
+data object FavouriteScreenRoute : ScreenRoute
+
 fun NavController.navigateToHome() = navigate(HomeRoute)
 fun NavController.navigateToMyPolls() = navigate(MyPollsRoute)
 fun NavController.navigateToCreate() = navigate(PollCreateRoute)
@@ -59,4 +65,5 @@ fun NavController.navigateToNotifications() = navigate(NotificationsRoute)
 fun NavController.navigateToProfile() = navigate(ProfileRoute)
 fun NavController.navigateToManagingPoll() = navigate(ManagePollRoute)
 fun NavController.navigateToPollViewer() = navigate(PollViewerRoute)
+fun NavController.navigateToFavourite() = navigate(FavouriteScreenRoute)
 
