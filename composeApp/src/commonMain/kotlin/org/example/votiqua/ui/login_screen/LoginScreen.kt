@@ -52,7 +52,7 @@ import org.example.votiqua.ui.navigation.navigateToRegister
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import votiqua.composeapp.generated.resources.Res
-import votiqua.composeapp.generated.resources.compose_multiplatform
+import votiqua.composeapp.generated.resources.icon
 
 @Composable
 internal fun LoginScreen(
@@ -123,7 +123,7 @@ internal fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(resource = Res.drawable.compose_multiplatform),
+                painter = painterResource(resource = Res.drawable.icon),
                 contentDescription = "App Icon",
                 modifier = Modifier
                     .padding(top = 24.dp)
