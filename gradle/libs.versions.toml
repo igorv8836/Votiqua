@@ -8,13 +8,13 @@ android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
 
-kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.3"
+kotlinxDatetime = "0.6.2"
+kotlinxSerializationJson = "1.8.0"
 coroutines = "1.10.1"
 ksp = "2.0.21-1.0.25"
 
 navigationCompose = "2.8.0-alpha10"
-coil3 = "3.0.0-alpha06"
+coil3 = "3.1.0"
 
 orbit = "9.0.0"
 lifecycle = "2.8.7"
@@ -23,17 +23,26 @@ koin = "4.0.0"
 
 napier = "2.7.1"
 
-room = "2.7.0-rc01"
-sqlite = "2.5.0-rc01"
-
-ktor = "3.0.0"
+room = "2.7.0-rc02"
+sqlite = "2.5.0-rc02"
 
 datastore = "1.1.3"
 mockk = "1.12.0"
-junitJupiter = "5.11.3"
+junitJupiter = "5.11.4"
 cronetApi = "119.6045.31"
-atomicfu = "0.26.1"
+atomicfu = "0.27.0"
 conventional-commits = "3.1.3"
+
+ktor = "3.1.0"
+ktor-test = "2.3.12"
+logback = "1.5.16"
+postgresVersion = "42.7.2"
+h2Version = "2.1.214"
+exposedVersion = "0.41.1"
+hikariVersion = "5.0.1"
+micrometerPrometheus = "1.13.2"
+commons-email = "1.5"
+junit = "5.11.4"
 
 [libraries]
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
@@ -86,6 +95,44 @@ cronet-api = { group = "org.chromium.net", name = "cronet-api", version.ref = "c
 
 atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
 
+# Сервер
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+test-junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
+ktor-server-auto-head-response = { module = "io.ktor:ktor-server-auto-head-response-jvm", version.ref = "ktor" }
+ktor-server-forwarded-header = { module = "io.ktor:ktor-server-forwarded-header", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
+ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
+ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor-test" }
+ktor-server-metrics-micrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometerPrometheus" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-apache = { module = "io.ktor:ktor-client-apache-jvm", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktor" }
+ktor-client-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposedVersion" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposedVersion" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposedVersion" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposedVersion" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresVersion" }
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikariVersion" }
+
+email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
+
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+
 [bundles]
 ktor = [
     "ktor-core",
@@ -111,3 +158,7 @@ conventional-commits = { id = "it.nicolasfarabegoli.conventional-commits", versi
 # Plugins defined by this project
 myComposeMultiplatform = { id = "com.example.votiqua.composeMultiplatform", version = "unspecified" }
 myKotlinMultiplatform = { id = "com.example.votiqua.kotlinMultiplatform", version = "unspecified" }
+
+
+# Сервер
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
