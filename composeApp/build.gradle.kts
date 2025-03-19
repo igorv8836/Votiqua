@@ -75,6 +75,7 @@ kotlin {
             implementation(project(":shared"))
             implementation(project(":orbit_mvi"))
             implementation(project(":core:common"))
+            implementation(project(":core:network"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

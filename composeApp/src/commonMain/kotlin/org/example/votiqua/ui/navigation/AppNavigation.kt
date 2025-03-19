@@ -62,7 +62,10 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable<SearchScreenRoute> {
-            SearchScreen(navController)
+            SearchScreen(
+                navController = navController,
+                viewModel = koinViewModel(),
+            )
         }
 
         composable<PollViewerRoute> {

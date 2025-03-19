@@ -22,7 +22,6 @@ import org.example.votiqua.ui.main_screen.Poll
 @Composable
 fun PollListScreen(
     navController: NavController,
-//    viewModel: PollListViewModel = viewModel()
 ) {
     val activePolls = listOf(
         Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),

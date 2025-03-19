@@ -1,0 +1,15 @@
+<resources>
+    <string name="find_vote">Найдите голосование</string>
+    <string name="back_or_search">Назад или поиск</string>
+    <string name="update">Обновить</string>
+    <string name="search_error">Ошибка поиска: %1$s</string>
+    <string name="found_polls">Найденные голосования</string>
+    <string name="clear">Очистить</string>
+    <string name="search">Поиск</string>
+    <string name="nothing_found">Ничего не найдено</string>
+
+
+    <string name="basic_error">Что-то пошло не так</string>
+    <string name="retry">Повторить</string>
+    <string name="loading">Загрузка...</string>
+</resources>

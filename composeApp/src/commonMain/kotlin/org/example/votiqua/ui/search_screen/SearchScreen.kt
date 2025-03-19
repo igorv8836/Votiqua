@@ -1,53 +1,105 @@
 package org.example.votiqua.ui.search_screen
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.orbit_mvi.compose.collectAsState
 import org.example.votiqua.ui.common.AppSearchBar
 import org.example.votiqua.ui.common.Dimens
 import org.example.votiqua.ui.common.PollCard
-import org.example.votiqua.ui.main_screen.mockPolls
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SearchScreen(navController: NavController) {
-    var searchQuery by remember { mutableStateOf("") }
-    val filteredPolls = mockPolls
-        .filter { searchQuery.isNotEmpty() && it.title.contains(searchQuery, ignoreCase = true) }
+fun SearchScreen(
+    navController: NavController,
+    viewModel: SearchViewModel = koinViewModel()
+) {
+    val state by viewModel.collectAsState()
 
-    Column(
-        modifier = Modifier
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         AppSearchBar(
-            false,
+            isMainScreen = false,
             navController = navController,
             onQueryChanged = { query ->
-                searchQuery = query
+                viewModel.onEvent(SearchEvent.UpdateQuery(query))
             }
         )
-
-
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = Dimens.medium)
-        ) {
-            item {
-                Text(
-                    text = "Найденные голосования",
-                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+        when (state) {
+            is SearchState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-            items(filteredPolls) { item ->
-                PollCard(item, navController)
+            is SearchState.Error -> {
+                val errorState = state as SearchState.Error
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = errorState.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Red
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { viewModel.onEvent(SearchEvent.UpdateQuery(errorState.query)) }) {
+                        Text(text = "Обновить")
+                    }
+                }
+            }
+            is SearchState.Success -> {
+                val successState = state as SearchState.Success
+                if (successState.query.isNotEmpty() && successState.results.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Ничего не найдено",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.padding(horizontal = Dimens.medium)
+                    ) {
+                        item {
+                            Text(
+                                text = "Найденные голосования",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                        items(successState.results) { poll ->
+                            PollCard(poll, navController)
+                        }
+                    }
+                }
             }
         }
     }
