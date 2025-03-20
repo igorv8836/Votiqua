@@ -1,0 +1,66 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Grant permission
+        run: chmod +x ./gradlew
+
+      - name: Build project
+        run: ./gradlew buildFatJar
+
+      - name: Copy .jar to server
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ${{ github.workspace }}/server/build/libs/votiqua.jar
+          target: "/backend/votiqua"
+          overwrite: 'true'
+          debug: 'true'
+
+      - name: move .jar to other directory
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{secrets.SERVER_IP}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          username: root
+          script: |
+            cd /
+            mv /backend/github/workspace/server/build/libs/votiqua.jar /backend/votiqua
+
+      - name: stop application on server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{secrets.SERVER_IP}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          username: root
+          script: |
+            pkill -f votiqua.jar
+        continue-on-error: true
+
+      - name: start application on server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{secrets.SERVER_IP}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          username: root
+          script: |
+            cd /backend/votiqua
+            nohup java -jar votiqua.jar > backend_votiqua.log 2>&1 &

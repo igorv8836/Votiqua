@@ -15,6 +15,12 @@ kotlin {
     }
 }
 
+ktor{
+    fatJar{
+        archiveFileName.set("votiqua.jar")
+    }
+}
+
 group = "org.example.votiqua"
 version = "1.0.0"
 application {
