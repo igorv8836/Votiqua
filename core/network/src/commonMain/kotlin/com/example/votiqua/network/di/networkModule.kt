@@ -61,8 +61,8 @@ private fun getReadyHttpClient(): HttpClient {
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             url {
-                protocol = URLProtocol.HTTPS
-                host = "quickqueues.tech"
+                protocol = URLProtocol.HTTP
+                host = "votiqua.quickqueues.tech"
             }
         }
     }

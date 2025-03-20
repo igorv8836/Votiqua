@@ -61,4 +61,6 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.postgresql)
     implementation(libs.hikari)
+
+    implementation("io.github.serpro69:kotlin-faker:1.14.0")
 }

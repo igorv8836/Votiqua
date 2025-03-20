@@ -36,8 +36,8 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import org.example.votiqua.ui.main_screen.mockPolls
 import org.example.votiqua.ui.navigation.navigateToSearch
+import org.example.votiqua.ui.search_screen.SearchEvent
 import org.jetbrains.compose.resources.stringResource
 import votiqua.composeapp.generated.resources.Res
 import votiqua.composeapp.generated.resources.back_or_search
@@ -49,15 +49,14 @@ import votiqua.composeapp.generated.resources.find_vote
 fun AppSearchBar(
     isMainScreen: Boolean,
     navController: NavController,
+    recommends: List<String> = emptyList(),
     onQueryChanged: (String) -> Unit = { },
+    onEvent: (SearchEvent) -> Unit = { },
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var textFieldValue by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
-
-    val suggestions = mockPolls.map { it.title }
-    val filteredSuggestions = suggestions.filter { it.contains(textFieldValue, ignoreCase = true) }
 
     Box(
         modifier = Modifier
@@ -77,6 +76,7 @@ fun AppSearchBar(
                 SearchBarDefaults.InputField(
                     onQueryChange = {
                         textFieldValue = it
+                        onEvent(SearchEvent.UpdateSearchText(it))
                     },
                     query = textFieldValue,
                     onSearch = {
@@ -128,7 +128,7 @@ fun AppSearchBar(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                filteredSuggestions.forEach { resultText ->
+                recommends.forEach { resultText ->
                     ListItem(
                         leadingContent = {
                             Icon(

@@ -17,5 +17,5 @@ fun uiModule() = module {
     viewModel { ManagePollViewModel(get()) }
     viewModel { PollViewerViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
-    viewModel { SearchViewModel() }
+    viewModel { SearchViewModel(get()) }
 }

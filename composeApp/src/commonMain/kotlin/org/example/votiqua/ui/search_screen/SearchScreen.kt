@@ -39,7 +39,9 @@ fun SearchScreen(
             navController = navController,
             onQueryChanged = { query ->
                 viewModel.onEvent(SearchEvent.UpdateQuery(query))
-            }
+            },
+            recommends = (state as? SearchState.Success)?.searchRecommends ?: emptyList(),
+            onEvent = viewModel::onEvent,
         )
         when (state) {
             is SearchState.Loading -> {

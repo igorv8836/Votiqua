@@ -4,9 +4,8 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.Application
 import io.ktor.server.config.ApplicationConfig
+import org.example.votiqua.database.utils.createDbTables
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
@@ -30,14 +29,4 @@ object DatabaseFactory {
         config.validate()
         return HikariDataSource(config)
     }
-}
-
-fun createDbTables() {
-    SchemaUtils.create(
-        TestTable
-    )
-}
-
-object TestTable : Table() {
-    val id = integer("id").autoIncrement()
 }
