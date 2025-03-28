@@ -10,10 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.DialogProperties
+import org.example.votiqua.ui.profile_screen.ProfileEvent
 
 @Composable
 fun ProfileAdditionalDialog(
-    title: String, textFieldLabel: String, denyRequest: () -> Unit, confirmRequest: (String) -> Unit
+    title: String, textFieldLabel: String, denyRequest: () -> Unit, confirmRequest: (ProfileEvent) -> Unit
 ) {
     var textFieldText by remember { mutableStateOf("") }
 
@@ -24,7 +25,7 @@ fun ProfileAdditionalDialog(
             onValueChange = { textFieldText = it },
             label = { Text(textFieldLabel) })
     }, confirmButton = {
-        TextButton(onClick = { confirmRequest(textFieldText) }) {
+        TextButton(onClick = { confirmRequest(ProfileEvent.ChangeNickname(textFieldText)) }) {
             Text(text = "Сохранить")
         }
     }, dismissButton = {

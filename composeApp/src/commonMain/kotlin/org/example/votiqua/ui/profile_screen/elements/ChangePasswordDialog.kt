@@ -14,10 +14,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.DialogProperties
+import org.example.votiqua.ui.profile_screen.ProfileEvent
 
 @Composable
 fun ChangePasswordDialog(
-    denyRequest: () -> Unit, confirmRequest: (String, String) -> Unit
+    denyRequest: () -> Unit, confirmRequest: (ProfileEvent) -> Unit
 ) {
     var lastPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -37,7 +38,7 @@ fun ChangePasswordDialog(
                 label = { Text("Введите новый пароль") })
         }
     }, confirmButton = {
-        TextButton(onClick = { confirmRequest(lastPassword, newPassword) }) {
+        TextButton(onClick = { ProfileEvent.ChangePassword(lastPassword, newPassword) }) {
             Text(text = "Сохранить")
         }
     }, dismissButton = {

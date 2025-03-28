@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,72 +34,74 @@ fun SearchScreen(
 ) {
     val state by viewModel.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        AppSearchBar(
-            isMainScreen = false,
-            navController = navController,
-            onQueryChanged = { query ->
-                viewModel.onEvent(SearchEvent.UpdateQuery(query))
-            },
-            recommends = (state as? SearchState.Success)?.searchRecommends ?: emptyList(),
-            onEvent = viewModel::onEvent,
-        )
-        when (state) {
-            is SearchState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is SearchState.Error -> {
-                val errorState = state as SearchState.Error
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = errorState.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Red
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { viewModel.onEvent(SearchEvent.UpdateQuery(errorState.query)) }) {
-                        Text(text = "Обновить")
+    Scaffold {
+        Column(modifier = Modifier.fillMaxSize()) {
+            AppSearchBar(
+                isMainScreen = false,
+                navController = navController,
+                onQueryChanged = { query ->
+                    viewModel.onEvent(SearchEvent.UpdateQuery(query))
+                },
+                recommends = (state as? SearchState.Success)?.searchRecommends ?: emptyList(),
+                onEvent = viewModel::onEvent,
+            )
+            when (state) {
+                is SearchState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
-            }
-            is SearchState.Success -> {
-                val successState = state as SearchState.Success
-                if (successState.query.isNotEmpty() && successState.results.isEmpty()) {
-                    Box(
+                is SearchState.Error -> {
+                    val errorState = state as SearchState.Error
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Ничего не найдено",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = errorState.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Red
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { viewModel.onEvent(SearchEvent.UpdateQuery(errorState.query)) }) {
+                            Text(text = "Обновить")
+                        }
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.padding(horizontal = Dimens.medium)
-                    ) {
-                        item {
+                }
+                is SearchState.Success -> {
+                    val successState = state as SearchState.Success
+                    if (successState.query.isNotEmpty() && successState.results.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
-                                text = "Найденные голосования",
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                text = "Ничего не найдено",
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                        items(successState.results) { poll ->
-                            PollCard(poll, navController)
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.padding(horizontal = Dimens.medium)
+                        ) {
+                            item {
+                                Text(
+                                    text = "Найденные голосования",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
+                            items(successState.results) { poll ->
+                                PollCard(poll, navController)
+                            }
                         }
                     }
                 }

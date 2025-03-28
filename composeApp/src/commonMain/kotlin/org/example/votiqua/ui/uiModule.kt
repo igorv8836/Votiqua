@@ -16,6 +16,7 @@ fun uiModule() = module {
     viewModel { SplashViewModel(get()) }
     viewModel { ManagePollViewModel(get()) }
     viewModel { PollViewerViewModel(get()) }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get()) }
+    viewModel { AppViewModel(get()) }
 }

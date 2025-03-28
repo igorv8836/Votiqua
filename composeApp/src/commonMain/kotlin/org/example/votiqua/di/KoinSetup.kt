@@ -1,6 +1,8 @@
 package org.example.votiqua.di
 
 import com.example.common.commonModule
+import com.example.votiqua.datastore.createDataStoreModule
+import com.example.votiqua.datastore.datastoreModule
 import com.example.votiqua.network.di.networkModule
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -21,6 +23,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             uiModule(),
             platformModule(),
             networkModule(),
+            createDataStoreModule(),
+            datastoreModule(),
         )
 
     }

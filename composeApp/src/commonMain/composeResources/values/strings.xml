@@ -8,8 +8,12 @@
     <string name="search">Поиск</string>
     <string name="nothing_found">Ничего не найдено</string>
 
-
     <string name="basic_error">Что-то пошло не так</string>
     <string name="retry">Повторить</string>
     <string name="loading">Загрузка...</string>
+
+    <string name="dark_theme">Темный режим: </string>
+    <string name="enabled">Включен</string>
+    <string name="disabled">Выключен</string>
+    <string name="system">Системный</string>
 </resources>

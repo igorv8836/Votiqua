@@ -98,7 +98,6 @@ fun NotificationBlock(notifications: List<String>) {
                 horizontal = AppPaddings.HORIZONTAL_PADDING,
             )
             .padding(top = 16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(

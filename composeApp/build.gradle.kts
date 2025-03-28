@@ -76,6 +76,7 @@ kotlin {
             implementation(project(":orbit_mvi"))
             implementation(project(":core:common"))
             implementation(project(":core:network"))
+            implementation(project(":core:datastore"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
