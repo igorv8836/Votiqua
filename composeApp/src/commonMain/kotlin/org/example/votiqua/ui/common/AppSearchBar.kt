@@ -11,6 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -36,6 +38,8 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import org.example.votiqua.domain.model.search.QueryRecommendModel
+import org.example.votiqua.domain.model.search.QueryType
 import org.example.votiqua.ui.navigation.navigateToSearch
 import org.example.votiqua.ui.search_screen.SearchEvent
 import org.jetbrains.compose.resources.stringResource
@@ -49,14 +53,15 @@ import votiqua.composeapp.generated.resources.find_vote
 fun AppSearchBar(
     isMainScreen: Boolean,
     navController: NavController,
-    recommends: List<String> = emptyList(),
+    recommends: List<QueryRecommendModel> = emptyList(),
     onQueryChanged: (String) -> Unit = { },
     onEvent: (SearchEvent) -> Unit = { },
+    expanded: Boolean = false,
+    changeExpanded: (Boolean) -> Unit = { },
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var textFieldValue by rememberSaveable { mutableStateOf("") }
-    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -80,11 +85,11 @@ fun AppSearchBar(
                     },
                     query = textFieldValue,
                     onSearch = {
-                        expanded = false
+                        changeExpanded(false)
                         onQueryChanged(textFieldValue)
                     },
                     expanded = expanded,
-                    onExpandedChange = { if (!isMainScreen) expanded = it else navController.navigateToSearch() },
+                    onExpandedChange = { if (!isMainScreen) changeExpanded(it) else navController.navigateToSearch() },
                     placeholder = {
                         Text(
                             text = stringResource(Res.string.find_vote),
@@ -106,7 +111,7 @@ fun AppSearchBar(
                             IconButton(
                                 onClick = {
                                     textFieldValue = ""
-                                    expanded = false
+                                    changeExpanded(false)
                                     onQueryChanged("")
                                     keyboardController?.hide()
                                 }
@@ -121,28 +126,45 @@ fun AppSearchBar(
                 )
             },
             expanded = expanded,
-            onExpandedChange = { expanded = it },
+            onExpandedChange = { changeExpanded(it) },
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                recommends.forEach { resultText ->
+                recommends.forEach { model ->
                     ListItem(
                         leadingContent = {
+                            val icon = when (model.type) {
+                                QueryType.HISTORY -> Icons.Default.History
+                                QueryType.RECOMMEND -> Icons.Default.Search
+                                
+                            }
                             Icon(
-                                imageVector = Icons.Default.Search,
+                                imageVector = icon,
                                 contentDescription = null,
                             )
                         },
-                        headlineContent = { Text(resultText) },
+                        trailingContent = {
+                            if (model.type == QueryType.HISTORY) {
+                                IconButton(
+                                    onClick = { onEvent(SearchEvent.DeleteQuery(model.query)) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        },
+                        headlineContent = { Text(model.query) },
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier =
                             Modifier.clickable {
-                                textFieldValue = resultText
+                                textFieldValue = model.query
                                 onQueryChanged(textFieldValue)
-                                expanded = false
+                                changeExpanded(false)
                             }
                                 .fillMaxWidth()
                                 .padding(horizontal = 4.dp)

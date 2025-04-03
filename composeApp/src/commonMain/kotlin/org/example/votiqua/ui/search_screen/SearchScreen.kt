@@ -16,12 +16,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.orbit_mvi.compose.collectAsState
+import com.example.orbit_mvi.compose.collectSideEffect
 import org.example.votiqua.ui.common.AppSearchBar
 import org.example.votiqua.ui.common.Dimens
 import org.example.votiqua.ui.common.PollCard
@@ -33,6 +37,13 @@ fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    viewModel.collectSideEffect {
+        when (it) {
+            SearchEffect.AutoQuerySendEffect -> expanded = false
+        }
+    }
 
     Scaffold {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -44,6 +55,8 @@ fun SearchScreen(
                 },
                 recommends = (state as? SearchState.Success)?.searchRecommends ?: emptyList(),
                 onEvent = viewModel::onEvent,
+                expanded = expanded,
+                changeExpanded = { expanded = it }
             )
             when (state) {
                 is SearchState.Loading -> {

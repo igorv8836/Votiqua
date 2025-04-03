@@ -26,8 +26,6 @@ class SettingsDataStore(private val dataStore: DataStore<Preferences>) {
     }
 }
 
-
 object SettingsKeys {
     val APP_THEME = intPreferencesKey("app_theme")
-
 }

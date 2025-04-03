@@ -20,6 +20,6 @@ fun dataModule() = module {
     single<UserRepository> { UserRepositoryImpl() }
     single<ProfileRepository> { ProfileRepositoryImpl(get()) }
 
-    single { SearchRecommendRepository(get()) }
+    single { SearchRecommendRepository(get(), get()) }
     single { SearchRecommendRemoteDataSource(get()) }
 }
