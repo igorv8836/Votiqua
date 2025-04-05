@@ -44,4 +44,5 @@ include(":core:common")
 include(":core:network")
 include(":core:datastore")
 
+include("server:common")
 include(":server:feature:auth")

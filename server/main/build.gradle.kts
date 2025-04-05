@@ -29,6 +29,7 @@ application {
 }
 
 dependencies {
+    implementation(projects.server.common)
     implementation(projects.shared)
     implementation(projects.server.feature.auth)
 

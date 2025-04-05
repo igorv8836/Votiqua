@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -12,8 +10,12 @@ application {
 }
 
 dependencies {
+    implementation(projects.server.common)
+    implementation(projects.shared)
+
     implementation(libs.bundles.server.database)
     implementation(libs.bundles.ktor.server.core)
+    implementation(libs.email)
 }
 
 tasks.test {

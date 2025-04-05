@@ -1,13 +1,11 @@
 package org.example.votiqua.routes
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.ktor.server.routing.route
-import org.example.votiqua.network.search.PollSearchResponse
+import io.ktor.http.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.example.votiqua.models.search.PollSearchResponse
 import org.example.votiqua.repositories.PollRepository
-import org.example.votiqua.routes.utils.handleBadRequest
+import org.example.votiqua.server.common.utils.handleBadRequest
 
 fun Route.searchRoute() {
     route("search") {

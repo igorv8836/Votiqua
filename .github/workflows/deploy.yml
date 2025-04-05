@@ -43,7 +43,7 @@ jobs:
           username: root
           script: |
             cd /
-            mv /backend/votiqua/github/workspace/server/build/libs/votiqua.jar /backend/votiqua
+            mv /backend/votiqua/github/workspace/server/main/build/libs/votiqua.jar /backend/votiqua
 
       - name: stop application on server
         uses: appleboy/ssh-action@v1.1.0

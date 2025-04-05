@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import org.example.votiqua.data.network.SearchRecommendRemoteDataSource
 import org.example.votiqua.domain.model.search.QueryRecommendModel
 import org.example.votiqua.domain.model.search.QueryType
-import org.example.votiqua.network.search.PollSearchResponse
+import org.example.votiqua.models.search.PollSearchResponse
 
 class SearchRecommendRepository(
     private val remoteDataSource: SearchRecommendRemoteDataSource,
