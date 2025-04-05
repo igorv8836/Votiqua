@@ -8,7 +8,7 @@ import org.example.votiqua.network.search.common.BaseResponse
 import org.example.votiqua.network.search.common.ErrorType
 
 suspend fun ApplicationCall.handleSuccess(message: String = AnswerType.SUCCESS.message) {
-    this.respond(HttpStatusCode.OK, BaseResponse(true, message))
+    this.respond(HttpStatusCode.OK, BaseResponse(message))
 }
 
 suspend fun ApplicationCall.handleUnauthorized() {

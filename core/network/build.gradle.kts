@@ -5,12 +5,12 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.websockets)
-            implementation(libs.ktor.auth)
-            implementation(libs.ktor.content.negotiation)
-            implementation(libs.ktor.serialization)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.websockets)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.serialization)
             implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(project(":core:common"))
@@ -20,15 +20,15 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.ktor.engine.okhttp)
+            implementation(libs.ktor.client.engine.okhttp)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.engine.darwin)
+            implementation(libs.ktor.client.engine.darwin)
         }
 
         desktopMain.dependencies {
-            implementation(libs.ktor.engine.java)
+            implementation(libs.ktor.client.engine.java)
         }
     }
 }

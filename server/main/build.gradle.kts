@@ -30,6 +30,7 @@ application {
 
 dependencies {
     implementation(projects.shared)
+    implementation(projects.server.feature.auth)
 
     implementation(libs.kotlinx.serialization.json)
 
@@ -48,7 +49,7 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.apache)
     implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.negotiation)
+    implementation(libs.ktor.client.content.negotiation)
 
     implementation(libs.logback.classic)
 
@@ -62,5 +63,5 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.hikari)
 
-    implementation("io.github.serpro69:kotlin-faker:1.14.0")
+    implementation(libs.kotlin.faker)
 }

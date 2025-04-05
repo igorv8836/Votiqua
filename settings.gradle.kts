@@ -15,6 +15,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
 dependencyResolutionManagement {
     repositories {
@@ -30,9 +33,15 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-include(":server")
+findProject(":composeApp")?.name = "mainApp"
+include(":server:main")
+findProject(":server:main")?.name = "mainServer"
+
 include(":shared")
+
 include(":orbit_mvi")
 include(":core:common")
 include(":core:network")
 include(":core:datastore")
+
+include(":server:feature:auth")

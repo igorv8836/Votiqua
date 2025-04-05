@@ -5,4 +5,5 @@ enum class ErrorType(val message: String) {
     GENERAL("Something went wrong"),
     UNAUTHORIZED("Unauthorized"),
     FORBIDDEN("Forbidden"),
+    INCORRECT_BODY("Incorrect body"),
 }

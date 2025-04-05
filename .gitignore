@@ -18,3 +18,4 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 application.conf
 composeApp/prefs.preferences_pb
+docker/.env

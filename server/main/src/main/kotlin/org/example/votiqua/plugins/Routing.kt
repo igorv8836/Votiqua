@@ -6,6 +6,7 @@ import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import org.example.votiqua.routes.authRoute
 import org.example.votiqua.routes.searchRoute
 
 fun Application.configureRouting(config: ApplicationConfig) {
@@ -13,6 +14,7 @@ fun Application.configureRouting(config: ApplicationConfig) {
     routing {
         route("api/v1"){
             searchRoute()
+            authRoute()
         }
     }
 }
