@@ -33,3 +33,21 @@ fun createDbTables() {
         PollParticipantTable
     )
 }
+
+fun deleteDbTables() {
+    SchemaUtils.drop(
+        PollOptionTable,
+        PollTable,
+        UserTable,
+        VoteTable,
+        PasswordResetTable,
+        TagTable,
+        PollTagTable,
+        PollAuthorTable,
+        NotificationTable,
+        FavoritePollTable,
+        RecommendedFeedTable,
+        SearchHistoryTable,
+        PollParticipantTable
+    )
+}

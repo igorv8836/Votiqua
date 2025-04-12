@@ -22,7 +22,7 @@ class PasswordResetUseCase(
     suspend fun saveResetCode(email: String): Result<Unit> {
         userUseCase.findUserByEmail(email) ?: throw UserNotFoundException(ErrorType.USER_NOT_FOUND.message)
         val code = passwordResetRepository.saveResetCode(email)
-        return emailService.sendMessage(email, "Votiqua password reset", "Password reset code: $code")
+        return emailService.sendMessage(email, subject = "Votiqua password reset", message = "Password reset code: $code")
     }
 
     suspend fun updatePassword(request: PasswordResetRequest): Boolean {

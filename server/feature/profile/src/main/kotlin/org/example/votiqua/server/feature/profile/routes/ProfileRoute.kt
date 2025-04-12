@@ -3,132 +3,128 @@ package org.example.votiqua.server.feature.profile.routes
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
-import io.ktor.http.content.streamProvider
-import io.ktor.server.request.receive
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondFile
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import io.ktor.utils.io.toByteArray
 import kotlinx.serialization.Serializable
+import org.example.votiqua.models.common.BaseResponse
+import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.server.common.utils.handleBadRequest
+import org.example.votiqua.server.common.utils.receiveOrException
 import org.example.votiqua.server.common.utils.requireAuthorization
 import org.example.votiqua.server.feature.profile.data.ProfileRepository
-import java.io.File
-import java.util.UUID
+import org.example.votiqua.server.feature.profile.domain.ProfilePhotoUseCase
+import org.koin.ktor.ext.inject
 
 @Serializable
 data class ProfileUpdateRequest(
     val username: String? = null,
-    val bio: String? = null
+    val description: String? = null
 )
 
 fun Route.profileRoute() {
+    val profilePhotoUseCase: ProfilePhotoUseCase by application.inject()
+    val profileRepository: ProfileRepository by application.inject()
+
     route("/profile") {
-        // Получить профиль текущего пользователя
-        get {
-            val userId = call.requireAuthorization()
-            val profile = ProfileRepository.getUserProfile(userId) ?: run {
-                call.respond(HttpStatusCode.NotFound, "Profile not found")
-                return@get
+        authenticate("jwt") {
+            get {
+                val userId = call.requireAuthorization()
+                val profile = profileRepository.getUserProfile(userId) ?: run {
+                    call.respondNotFoundUser()
+                    return@get
+                }
+
+                call.respond(HttpStatusCode.OK, profile)
             }
-            
-            call.respond(HttpStatusCode.OK, profile)
+
+            patch {
+                val userId = call.requireAuthorization()
+                val updateRequest = call.receiveOrException<ProfileUpdateRequest>()
+
+                val updatedProfile = profileRepository.updateUserProfile(
+                    userId = userId,
+                    username = updateRequest.username,
+                    description = updateRequest.description
+                ) ?: run {
+                    call.respondNotFoundUser()
+                    return@patch
+                }
+
+                call.respond(HttpStatusCode.OK, updatedProfile)
+            }
+
+            post("/photo") {
+                val userId = call.requireAuthorization()
+
+                val multipart = call.receiveMultipart()
+                var photo: ByteArray? = null
+                var fileExtension: String? = null
+
+                multipart.forEachPart { part ->
+                    when (part) {
+                        is PartData.FileItem -> {
+                            if (part.name == "photo") {
+                                photo = part.provider().toByteArray()
+                                fileExtension = part.originalFileName?.substringAfterLast('.')
+                            }
+                            part.dispose()
+                        }
+                        else -> part.dispose()
+                    }
+                }
+
+                val updatedProfile = if (photo != null && fileExtension != null) {
+                    profilePhotoUseCase.updateUserPhoto(userId, photo!!, fileExtension!!)
+                } else {
+                    return@post call.respond(HttpStatusCode.BadRequest, BaseResponse("No valid update data provided"))
+                }
+
+                call.respond(updatedProfile)
+            }
         }
         
-        // Получить профиль по ID
         get("/{userId}") {
             val targetUserId = call.parameters["userId"]?.toIntOrNull() ?: run {
                 call.handleBadRequest("Invalid user ID")
                 return@get
             }
             
-            val profile = ProfileRepository.getUserProfile(targetUserId) ?: run {
-                call.respond(HttpStatusCode.NotFound, "Profile not found")
+            val profile = profileRepository.getUserProfile(targetUserId) ?: run {
+                call.respondNotFoundUser()
                 return@get
             }
             
             call.respond(HttpStatusCode.OK, profile)
         }
-        
-        // Обновить профиль
-        patch {
-            val userId = call.requireAuthorization()
-            
-            val updateRequest = try {
-                call.receive<ProfileUpdateRequest>()
+
+        get("/{userId}/photo") {
+            val targetUserId = call.parameters["userId"]?.toIntOrNull() ?: run {
+                call.handleBadRequest("Invalid user ID")
+                return@get
+            }
+
+            try {
+                val photoUrl = profilePhotoUseCase.getOtherUserPhotoUrl(targetUserId)
+                val photoFile = profilePhotoUseCase.getPhotoFile(photoUrl)
+
+                call.respondFile(photoFile)
             } catch (e: Exception) {
-                call.handleBadRequest("Invalid update data")
-                return@patch
+                call.respond(HttpStatusCode.NotFound, BaseResponse("Photo not found"))
             }
-            
-            val updatedProfile = ProfileRepository.updateUserProfile(
-                userId = userId,
-                username = updateRequest.username,
-                bio = updateRequest.bio
-            ) ?: run {
-                call.respond(HttpStatusCode.NotFound, "Profile not found")
-                return@patch
-            }
-            
-            call.respond(HttpStatusCode.OK, updatedProfile)
-        }
-        
-        // Загрузить фото профиля
-        post("/photo") {
-            val userId = call.requireAuthorization()
-            
-            val multipart = call.receiveMultipart()
-            var fileName: String? = null
-            
-            multipart.forEachPart { part ->
-                when (part) {
-                    is PartData.FileItem -> {
-                        val originalFileName = part.originalFileName ?: "photo.jpg"
-                        val fileExtension = originalFileName.substringAfterLast('.', "jpg")
-                        
-                        // Создаем уникальное имя файла
-                        fileName = "${UUID.randomUUID()}-$userId.$fileExtension"
-                        
-                        // Путь к директории для хранения фотографий профилей
-                        val uploadDir = File("uploads/profile_photos")
-                        if (!uploadDir.exists()) {
-                            uploadDir.mkdirs()
-                        }
-                        
-                        // Сохраняем файл
-                        val file = File(uploadDir, fileName!!)
-                        part.streamProvider().use { input ->
-                            file.outputStream().buffered().use { output ->
-                                input.copyTo(output)
-                            }
-                        }
-                    }
-                    else -> {}
-                }
-                part.dispose()
-            }
-            
-            if (fileName == null) {
-                call.handleBadRequest("No file uploaded")
-                return@post
-            }
-            
-            // URL для доступа к фотографии
-            val photoUrl = "/uploads/profile_photos/$fileName"
-            
-            // Обновляем профиль пользователя с новым URL фотографии
-            val updatedProfile = ProfileRepository.updateUserProfile(
-                userId = userId,
-                photoUrl = photoUrl
-            ) ?: run {
-                call.respond(HttpStatusCode.NotFound, "Profile not found")
-                return@post
-            }
-            
-            call.respond(HttpStatusCode.OK, updatedProfile)
         }
     }
+}
+
+private suspend fun ApplicationCall.respondNotFoundUser() {
+    respond(HttpStatusCode.NotFound, BaseResponse(ErrorType.PROFILE_NOT_FOUND.message))
 }

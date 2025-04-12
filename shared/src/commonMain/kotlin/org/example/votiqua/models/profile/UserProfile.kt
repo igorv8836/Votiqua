@@ -8,7 +8,7 @@ data class UserProfile(
     val username: String,
     val email: String,
     val photoUrl: String? = null,
-    val bio: String? = null,
+    val description: String? = null,
     val pollsCreated: Int = 0,
     val pollsVoted: Int = 0
 ) 

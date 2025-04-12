@@ -19,3 +19,4 @@ captures
 application.conf
 composeApp/prefs.preferences_pb
 docker/.env
+uploads/*

@@ -16,7 +16,6 @@ import org.jetbrains.exposed.sql.update
 
 fun Route.notificationRoute() {
     route("/notifications") {
-        // Получить уведомления пользователя
         get {
             val userId = call.requireAuthorization()
             val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 20
@@ -41,7 +40,6 @@ fun Route.notificationRoute() {
             call.respond(HttpStatusCode.OK, mapOf("count" to notifications.size, "results" to notifications))
         }
         
-        // Отметить уведомление как прочитанное
         post("/{id}/read") {
             val userId = call.requireAuthorization()
             val notificationId = call.parameters["id"]?.toIntOrNull() ?: run {
@@ -64,7 +62,6 @@ fun Route.notificationRoute() {
             }
         }
         
-        // Отметить все уведомления как прочитанные
         post("/read-all") {
             val userId = call.requireAuthorization()
             

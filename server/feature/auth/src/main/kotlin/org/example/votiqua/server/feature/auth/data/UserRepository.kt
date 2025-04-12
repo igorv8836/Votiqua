@@ -7,7 +7,6 @@ import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.common.utils.toTimestampMoscow
 import org.example.votiqua.server.feature.auth.api.database.UserTable
-import org.example.votiqua.server.feature.auth.utils.getPhotoPath
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -81,7 +80,7 @@ class UserRepository {
             email = row[UserTable.email],
             passwordHash = row[UserTable.passwordHash],
             username = row[UserTable.username],
-            photoUrl = if (row[UserTable.photo] != null) getPhotoPath(row[UserTable.id]) else null,
+            photoUrl = row[UserTable.photoUrl],
             notificationEnabled = row[UserTable.notificationEnabled],
             isActive = row[UserTable.isActive],
             banReason = row[UserTable.banReason],

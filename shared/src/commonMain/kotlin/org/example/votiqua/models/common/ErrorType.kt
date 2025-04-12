@@ -15,4 +15,9 @@ enum class ErrorType(val message: String) {
 
 
     POLL_NOT_FOUND("Poll not found"),
+
+    PROFILE_NOT_FOUND("Profile not found"),
+    FILE_TOO_LARGE_5MB("File too large, maximum - 5 MB"),
+    INVALID_FILE_TYPE("Invalid file type, use jpeg, jpg or png"),
+    PHOTO_NOT_FOUND("Photo not found"),
 }

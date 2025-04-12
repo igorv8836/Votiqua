@@ -9,6 +9,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.example.votiqua.models.poll.Poll
+import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.utils.getUserId
 import org.example.votiqua.server.common.utils.handleBadRequest
 import org.example.votiqua.server.common.utils.receiveOrException
@@ -75,8 +76,8 @@ fun Route.pollRoute() {
                     return@post
                 }
 
-                val updatedPoll = pollRepository.getPollById(pollId, userId)
-                call.respond(HttpStatusCode.OK, updatedPoll!!)
+                val updatedPoll = pollRepository.getPollById(pollId, userId) ?: throw HTTPConflictException()
+                call.respond(HttpStatusCode.OK, updatedPoll)
             }
 
             get("/user/{userId}") {
