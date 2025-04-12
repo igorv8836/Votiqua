@@ -6,11 +6,12 @@ import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import org.example.votiqua.routes.notificationRoute
-import org.example.votiqua.routes.profileRoute
-import org.example.votiqua.routes.recommendationRoute
-import org.example.votiqua.routes.searchRoute
 import org.example.votiqua.server.feature.auth.routes.authRoute
+import org.example.votiqua.server.feature.profile.routes.notificationRoute
+import org.example.votiqua.server.feature.profile.routes.profileRoute
+import org.example.votiqua.server.feature.recom.routes.recommendationRoute
+import org.example.votiqua.server.feature.recom.routes.searchRoute
+import org.example.votiqua.server.feature.voting.routes.favoritePollRoute
 import org.example.votiqua.server.feature.voting.routes.pollRoute
 
 fun Application.configureRouting(config: ApplicationConfig) {
@@ -23,6 +24,7 @@ fun Application.configureRouting(config: ApplicationConfig) {
             profileRoute()
             recommendationRoute()
             notificationRoute()
+            favoritePollRoute()
         }
     }
 }

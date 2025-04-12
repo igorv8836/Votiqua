@@ -33,8 +33,10 @@ dependencies {
     implementation(projects.shared)
     implementation(projects.server.feature.authApi)
     implementation(projects.server.feature.auth)
-    implementation(projects.server.feature.search)
+    implementation(projects.server.feature.recom)
+    implementation(projects.server.feature.profileApi)
     implementation(projects.server.feature.profile)
+    implementation(projects.server.feature.votingApi)
     implementation(projects.server.feature.voting)
 
     implementation(libs.kotlinx.serialization.json)

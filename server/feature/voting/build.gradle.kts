@@ -12,6 +12,7 @@ application {
 dependencies {
     implementation(projects.server.common)
     implementation(projects.server.feature.authApi)
+    implementation(projects.server.feature.votingApi)
     implementation(projects.shared)
 
     implementation(libs.bundles.server.database)

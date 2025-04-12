@@ -11,13 +11,12 @@ application {
 
 dependencies {
     implementation(projects.server.common)
-    implementation(projects.shared)
-    implementation(projects.server.feature.profileApi)
     implementation(projects.server.feature.authApi)
-    implementation(projects.server.feature.votingApi)
+    implementation(projects.shared)
 
     implementation(libs.bundles.server.database)
     implementation(libs.bundles.ktor.server.core)
+    implementation(libs.kotlinx.datetime)
 }
 
 tasks.test {
