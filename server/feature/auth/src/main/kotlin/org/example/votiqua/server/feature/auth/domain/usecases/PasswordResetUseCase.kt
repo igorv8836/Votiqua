@@ -5,11 +5,12 @@ import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.models.MainConfig
 import org.example.votiqua.server.common.models.UserNotFoundException
+import org.example.votiqua.server.common.utils.currentDateTime
+import org.example.votiqua.server.common.utils.toUtcTimestamp
 import org.example.votiqua.server.feature.auth.data.EmailService
 import org.example.votiqua.server.feature.auth.data.PasswordResetRepository
 import org.example.votiqua.server.feature.auth.utils.HashFactory
 import org.example.votiqua.server.feature.auth.utils.checkPasswordLength
-import java.time.LocalDateTime
 
 
 class PasswordResetUseCase(
@@ -29,7 +30,7 @@ class PasswordResetUseCase(
 
         request.newPassword.checkPasswordLength()
 
-        if (existingRecord.createdAt <= LocalDateTime.now().minusMinutes(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.value.toLong())){
+        if (existingRecord.createdAt <= currentDateTime().minusMinutes(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.value.toLong()).toUtcTimestamp()){
             throw HTTPConflictException(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.text)
         }
         if (existingRecord.countInputAttempts >= MainConfig.MAX_RESET_ATTEMPTS.value){

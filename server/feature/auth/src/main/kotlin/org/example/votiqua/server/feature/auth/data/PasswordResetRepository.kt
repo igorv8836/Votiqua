@@ -1,13 +1,14 @@
 package org.example.votiqua.server.feature.auth.data
 
+import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
-import org.example.votiqua.server.feature.auth.database.PasswordResetTable
+import org.example.votiqua.server.common.utils.toUtcTimestamp
+import org.example.votiqua.server.feature.auth.api.database.PasswordResetTable
 import org.example.votiqua.server.feature.auth.domain.models.PasswordResetModel
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
-import java.time.LocalDateTime
 
 class PasswordResetRepository {
     suspend fun saveResetCode(email: String): Int {
@@ -22,12 +23,12 @@ class PasswordResetRepository {
                 PasswordResetTable.insert {
                     it[PasswordResetTable.email] = email
                     it[code] = resetCode
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = currentDateTime()
                 }
             } else {
                 PasswordResetTable.update({ PasswordResetTable.email.eq(email) }) {
                     it[code] = resetCode
-                    it[createdAt] = LocalDateTime.now()
+                    it[createdAt] = currentDateTime()
                     it[countInputAttempts] = 0
                 }
             }
@@ -43,7 +44,7 @@ class PasswordResetRepository {
                 PasswordResetModel(
                     email = it[PasswordResetTable.email],
                     code = it[PasswordResetTable.code],
-                    createdAt = it[PasswordResetTable.createdAt],
+                    createdAt = it[PasswordResetTable.createdAt].toUtcTimestamp(),
                     countInputAttempts = it[PasswordResetTable.countInputAttempts],
                     isUsed = it[PasswordResetTable.isUsed]
                 )

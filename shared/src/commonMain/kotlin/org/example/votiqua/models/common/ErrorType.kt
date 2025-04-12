@@ -12,4 +12,7 @@ enum class ErrorType(val message: String) {
     USERNAME_ALREADY_EXISTS("the name is already in use"),
 
     INVALID_EMAIL("Invalid email address"),
+
+
+    POLL_NOT_FOUND("Poll not found"),
 }

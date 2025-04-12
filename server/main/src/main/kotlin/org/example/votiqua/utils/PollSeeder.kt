@@ -1,11 +1,11 @@
 package org.example.votiqua.utils
 
 import io.github.serpro69.kfaker.Faker
-import org.example.votiqua.database.tables.PollTable
+import org.example.votiqua.server.common.utils.currentDateTime
+import org.example.votiqua.server.feature.voting.database.PollTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.LocalDateTime
 
 
 object PollSeeder {
@@ -25,9 +25,9 @@ object PollSeeder {
                     it[isMultiple] = faker.random.nextBoolean()
                     it[isAnonymous] = faker.random.nextBoolean()
                     it[isOpen] = faker.random.nextBoolean()
-                    it[createdAt] = LocalDateTime.now()
-                    it[startDate] = LocalDateTime.now().plusDays(faker.random.nextLong(100))
-                    it[endDate] = LocalDateTime.now().plusDays(faker.random.nextLong(100))
+                    it[createdAt] = currentDateTime()
+                    it[startDate] = currentDateTime().plusDays(faker.random.nextLong(100))
+                    it[endDate] = currentDateTime().plusDays(faker.random.nextLong(100))
                 }
             }
         }

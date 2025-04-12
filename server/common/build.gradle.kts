@@ -14,5 +14,6 @@ dependencies {
 
     implementation(libs.bundles.ktor.server.core)
     implementation(libs.bundles.server.database)
+    implementation(libs.kotlinx.datetime)
     testImplementation(kotlin("test"))
 }

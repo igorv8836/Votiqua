@@ -45,4 +45,8 @@ include(":core:network")
 include(":core:datastore")
 
 include("server:common")
+include(":server:feature:auth-api")
 include(":server:feature:auth")
+include(":server:feature:voting")
+include(":server:feature:profile")
+include(":server:feature:search")

@@ -8,6 +8,7 @@ class RestrictiveException(message: String? = null) : Exception(message)
 
 class HTTPConflictException(message: String? = null) : Exception(message)
 class HTTPUnauthorizedException(message: String? = null) : Exception(message)
+class HTTPForbiddenException(message: String? = null) : Exception(message)
 
 class IncorrectBodyException(message: String? = null) : Exception(message)
 class OutOfConfigRangeException(message: String? = null) : Exception(message)

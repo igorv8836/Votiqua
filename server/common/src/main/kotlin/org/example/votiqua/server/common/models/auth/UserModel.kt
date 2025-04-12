@@ -2,8 +2,7 @@ package org.example.votiqua.server.common.models.auth
 
 import kotlinx.serialization.Serializable
 import org.example.votiqua.models.auth.User
-import org.example.votiqua.server.common.utils.toTimestampMoscow
-import java.time.LocalDateTime
+import org.example.votiqua.server.common.utils.currentTimestamp
 
 @Serializable
 data class UserModel(
@@ -32,6 +31,6 @@ data class UserModel(
         notificationEnabled = true,
         isActive = true,
         banReason = null,
-        createdAt = LocalDateTime.now().toTimestampMoscow()
+        createdAt = currentTimestamp()
     )
 }

@@ -1,4 +1,4 @@
-package org.example.votiqua.server.feature.auth.database
+package org.example.votiqua.server.feature.auth.api.database
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime

@@ -3,13 +3,18 @@ package org.example.votiqua.server.feature.auth.data
 import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.models.auth.UserModel
+import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.common.utils.toTimestampMoscow
-import org.example.votiqua.server.feature.auth.database.UserTable
+import org.example.votiqua.server.feature.auth.api.database.UserTable
 import org.example.votiqua.server.feature.auth.utils.getPhotoPath
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import java.time.LocalDateTime
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 
 class UserRepository {
 
@@ -31,7 +36,7 @@ class UserRepository {
                 table[notificationEnabled] = userModel.notificationEnabled
                 table[isActive] = userModel.isActive
                 table[banReason] = userModel.banReason
-                table[createdAt] = LocalDateTime.now()
+                table[createdAt] = currentDateTime()
             }
         }
     }

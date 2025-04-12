@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import org.example.votiqua.server.common.constants.AuthConstants
 import org.example.votiqua.server.common.models.auth.UserModel
-import java.time.LocalDateTime
+import org.example.votiqua.server.common.utils.currentDateTime
 import java.time.ZoneOffset
 
 class JwtService(
@@ -25,7 +25,7 @@ class JwtService(
             .withSubject(AuthConstants.JWT_SUBJECT)
             .withIssuer(issuer)
             .withClaim(AuthConstants.JWT_CLAIM, user.email)
-            .withExpiresAt(LocalDateTime.now().plusDays(90).toInstant(ZoneOffset.UTC))
+            .withExpiresAt(currentDateTime().plusDays(90).toInstant(ZoneOffset.UTC))
             .sign(algorithm)
     }
 

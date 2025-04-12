@@ -114,6 +114,7 @@ ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "k
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
 ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor-test" }
 ktor-server-metrics-micrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometerPrometheus" }
 
 ktor-client-apache = { module = "io.ktor:ktor-client-apache-jvm", version.ref = "ktor" }
@@ -136,7 +137,8 @@ ktor-server-core = [
     "ktor-server-auth",
     "ktor-server-auth-jwt",
     "ktor-server-netty",
-    "koin-ktor"
+    "koin-ktor",
+    "kotlinx-datetime"
 ]
 
 server-database = [

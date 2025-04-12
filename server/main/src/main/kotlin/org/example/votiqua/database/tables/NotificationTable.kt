@@ -1,6 +1,6 @@
 package org.example.votiqua.database.tables
 
-import org.example.votiqua.server.feature.auth.database.UserTable
+import org.example.votiqua.server.feature.auth.api.database.UserTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime

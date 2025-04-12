@@ -1,15 +1,20 @@
 package org.example.votiqua.plugins
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.NotFoundException
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.server.common.models.HTTPConflictException
+import org.example.votiqua.server.common.models.HTTPForbiddenException
 import org.example.votiqua.server.common.models.HTTPUnauthorizedException
 import org.example.votiqua.server.common.models.IncorrectBodyException
 import org.example.votiqua.server.common.models.OutOfConfigRangeException
+import org.example.votiqua.server.common.utils.handleForbidden
+import org.example.votiqua.server.common.utils.handleUnauthorized
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
@@ -40,13 +45,21 @@ fun Application.configureStatusPages() {
             )
         }
 
-        exception<HTTPUnauthorizedException> { call, exception ->
+        exception<NotFoundException> { call, exception ->
             call.respond(
-                status = HttpStatusCode.Unauthorized,
+                status = HttpStatusCode.NotFound,
                 message = BaseResponse(
-                    message = exception.message ?: ErrorType.GENERAL.message,
+                    message = exception.message ?: ErrorType.POLL_NOT_FOUND.message,
                 )
             )
+        }
+
+        exception<HTTPUnauthorizedException> { call, exception ->
+            call.handleUnauthorized(exception.message)
+        }
+
+        exception<HTTPForbiddenException> { call, _ ->
+            call.handleForbidden()
         }
 
         exception<OutOfConfigRangeException> { call, exception ->

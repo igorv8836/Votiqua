@@ -31,9 +31,14 @@ application {
 dependencies {
     implementation(projects.server.common)
     implementation(projects.shared)
+    implementation(projects.server.feature.authApi)
     implementation(projects.server.feature.auth)
+    implementation(projects.server.feature.search)
+    implementation(projects.server.feature.profile)
+    implementation(projects.server.feature.voting)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.auth)
@@ -46,6 +51,7 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.metrics.micrometer)
     implementation(libs.ktor.server.forwarded.header)
+    implementation(libs.ktor.server.cors)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.apache)
