@@ -36,7 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.example.votiqua.ui.common.Dimens
+import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.manage_poll_screen.elements.ParticipantsBlock
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import org.example.votiqua.ui.common.Dimens
+import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.common.PollCard
 import org.example.votiqua.ui.main_screen.Poll
 

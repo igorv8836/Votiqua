@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.io.IOException
+import org.example.votiqua.models.common.BaseResponse
 
 suspend inline fun <reified T> safeApiCall(apiCall: () -> HttpResponse): Result<T> {
     return try {
@@ -18,19 +19,25 @@ suspend inline fun <reified T> safeApiCall(apiCall: () -> HttpResponse): Result<
                 Result.success(responseBody)
             }
             HttpStatusCode.BadRequest -> {
-                Result.failure(NetworkException.ClientErrorException(response.bodyAsText()))
+                val errorText = response.tryGetErrorText() ?: ("BadRequest: " + response.bodyAsText())
+                Result.failure(NetworkException.ClientErrorException(errorText))
             }
             HttpStatusCode.Unauthorized -> {
-                Result.failure(NetworkException.Unauthorized("UnAuthorized: " + response.bodyAsText()))
+                val errorText = response.tryGetErrorText() ?: ("Unauthorized: " + response.bodyAsText())
+                return Result.failure(NetworkException.Unauthorized(errorText))
             }
             HttpStatusCode.Conflict -> {
-                Result.failure(NetworkException.ClientErrorException("Conflict: " + response.bodyAsText()))
+                val errorText = response.tryGetErrorText() ?: ("Conflict: " + response.bodyAsText())
+                Result.failure(NetworkException.ClientErrorException(errorText))
             }
             HttpStatusCode.TooManyRequests -> {
                 Result.failure(NetworkException.ClientErrorException(response.bodyAsText()))
             }
             else -> {
-                Result.failure(NetworkException.UnexpectedException("Unexpected status code: ${response.status.value}, ${response.bodyAsText()}"))
+                val errorText = response.tryGetErrorText()
+                    ?: "Unexpected status code: ${response.status.value}, ${response.bodyAsText()}"
+
+                Result.failure(NetworkException.UnexpectedException(errorText))
             }
         }
     } catch (e: ClientRequestException) {
@@ -41,5 +48,13 @@ suspend inline fun <reified T> safeApiCall(apiCall: () -> HttpResponse): Result<
         Result.failure(NetworkException.NetworkIOException("${e.message}"))
     } catch (e: Exception) {
         Result.failure(NetworkException.UnexpectedException("${e.message}"))
+    }
+}
+
+suspend fun HttpResponse.tryGetErrorText(): String? {
+    return try {
+        body<BaseResponse<String>>().message
+    } catch (e: Exception) {
+        null
     }
 }

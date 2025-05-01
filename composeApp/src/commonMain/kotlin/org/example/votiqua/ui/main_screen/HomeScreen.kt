@@ -29,9 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.example.votiqua.ui.common.AppPaddings
+import com.example.votiqua.core.ui_common.constants.AppPaddings
+import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.common.AppSearchBar
-import org.example.votiqua.ui.common.Dimens
 import org.example.votiqua.ui.common.PollCard
 
 val mockPolls = listOf(

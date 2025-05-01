@@ -1,10 +1,15 @@
 package org.example.votiqua.server.feature.auth.routes
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 import org.example.votiqua.models.auth.LoginRequest
 import org.example.votiqua.models.auth.PasswordRecoveryRequest
 import org.example.votiqua.models.auth.PasswordResetRequest
@@ -12,6 +17,7 @@ import org.example.votiqua.models.auth.RegisterRequest
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.server.common.utils.handleSuccess
 import org.example.votiqua.server.common.utils.receiveOrException
+import org.example.votiqua.server.common.utils.requireAuthorization
 import org.example.votiqua.server.feature.auth.domain.usecases.PasswordResetUseCase
 import org.example.votiqua.server.feature.auth.domain.usecases.UserUseCase
 import org.koin.ktor.ext.inject
@@ -72,6 +78,13 @@ fun Route.authRoute() {
             val username = call.parameters["username"] ?: throw BadRequestException("Username is required")
             val taken = userUseCase.isUsernameTaken(username)
             call.respond(HttpStatusCode.OK, mapOf("isUsed" to taken))
+        }
+
+        authenticate("jwt") {
+            get("/check-token") {
+                call.requireAuthorization()
+                call.respond(HttpStatusCode.OK, BaseResponse(true))
+            }
         }
     }
 }

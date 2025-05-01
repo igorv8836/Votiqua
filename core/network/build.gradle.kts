@@ -13,7 +13,9 @@ kotlin {
             implementation(libs.ktor.client.serialization)
             implementation(libs.ktor.serialization.kotlinx.json)
 
-            implementation(project(":core:common"))
+            implementation(projects.core.common)
+            implementation(projects.shared)
+            implementation(projects.core.datastore)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -4,32 +4,28 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import org.example.votiqua.ui.login_screen.LoginScreen
+import com.example.feature.auth.navigation.AuthNavigator
+import com.example.votiqua.core.ui_common.navigation.FavouriteScreenRoute
+import com.example.votiqua.core.ui_common.navigation.MainScreenRoute
+import com.example.votiqua.core.ui_common.navigation.ManagePollRoute
+import com.example.votiqua.core.ui_common.navigation.PollCreateRoute
+import com.example.votiqua.core.ui_common.navigation.PollViewerRoute
+import com.example.votiqua.core.ui_common.navigation.SearchScreenRoute
+import com.example.votiqua.core.ui_common.navigation.SplashRoute
+import com.example.votiqua.core.ui_common.navigation.navigateToManagingPoll
 import org.example.votiqua.ui.manage_poll_screen.ManagePollScreen
 import org.example.votiqua.ui.poll_viewer_screen.PollViewerScreen
 import org.example.votiqua.ui.profile_screen.FavoritesScreen
-import org.example.votiqua.ui.register_screen.RegisterScreen
 import org.example.votiqua.ui.search_screen.SearchScreen
-import org.example.votiqua.ui.splash_screen.SplashScreen
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = MainScreenRoute) {
-        composable<LoginRoute> {
-            LoginScreen(
-                navController = navController,
-            )
-        }
+    val authNavigator: AuthNavigator = koinInject<AuthNavigator>()
 
-        composable<RegisterRoute> {
-            RegisterScreen(navController, it.toRoute<RegisterRoute>().email)
-        }
-
-        composable<SplashRoute> {
-            SplashScreen(navController = navController)
-        }
+    NavHost(navController = navController, startDestination = SplashRoute) {
+        authNavigator.registerNavigation(this, navController)
 
         composable<MainScreenRoute> {
             MainScreen(navController)

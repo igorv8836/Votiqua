@@ -1,6 +1,7 @@
 package org.example.votiqua.di
 
 import com.example.common.commonModule
+import com.example.feature.auth.authModule
 import com.example.votiqua.datastore.createDataStoreModule
 import com.example.votiqua.datastore.datastoreModule
 import com.example.votiqua.network.di.networkModule
@@ -25,6 +26,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             networkModule(),
             createDataStoreModule(),
             datastoreModule(),
+            authModule(),
+            pollModule()
         )
 
     }

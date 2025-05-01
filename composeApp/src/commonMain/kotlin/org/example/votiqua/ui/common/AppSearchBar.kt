@@ -38,15 +38,16 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.example.votiqua.core.ui_common.constants.AppPaddings
+import com.example.votiqua.core.ui_common.navigation.navigateToSearch
 import org.example.votiqua.domain.model.search.QueryRecommendModel
 import org.example.votiqua.domain.model.search.QueryType
-import org.example.votiqua.ui.navigation.navigateToSearch
 import org.example.votiqua.ui.search_screen.SearchEvent
 import org.jetbrains.compose.resources.stringResource
-import votiqua.composeapp.generated.resources.Res
-import votiqua.composeapp.generated.resources.back_or_search
-import votiqua.composeapp.generated.resources.clear
-import votiqua.composeapp.generated.resources.find_vote
+import votiqua.core.ui_common.generated.resources.Res
+import votiqua.core.ui_common.generated.resources.back_or_search
+import votiqua.core.ui_common.generated.resources.clear
+import votiqua.core.ui_common.generated.resources.find_vote
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

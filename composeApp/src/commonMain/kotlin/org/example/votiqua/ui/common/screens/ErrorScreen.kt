@@ -24,9 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import votiqua.composeapp.generated.resources.Res
-import votiqua.composeapp.generated.resources.basic_error
-import votiqua.composeapp.generated.resources.retry
+import votiqua.core.ui_common.generated.resources.Res
+import votiqua.core.ui_common.generated.resources.basic_error
+import votiqua.core.ui_common.generated.resources.retry
 
 @Composable
 fun ErrorScreen(

@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.example.common.ThemeMode
 import com.example.orbit_mvi.compose.collectAsState
+import com.example.votiqua.core.ui_common.theme.AppTheme
 import org.example.votiqua.ui.AppViewModel
 import org.example.votiqua.ui.navigation.AppNavigation
-import org.example.votiqua.ui.theme.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 

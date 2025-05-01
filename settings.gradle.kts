@@ -41,8 +41,14 @@ include(":shared")
 
 include(":orbit_mvi")
 include(":core:common")
+include(":core:ui-common")
 include(":core:network")
 include(":core:datastore")
+
+include(":feature:auth-api")
+include(":feature:auth")
+include(":feature:profile-api")
+include(":feature:profile")
 
 include("server:common")
 include(":server:feature:auth-api")

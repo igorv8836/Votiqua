@@ -15,6 +15,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.votiqua.core.ui_common.navigation.BottomPollCreateRoute
+import com.example.votiqua.core.ui_common.navigation.HomeRoute
+import com.example.votiqua.core.ui_common.navigation.MyPollsRoute
+import com.example.votiqua.core.ui_common.navigation.NotificationsRoute
+import com.example.votiqua.core.ui_common.navigation.ProfileRoute
+import com.example.votiqua.core.ui_common.navigation.navigateToCreate
 
 data class BottomNavItem<T : Any>(val title:String, val icon: ImageVector, val route: T)
 

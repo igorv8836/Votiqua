@@ -18,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import votiqua.composeapp.generated.resources.Res
-import votiqua.composeapp.generated.resources.loading
+import votiqua.core.ui_common.generated.resources.Res
+import votiqua.core.ui_common.generated.resources.loading
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {

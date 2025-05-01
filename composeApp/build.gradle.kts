@@ -72,15 +72,21 @@ kotlin {
 
             implementation(libs.kotlinx.serialization.json)
 
-            implementation(project(":shared"))
-            implementation(project(":orbit_mvi"))
-            implementation(project(":core:common"))
-            implementation(project(":core:network"))
-            implementation(project(":core:datastore"))
+            implementation(projects.shared)
+            implementation(projects.orbitMvi)
+            implementation(projects.core.common)
+            implementation(projects.core.uiCommon)
+            implementation(projects.core.network)
+            implementation(projects.core.datastore)
+            implementation(projects.feature.authApi)
+            implementation(projects.feature.auth)
+            implementation(projects.feature.profileApi)
+            implementation(projects.feature.profile)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.engine.java)
         }
     }
 }
