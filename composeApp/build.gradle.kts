@@ -79,9 +79,11 @@ kotlin {
             implementation(projects.core.network)
             implementation(projects.core.datastore)
             implementation(projects.feature.authApi)
-            implementation(projects.feature.auth)
+            implementation(projects.feature.authImpl)
             implementation(projects.feature.profileApi)
-            implementation(projects.feature.profile)
+            implementation(projects.feature.profileImpl)
+            implementation(projects.feature.votingApi)
+            implementation(projects.feature.votingImpl)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

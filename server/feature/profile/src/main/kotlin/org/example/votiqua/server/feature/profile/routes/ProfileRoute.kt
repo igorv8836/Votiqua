@@ -15,21 +15,15 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.utils.io.toByteArray
-import kotlinx.serialization.Serializable
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.common.ErrorType
+import org.example.votiqua.models.profile.ProfileUpdateRequest
 import org.example.votiqua.server.common.utils.handleBadRequest
 import org.example.votiqua.server.common.utils.receiveOrException
 import org.example.votiqua.server.common.utils.requireAuthorization
 import org.example.votiqua.server.feature.profile.data.ProfileRepository
 import org.example.votiqua.server.feature.profile.domain.ProfilePhotoUseCase
 import org.koin.ktor.ext.inject
-
-@Serializable
-data class ProfileUpdateRequest(
-    val username: String? = null,
-    val description: String? = null
-)
 
 fun Route.profileRoute() {
     val profilePhotoUseCase: ProfilePhotoUseCase by application.inject()
@@ -89,7 +83,7 @@ fun Route.profileRoute() {
                     return@post call.respond(HttpStatusCode.BadRequest, BaseResponse("No valid update data provided"))
                 }
 
-                call.respond(updatedProfile)
+                call.respond(HttpStatusCode.OK, updatedProfile)
             }
         }
         

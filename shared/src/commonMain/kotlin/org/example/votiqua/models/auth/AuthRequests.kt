@@ -26,3 +26,9 @@ data class PasswordResetRequest(
     val code: Int,
     val newPassword: String
 )
+
+@Serializable
+data class PasswordChangeRequest(
+    val lastPassword: String,
+    val newPassword: String,
+)

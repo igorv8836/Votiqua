@@ -65,7 +65,31 @@ class UserUseCase(
 
     suspend fun checkUser(email: String, password: String): UserModel? = userRepository.checkUser(email, password)
 
-    suspend fun updatePassword(email: String, password: String) = userRepository.updatePassword(email, password)
+    suspend fun updatePassword(email: String, password: String) {
+        password.checkPasswordLength()
+        userRepository.updatePassword(email, password)
+    }
+
+    suspend fun checkAndUpdatePassword(
+        email: String,
+        lastPassword: String,
+        newPassword: String,
+    ) {
+        newPassword.checkPasswordLength()
+        val user = checkUser(
+            email = email,
+            password = hashFactory.hash(lastPassword),
+        )
+
+        user?.let {
+            updatePassword(
+                email = email,
+                password = hashFactory.hash(newPassword),
+            )
+        } ?: run {
+            throw HTTPConflictException(ErrorType.INVALID_CREDENTIALS.message)
+        }
+    }
 
     suspend fun deleteUser(email: String, password: String) = userRepository.deleteUser(email, password)
 }

@@ -30,12 +30,13 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun changePassword(
-        email: String,
         oldPassword: String,
         newPassword: String
     ): Result<String> {
-        // Это должно быть реализовано в API, пока вернем заглушку
-        return Result.success("Пароль успешно изменен")
+        return remoteDataSource.changePassword(
+            lastPassword = oldPassword,
+            newPassword = newPassword,
+        ).map { it.message }
     }
 
     override suspend fun resetPassword(

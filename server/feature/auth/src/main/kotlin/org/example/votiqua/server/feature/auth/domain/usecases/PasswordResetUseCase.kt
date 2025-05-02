@@ -22,7 +22,11 @@ class PasswordResetUseCase(
     suspend fun saveResetCode(email: String): Result<Unit> {
         userUseCase.findUserByEmail(email) ?: throw UserNotFoundException(ErrorType.USER_NOT_FOUND.message)
         val code = passwordResetRepository.saveResetCode(email)
-        return emailService.sendMessage(email, subject = "Votiqua password reset", message = "Password reset code: $code")
+        return emailService.sendMessage(
+            email,
+            subject = "Votiqua password reset",
+            message = "Password reset code: $code"
+        )
     }
 
     suspend fun updatePassword(request: PasswordResetRequest): Boolean {
@@ -30,15 +34,15 @@ class PasswordResetUseCase(
 
         request.newPassword.checkPasswordLength()
 
-        if (existingRecord.createdAt <= currentDateTime().minusMinutes(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.value.toLong()).toUtcTimestamp()){
+        if (existingRecord.createdAt <= currentDateTime().minusMinutes(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.value.toLong()).toUtcTimestamp()) {
             throw HTTPConflictException(MainConfig.PASSWORD_RESET_TIMEOUT_MINUTES.text)
         }
-        if (existingRecord.countInputAttempts >= MainConfig.MAX_RESET_ATTEMPTS.value){
+        if (existingRecord.countInputAttempts >= MainConfig.MAX_RESET_ATTEMPTS.value) {
             throw HTTPConflictException(MainConfig.MAX_RESET_ATTEMPTS.text)
         } else {
             passwordResetRepository.incrementInputAttempts(request.email)
         }
-        if (existingRecord.isUsed){
+        if (existingRecord.isUsed) {
             throw HTTPConflictException("This code was used")
         }
 

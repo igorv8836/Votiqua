@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.shared)
     implementation(projects.server.feature.authApi)
     implementation(projects.server.feature.votingApi)
-    implementation(projects.server.feature.voting)
+    implementation(projects.server.feature.votingImpl)
 
     implementation(libs.bundles.server.database)
     implementation(libs.bundles.ktor.server.core)

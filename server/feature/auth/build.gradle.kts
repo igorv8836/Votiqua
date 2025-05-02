@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.server.common)
     implementation(projects.shared)
     implementation(projects.server.feature.authApi)
+    implementation(projects.server.feature.profileApi)
 
     implementation(libs.bundles.server.database)
     implementation(libs.bundles.ktor.server.core)

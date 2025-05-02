@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.feature.auth.navigation.AuthNavigator
-import com.example.votiqua.core.ui_common.navigation.FavouriteScreenRoute
+import com.example.feature.profile.api.navigation.ProfileNavigator
 import com.example.votiqua.core.ui_common.navigation.MainScreenRoute
 import com.example.votiqua.core.ui_common.navigation.ManagePollRoute
 import com.example.votiqua.core.ui_common.navigation.PollCreateRoute
@@ -15,7 +15,6 @@ import com.example.votiqua.core.ui_common.navigation.SplashRoute
 import com.example.votiqua.core.ui_common.navigation.navigateToManagingPoll
 import org.example.votiqua.ui.manage_poll_screen.ManagePollScreen
 import org.example.votiqua.ui.poll_viewer_screen.PollViewerScreen
-import org.example.votiqua.ui.profile_screen.FavoritesScreen
 import org.example.votiqua.ui.search_screen.SearchScreen
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -23,9 +22,11 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val authNavigator: AuthNavigator = koinInject<AuthNavigator>()
+    val profileNavigator: ProfileNavigator = koinInject<ProfileNavigator>()
 
     NavHost(navController = navController, startDestination = SplashRoute) {
         authNavigator.registerNavigation(this, navController)
+        profileNavigator.registerNavigation(this, navController)
 
         composable<MainScreenRoute> {
             MainScreen(navController)
@@ -74,10 +75,6 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigateToManagingPoll()
                 }
             )
-        }
-
-        composable<FavouriteScreenRoute> {
-            FavoritesScreen(navController)
         }
     }
 }

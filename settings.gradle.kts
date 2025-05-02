@@ -33,9 +33,9 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-findProject(":composeApp")?.name = "mainApp"
+findProject(":composeApp")?.name = "main-app"
 include(":server:main")
-findProject(":server:main")?.name = "mainServer"
+findProject(":server:main")?.name = "main-server"
 
 include(":shared")
 
@@ -47,14 +47,25 @@ include(":core:datastore")
 
 include(":feature:auth-api")
 include(":feature:auth")
+findProject(":feature:auth")?.name = "auth-impl"
 include(":feature:profile-api")
 include(":feature:profile")
+findProject(":feature:profile")?.name = "profile-impl"
+include(":feature:voting-api")
+include(":feature:voting")
+findProject(":feature:voting")?.name = "voting-impl"
+include(":feature:recom-api")
+include(":feature:recom")
+findProject(":feature:recom")?.name = "recom-impl"
 
 include("server:common")
 include(":server:feature:auth-api")
 include(":server:feature:auth")
+findProject(":server:feature:auth")?.name = "auth-impl"
 include(":server:feature:voting-api")
 include(":server:feature:voting")
+findProject(":server:feature:voting")?.name = "voting-impl"
 include(":server:feature:profile-api")
 include(":server:feature:profile")
+findProject(":server:feature:profile")?.name = "profile-impl"
 include(":server:feature:recom")

@@ -4,9 +4,9 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.ThemeMode
+import com.example.feature.profile.api.data.repository.ProfileRepository
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.launch
-import org.example.votiqua.domain.repository.ProfileRepository
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
