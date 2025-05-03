@@ -11,4 +11,5 @@ data class UiPoll(
     val description: String,
     val category: String,
     val creationDate: String,
+    val id: Int = -1,
 )

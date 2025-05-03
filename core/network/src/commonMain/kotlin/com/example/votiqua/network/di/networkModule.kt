@@ -19,7 +19,6 @@ import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
@@ -69,10 +68,10 @@ private fun getReadyHttpClient(
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             url {
-                protocol = URLProtocol.HTTP
-                host = "votiqua.quickqueues.tech"
-//                host = "127.0.0.1"
-//                port = 8090
+//                protocol = URLProtocol.HTTP
+//                host = "votiqua.quickqueues.tech"
+                host = "127.0.0.1"
+                port = 8090
 
                 encodedPath = buildString {
                     append("/api/v1/")

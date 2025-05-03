@@ -20,7 +20,7 @@ internal class PollViewerViewModel(
         val res = pollRepository.getPoll(pollId)
 
         res.onSuccess { poll ->
-            val isAdmin = true // TODO
+            val isAdmin = true //  TODO
             reduce {
                 state.copy(
                     pollId = poll.id,
@@ -34,7 +34,7 @@ internal class PollViewerViewModel(
                 )
             }
         }.onFailure {
-            TODO()
+             TODO()
         }
     }
 

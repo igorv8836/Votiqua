@@ -16,6 +16,7 @@ kotlin {
 
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.datetime)
+            implementation("com.github.skydoves:landscapist-coil3:2.4.7")
         }
     }
 }

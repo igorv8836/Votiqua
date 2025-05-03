@@ -185,7 +185,7 @@ fun PollsBlock(
         } else {
             Column(modifier = Modifier.padding(horizontal = AppPaddings.HORIZONTAL_PADDING)) {
                 polls.forEach { poll ->
-                    PollCard(poll, navController)
+                    PollCard(poll = poll, navController = navController)
                 }
             }
         }

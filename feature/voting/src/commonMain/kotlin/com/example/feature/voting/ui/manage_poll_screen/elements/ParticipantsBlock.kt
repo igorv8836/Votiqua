@@ -40,6 +40,11 @@ fun ParticipantsBlock(participants: List<Participant>, anonymous: Boolean) {
             Spacer(modifier = Modifier.height(12.dp))
 
             if (!anonymous) {
+//                LazyColumn {
+//                    items(participants) { participant ->
+//                        ParticipantItem(participant = participant)
+//                    }
+//                }
                 participants.forEach { participant ->
                     ParticipantItem(participant = participant)
                 }

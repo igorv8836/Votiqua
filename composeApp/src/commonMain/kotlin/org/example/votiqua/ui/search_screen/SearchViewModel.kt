@@ -3,7 +3,7 @@ package org.example.votiqua.ui.search_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.feature.voting.domain.models.Poll
+import com.example.feature.voting.domain.models.UiPoll
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,7 +27,7 @@ sealed class SearchState {
 
     data class Success(
         override val query: String,
-        val results: List<Poll> = emptyList(),
+        val results: List<UiPoll> = emptyList(),
         val searchRecommends: List<QueryRecommendModel> = emptyList()
     ) : SearchState()
 

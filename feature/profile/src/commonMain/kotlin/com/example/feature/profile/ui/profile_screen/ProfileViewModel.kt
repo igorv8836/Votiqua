@@ -63,7 +63,7 @@ internal class ProfileViewModel(
     private fun changeNickname(newNickname: String) = intent {
         val result = profileRepository.updateUserProfile(
             username = newNickname,
-            description = null, // TODO
+            description = null, //  TODO
         )
 
         result.onSuccess { updatedUser ->
@@ -103,7 +103,7 @@ internal class ProfileViewModel(
 
     private fun changePhoto(uri: String) = intent {
         try {
-//            val file = File(uri) // TODO
+//            val file = File(uri) //  TODO
 //            val fileExtension = file.extension
 //            val updatedUser = profileRepository.updateUserPhoto(
 //                file.inputStream().asInput(),

@@ -1,4 +1,4 @@
-package org.example.votiqua.ui.profile_screen
+package com.example.feature.profile.ui.profile_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,22 +20,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.feature.voting.domain.models.UiPoll
+import com.example.feature.voting.ui.PollCard
 import com.example.votiqua.core.ui_common.constants.Dimens
-import org.example.votiqua.ui.common.PollCard
-import org.example.votiqua.ui.main_screen.Poll
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     navController: NavController,
 ) {
-    val favoritePolls: List<Poll> = listOf(
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        Poll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+    val favoritePolls: List<UiPoll> = listOf(
+        UiPoll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
+        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
     )
     Scaffold(
         topBar = {

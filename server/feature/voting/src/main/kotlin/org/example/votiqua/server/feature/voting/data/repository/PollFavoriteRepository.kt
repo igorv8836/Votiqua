@@ -13,8 +13,8 @@ class PollFavoriteRepository {
     suspend fun changeFavoriteStatus(
         userId: Int,
         pollId: Int,
-    ) {
-        dbQuery {
+    ): Boolean {
+        return dbQuery {
             if (hasFavoritePoll(userId, pollId)) {
                 FavoritePollTable.deleteWhere {
                     (FavoritePollTable.pollId eq pollId) and (FavoritePollTable.userId eq userId)
@@ -26,6 +26,7 @@ class PollFavoriteRepository {
                     it[FavoritePollTable.createdAt] = currentDateTime()
                 }
             }
+            return@dbQuery true
         }
     }
 
@@ -44,9 +45,9 @@ class PollFavoriteRepository {
         return dbQuery {
             FavoritePollTable.select {
                 FavoritePollTable.userId eq userId
+            }.map {
+                it[FavoritePollTable.pollId]
             }
-        }.map {
-            it[FavoritePollTable.pollId]
         }
     }
 }
