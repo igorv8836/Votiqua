@@ -4,6 +4,7 @@ import com.example.common.di.commonModule
 import com.example.feature.auth.authModule
 import com.example.feature.profile.profileModule
 import com.example.feature.voting.data.platformModule
+import com.example.feature.voting.votingModule
 import com.example.votiqua.datastore.createDataStoreModule
 import com.example.votiqua.datastore.datastoreModule
 import com.example.votiqua.network.di.networkModule
@@ -29,6 +30,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             datastoreModule(),
             authModule(),
             profileModule(),
+            votingModule(),
             pollModule()
         )
 

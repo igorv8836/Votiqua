@@ -15,6 +15,7 @@ import org.example.votiqua.models.auth.PasswordChangeRequest
 import org.example.votiqua.models.auth.PasswordRecoveryRequest
 import org.example.votiqua.models.auth.PasswordResetRequest
 import org.example.votiqua.models.auth.RegisterRequest
+import org.example.votiqua.models.auth.TokenResponse
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.server.common.models.HTTPConflictException
@@ -39,7 +40,7 @@ fun Route.authRoute() {
                 emailRequest = request,
             )
 
-            call.respond(HttpStatusCode.OK, mapOf("token" to res))
+            call.respond(HttpStatusCode.OK, TokenResponse(res))
         }
 
         post("/register") {
@@ -49,7 +50,7 @@ fun Route.authRoute() {
                 user = emailRegisterRequest,
             )
 
-            call.respond(HttpStatusCode.OK, mapOf("token" to res))
+            call.respond(HttpStatusCode.OK, TokenResponse(res))
         }
 
         post("/send_reset_code") {

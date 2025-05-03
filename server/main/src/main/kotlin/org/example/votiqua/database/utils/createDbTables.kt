@@ -6,7 +6,6 @@ import org.example.votiqua.server.feature.profile.database.NotificationTable
 import org.example.votiqua.server.feature.recom.database.RecommendedFeedTable
 import org.example.votiqua.server.feature.recom.database.SearchHistoryTable
 import org.example.votiqua.server.feature.voting.database.FavoritePollTable
-import org.example.votiqua.server.feature.voting.database.PollAuthorTable
 import org.example.votiqua.server.feature.voting.database.PollOptionTable
 import org.example.votiqua.server.feature.voting.database.PollParticipantTable
 import org.example.votiqua.server.feature.voting.database.PollTable
@@ -25,7 +24,6 @@ fun createDbTables() {
         PasswordResetTable,
         TagTable,
         PollTagTable,
-        PollAuthorTable,
         NotificationTable,
         FavoritePollTable,
         RecommendedFeedTable,
@@ -43,7 +41,6 @@ fun deleteDbTables() {
         PasswordResetTable,
         TagTable,
         PollTagTable,
-        PollAuthorTable,
         NotificationTable,
         FavoritePollTable,
         RecommendedFeedTable,

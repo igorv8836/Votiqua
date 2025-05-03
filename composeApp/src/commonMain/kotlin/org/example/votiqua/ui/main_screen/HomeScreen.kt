@@ -24,15 +24,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.feature.voting.domain.models.Poll
+import com.example.feature.voting.ui.PollCard
 import com.example.votiqua.core.ui_common.constants.AppPaddings
 import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.common.AppSearchBar
-import org.example.votiqua.ui.common.PollCard
 
 val mockPolls = listOf(
     Poll(
@@ -191,15 +191,3 @@ fun PollsBlock(
         }
     }
 }
-
-
-@Stable
-data class Poll(
-    val title: String,
-    val endDate: String,
-    val participants: Int,
-    val status: String,
-    val description: String,
-    val category: String,
-    val creationDate: String,
-)

@@ -5,7 +5,7 @@ import org.example.votiqua.server.common.models.MainConfig
 import org.example.votiqua.server.common.models.OutOfConfigRangeException
 import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.feature.auth.api.database.UserTable
-import org.example.votiqua.server.feature.voting.database.PollAuthorTable
+import org.example.votiqua.server.feature.voting.database.PollTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
@@ -16,8 +16,8 @@ class ProfileRepositoryImpl : ProfileRepository {
     private fun getUserProfileWithoutDbBlocking(userId: Int): UserProfile? {
         val userRow = UserTable.select { UserTable.id eq userId }.singleOrNull() ?: return null
 
-        val pollsCreated = PollAuthorTable
-            .select { PollAuthorTable.authorId eq userId }
+        val pollsCreated = PollTable
+            .select { PollTable.authorId eq userId }
             .count()
 
         val pollsVoted = VoteTable

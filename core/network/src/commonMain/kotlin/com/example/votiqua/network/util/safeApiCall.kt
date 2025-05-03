@@ -13,11 +13,11 @@ import org.example.votiqua.models.common.BaseResponse
 suspend inline fun <reified T> safeApiCall(apiCall: () -> HttpResponse): Result<T> {
     return try {
         val response = apiCall()
+        if (response.status.value in 200..299) {
+            val responseBody = response.body<T>()
+            return Result.success(responseBody)
+        }
         when (response.status) {
-            HttpStatusCode.OK -> {
-                val responseBody = response.body<T>()
-                Result.success(responseBody)
-            }
             HttpStatusCode.BadRequest -> {
                 val errorText = response.tryGetErrorText() ?: ("BadRequest: " + response.bodyAsText())
                 Result.failure(NetworkException.ClientErrorException(errorText))

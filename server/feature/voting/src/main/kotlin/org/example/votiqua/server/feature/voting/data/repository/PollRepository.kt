@@ -6,12 +6,8 @@ import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.common.utils.toLocalDateTimeMoscow
 import org.example.votiqua.server.common.utils.toUtcDateTime
-import org.example.votiqua.server.feature.voting.database.PollAuthorTable
-import org.example.votiqua.server.feature.voting.database.PollOptionTable
 import org.example.votiqua.server.feature.voting.database.PollParticipantTable
 import org.example.votiqua.server.feature.voting.database.PollTable
-import org.example.votiqua.server.feature.voting.database.PollTagTable
-import org.example.votiqua.server.feature.voting.database.TagTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -21,20 +17,17 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
-class PollRepository : BasePollRepository() {
-    suspend fun getPollById(id: Int, userId: Int? = null): Poll? {
+class PollRepository(
+    private val tagRepository: TagRepository,
+    private val pollOptionRepository: PollOptionRepository,
+) : BasePollRepository(tagRepository, pollOptionRepository) {
+    suspend fun getPollById(id: Int): Poll? {
         return dbQuery {
             val pollRow = PollTable.select { PollTable.id eq id }.singleOrNull() ?: return@dbQuery null
             val poll = mapRowToPoll(pollRow)
 
-            val options = PollOptionTable
-                .select { PollOptionTable.pollId eq id }
-                .orderBy(PollOptionTable.orderIndex)
-                .map { mapRowToPollOption(it) }
-
-            val tags = (PollTagTable innerJoin TagTable)
-                .select { PollTagTable.pollId eq id }
-                .map { mapRowToTag(it) }
+            val options = pollOptionRepository.getOptions(id)
+            val tags = tagRepository.getPollTags(id)
 
             poll.copy(options = options, tags = tags)
         }
@@ -49,29 +42,16 @@ class PollRepository : BasePollRepository() {
                 it[isAnonymous] = poll.isAnonymous
                 it[isOpen] = poll.isOpen
                 it[createdAt] = currentDateTime()
-                it[startDate] = poll.startDate?.toUtcDateTime()
-                it[endDate] = poll.endDate?.toUtcDateTime()
+                it[startDate] = poll.startTime?.toUtcDateTime()
+                it[endDate] = poll.endTime?.toUtcDateTime()
+                it[PollTable.authorId] = authorId
             } get PollTable.id
 
-            poll.options.forEach { option ->
-                PollOptionTable.insert {
-                    it[PollOptionTable.pollId] = pollId
-                    it[optionText] = option.optionText
-                    it[orderIndex] = option.orderIndex
-                }
-            }
-
-            poll.tags.forEach { tag ->
-                val tagId = TagTable.select { TagTable.name eq tag.name }
-                    .singleOrNull()?.get(TagTable.id) ?: (TagTable.insert {
-                    it[TagTable.name] = tag.name
-                } get TagTable.id)
-
-                PollTagTable.insert {
-                    it[PollTagTable.pollId] = pollId
-                    it[PollTagTable.tagId] = tagId
-                }
-            }
+            pollOptionRepository.insertOptions(
+                pollId,
+                poll.options
+            )
+            tagRepository.insertTags(poll.tags, pollId)
 
             PollParticipantTable.insert {
                 it[PollParticipantTable.pollId] = pollId
@@ -81,22 +61,7 @@ class PollRepository : BasePollRepository() {
 
             pollId
         }
-        return getPollById(pollId, authorId) ?: throw HTTPConflictException("Error in creating")
-    }
-
-    suspend fun votePoll(pollId: Int, optionId: Int, userId: Int): Boolean {
-        return dbQuery {
-            val poll = PollTable.select { PollTable.id eq pollId }.singleOrNull() ?: return@dbQuery false
-
-            VoteTable.insert {
-                it[VoteTable.pollId] = pollId
-                it[VoteTable.optionId] = optionId
-                it[VoteTable.userId] = userId
-                it[VoteTable.votedAt] = currentDateTime()
-            }
-
-            true
-        }
+        return getPollById(pollId) ?: throw HTTPConflictException("Error in creating")
     }
 
     suspend fun deletePoll(pollId: Int, userId: Int): Boolean {
@@ -108,27 +73,33 @@ class PollRepository : BasePollRepository() {
         }
     }
 
-    suspend fun updatePoll(pollId: Int, poll: Poll): Poll? {
-        val updated = dbQuery {
-            PollTable.update({ PollTable.id eq pollId }) {
+    suspend fun updatePoll(poll: Poll): Poll? {
+        dbQuery {
+            PollTable.update({ PollTable.id eq poll.id }) {
                 it[question] = poll.question
                 it[description] = poll.description
                 it[isMultiple] = poll.isMultiple
                 it[isAnonymous] = poll.isAnonymous
                 it[isOpen] = poll.isOpen
-                it[startDate] = poll.startDate?.toLocalDateTimeMoscow()
-                it[endDate] = poll.endDate?.toLocalDateTimeMoscow()
+                it[startDate] = poll.startTime?.toLocalDateTimeMoscow()
+                it[endDate] = poll.endTime?.toLocalDateTimeMoscow()
             }
+
+            pollOptionRepository.updateOptions(
+                pollId = poll.id,
+                options = poll.options,
+            )
+            tagRepository.updatePollTags(poll)
         }
-        return if (updated > 0) getPollById(pollId) else null
+        return getPollById(poll.id)
     }
 
-    suspend fun searchPolls(query: String, limit: Int): List<Poll> {
+    suspend fun searchPolls(query: String, limit: Int, offset: Int = 0): List<Poll> {
         return dbQuery {
             val polls = PollTable
                 .select { PollTable.question.like("%$query%") }
                 .orderBy(PollTable.createdAt, SortOrder.DESC)
-                .limit(limit)
+                .limit(limit, offset.toLong())
                 .map { mapRowToPoll(it) }
 
             fillPollsWithOptionsAndTags(polls)
@@ -137,8 +108,8 @@ class PollRepository : BasePollRepository() {
 
     suspend fun getUserPolls(userId: Int, limit: Int, offset: Int): List<Poll> {
         return dbQuery {
-            val polls = (PollTable innerJoin PollAuthorTable)
-                .select { PollAuthorTable.authorId eq userId }
+            val polls = PollTable
+                .select { PollTable.authorId eq userId }
                 .orderBy(PollTable.createdAt, SortOrder.DESC)
                 .limit(limit, offset.toLong())
                 .map { mapRowToPoll(it) }
@@ -171,6 +142,21 @@ class PollRepository : BasePollRepository() {
                 .firstOrNull()
 
             member != null
+        }
+    }
+
+    suspend fun votePoll(pollId: Int, optionId: Int, userId: Int): Boolean {
+        return dbQuery {
+            val poll = PollTable.select { PollTable.id eq pollId }.singleOrNull() ?: return@dbQuery false
+
+            VoteTable.insert {
+                it[VoteTable.pollId] = pollId
+                it[VoteTable.optionId] = optionId
+                it[VoteTable.userId] = userId
+                it[VoteTable.votedAt] = currentDateTime()
+            }
+
+            true
         }
     }
 }

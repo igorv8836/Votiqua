@@ -24,11 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.feature.voting.ui.PollCard
 import com.example.orbit_mvi.compose.collectAsState
 import com.example.orbit_mvi.compose.collectSideEffect
+import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.common.AppSearchBar
-import org.example.votiqua.ui.common.Dimens
-import org.example.votiqua.ui.common.PollCard
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

@@ -1,15 +1,13 @@
 package org.example.votiqua.server.feature.voting.domain.usecase
 
 import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.plugins.NotFoundException
 import org.example.votiqua.models.poll.Poll
-import org.example.votiqua.server.common.models.HTTPForbiddenException
-import org.example.votiqua.server.feature.voting.data.repository.PollAuthorRepository
+import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.feature.voting.data.repository.PollRepository
 
 class PollUseCase(
     private val pollRepository: PollRepository,
-    private val pollAuthorRepository: PollAuthorRepository,
+    private val favoritePollUseCase: FavoritePollUseCase
 ) {
     suspend fun create(
         poll: Poll,
@@ -21,30 +19,38 @@ class PollUseCase(
 
         val createdPoll = pollRepository.createPoll(poll, authorId)
 
-        pollAuthorRepository.addPollAuthor(
-            createdPoll = createdPoll,
-            userId = authorId,
-        )
-
         return createdPoll
     }
 
     suspend fun get(
         pollId: Int,
-        userId: Int?,
+        userId: Int? = null,
     ) : Poll {
-        val poll = pollRepository.getPollById(pollId, userId) ?: run {
-            throw NotFoundException("Poll not found or poll is private")
+        val poll = pollRepository.getPollById(pollId)
+            ?: throw HTTPConflictException("Poll not found")
+            
+        return if (userId != null) {
+            val isFavorite = favoritePollUseCase.isFavorite(userId, pollId)
+            poll.copy(isFavorite = isFavorite)
+        } else {
+            poll
         }
-
-        if (poll.isOpen) return poll
-        if (userId == null) throw HTTPForbiddenException()
-
-        val isAccessed = pollRepository.checkAccess(
-            userId = userId,
-            pollId = pollId,
-        )
-
-        return poll.takeIf { isAccessed } ?: throw HTTPForbiddenException()
+    }
+    
+    suspend fun getPolls(query: String = "", limit: Int = 10, offset: Int = 0): List<Poll> {
+        return pollRepository.searchPolls(query, limit, offset)
+    }
+    
+    suspend fun getUserPolls(userId: Int, limit: Int = 10, offset: Int = 0): List<Poll> {
+        return pollRepository.getUserPolls(userId, limit, offset)
+    }
+    
+    suspend fun vote(pollId: Int, optionId: Int, userId: Int): Poll {
+        val success = pollRepository.votePoll(pollId, optionId, userId)
+        if (!success) {
+            throw HTTPConflictException("Poll or option not found")
+        }
+        
+        return get(pollId, userId)
     }
 }

@@ -3,13 +3,13 @@ package org.example.votiqua.ui.search_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.feature.voting.domain.models.Poll
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.votiqua.data.repository.SearchRecommendRepository
 import org.example.votiqua.domain.model.search.QueryRecommendModel
-import org.example.votiqua.ui.main_screen.Poll
 import org.example.votiqua.ui.main_screen.mockPolls
 import org.example.votiqua.ui.search_screen.SearchState.Error
 import org.example.votiqua.ui.search_screen.SearchState.Loading
