@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
@@ -110,6 +111,21 @@ class PollRepository(
         return dbQuery {
             val polls = PollTable
                 .select { PollTable.authorId eq userId }
+                .orderBy(PollTable.createdAt, SortOrder.DESC)
+                .limit(limit, offset.toLong())
+                .map { mapRowToPoll(it) }
+
+            fillPollsWithOptionsAndTags(polls)
+        }
+    }
+
+    suspend fun getParticipatedPolls(userId: Int, limit: Int, offset: Int): List<Poll> {
+        return dbQuery {
+            val polls = PollTable
+                .innerJoin(PollParticipantTable, { PollTable.id }, { PollParticipantTable.pollId })
+                .select {
+                    (PollParticipantTable.userId eq userId) and (PollTable.authorId neq userId)
+                }
                 .orderBy(PollTable.createdAt, SortOrder.DESC)
                 .limit(limit, offset.toLong())
                 .map { mapRowToPoll(it) }

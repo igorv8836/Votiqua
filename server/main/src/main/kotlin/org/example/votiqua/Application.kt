@@ -9,7 +9,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
-import kotlinx.coroutines.runBlocking
 import org.example.votiqua.plugins.DatabaseFactory.initializationDatabase
 import org.example.votiqua.plugins.configureCors
 import org.example.votiqua.plugins.configureFileUpload
@@ -18,7 +17,6 @@ import org.example.votiqua.plugins.configureRouting
 import org.example.votiqua.plugins.configureSecurity
 import org.example.votiqua.plugins.configureSerialization
 import org.example.votiqua.plugins.configureStatusPages
-import org.example.votiqua.utils.PollSeeder
 import org.koin.ktor.ext.get
 import org.slf4j.event.Level
 import java.io.File
@@ -49,8 +47,4 @@ fun Application.module() {
     configureSerialization()
     initializationDatabase(config)
     configureRouting(config)
-
-    runBlocking {
-        PollSeeder.seedPolls(1000)
-    }
 }

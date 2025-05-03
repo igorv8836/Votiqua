@@ -45,6 +45,10 @@ class PollUseCase(
         return pollRepository.getUserPolls(userId, limit, offset)
     }
     
+    suspend fun getParticipatedPolls(userId: Int, limit: Int = 10, offset: Int = 0): List<Poll> {
+        return pollRepository.getParticipatedPolls(userId, limit, offset)
+    }
+    
     suspend fun vote(pollId: Int, optionId: Int, userId: Int): Poll {
         val success = pollRepository.votePoll(pollId, optionId, userId)
         if (!success) {

@@ -7,9 +7,14 @@ class PollRepositoryImpl(
     private val remoteDataSource: PollRemoteDataSource
 ) : PollRepository {
 
-    override suspend fun getPolls(limit: Int, offset: Int): Result<List<Poll>> {
-        return remoteDataSource.getPolls(limit, offset)
-            .map { it.results }
+    override suspend fun getMyPolls(limit: Int, offset: Int): Result<List<Poll>> {
+        return remoteDataSource.getMyPolls(limit, offset)
+            .map { it.polls }
+    }
+
+    override suspend fun getOtherPolls(limit: Int, offset: Int): Result<List<Poll>> {
+        return remoteDataSource.getOtherPolls(limit, offset)
+            .map { it.polls }
     }
 
     override suspend fun getPoll(id: Int): Result<Poll> {
@@ -26,11 +31,6 @@ class PollRepositoryImpl(
 
     override suspend fun vote(pollId: Int, optionId: Int): Result<Poll> {
         return remoteDataSource.vote(pollId, optionId)
-    }
-
-    override suspend fun getUserPolls(userId: Int, limit: Int, offset: Int): Result<List<Poll>> {
-        return remoteDataSource.getUserPolls(userId, limit, offset)
-            .map { it.results }
     }
 
     override suspend fun toggleFavorite(pollId: Int): Result<Boolean> {

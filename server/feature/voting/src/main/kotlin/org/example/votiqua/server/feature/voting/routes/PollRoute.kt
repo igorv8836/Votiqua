@@ -25,7 +25,7 @@ fun Route.pollRoute() {
     authenticate("jwt") {
         route("/polls") {
             get("/my-polls") {
-                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10000
                 val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
                 
                 val userId = call.requireAuthorization()
@@ -35,6 +35,20 @@ fun Route.pollRoute() {
                     offset = offset,
                 )
                 
+                call.respond(HttpStatusCode.OK, PollsResponse(polls))
+            }
+
+            get("/other-polls") {
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10000
+                val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
+
+                val userId = call.requireAuthorization()
+                val polls = pollUseCase.getParticipatedPolls(
+                    userId = userId,
+                    limit = limit,
+                    offset = offset,
+                )
+
                 call.respond(HttpStatusCode.OK, PollsResponse(polls))
             }
 

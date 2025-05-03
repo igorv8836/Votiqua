@@ -11,39 +11,29 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.feature.voting.domain.models.Poll
 import com.example.feature.voting.ui.PollCard
+import com.example.feature.voting.ui.manage_poll_screen.elements.PlaceholderScreen
+import com.example.orbit_mvi.compose.collectAsState
 import com.example.votiqua.core.ui_common.constants.Dimens
+import com.example.votiqua.core.ui_common.screens.LoadingScreen
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PollListScreen(
     navController: NavController,
+    viewModel: PollListViewModel = koinViewModel(),
 ) {
-    val activePolls = listOf(
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        Poll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-    )
-    val myPolls = listOf(
-        Poll("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год", "Праздники", "2023-09-01"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01"),
-        Poll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01"),
-    )
-
     val tabList = listOf("Мои", "Остальные")
     val pagerState = rememberPagerState(pageCount = { 2 })
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
+
+    val state by viewModel.collectAsState()
 
     Column(modifier = Modifier) {
         TabRow(selectedTabIndex = tabIndex) {
@@ -65,12 +55,28 @@ internal fun PollListScreen(
                     .padding(horizontal = Dimens.medium)
             ) {
                 when (index) {
-                    0 -> items(activePolls) { it1 ->
-                        PollCard(it1, navController = navController)
+                    0 -> {
+                        if (state.myPollsIsLoading) {
+                            item { LoadingScreen() }
+                        } else if (state.myPolls.isEmpty()) {
+                            item { PlaceholderScreen("Голосований пока нет") }
+                        } else {
+                            items(state.myPolls) { it1 ->
+                                PollCard(it1, navController = navController, isMyPoll = true)
+                            }
+                        }
                     }
 
-                    1 -> items(myPolls) { it1 ->
-                        PollCard(it1, navController = navController)
+                    1 -> {
+                        if (state.otherPollsIsLoading) {
+                            item { LoadingScreen() }
+                        } else if (state.otherPolls.isEmpty()) {
+                            item { PlaceholderScreen("Голосований пока нет") }
+                        } else {
+                            items(state.otherPolls) { it1 ->
+                                PollCard(it1, navController = navController)
+                            }
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.example.feature.voting.data
 
-import com.example.feature.voting.domain.models.PollListResponse
 import com.example.votiqua.network.util.safeApiCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -9,13 +8,23 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.poll.Poll
+import org.example.votiqua.models.poll.PollsResponse
 
 class PollRemoteDataSource(
     private val httpClient: HttpClient
 ) {
-    suspend fun getPolls(limit: Int = 10, offset: Int = 0): Result<PollListResponse> {
+    suspend fun getMyPolls(limit: Int = 10, offset: Int = 0): Result<PollsResponse> {
         return safeApiCall {
             httpClient.get("polls/my-polls") {
+                parameter("limit", limit)
+                parameter("offset", offset)
+            }
+        }
+    }
+
+    suspend fun getOtherPolls(limit: Int = 10, offset: Int = 0): Result<PollsResponse> {
+        return safeApiCall {
+            httpClient.get("polls/other-polls") {
                 parameter("limit", limit)
                 parameter("offset", offset)
             }
@@ -44,16 +53,7 @@ class PollRemoteDataSource(
         }
     }
 
-    suspend fun getUserPolls(userId: Int, limit: Int = 10, offset: Int = 0): Result<PollListResponse> {
-        return safeApiCall {
-            httpClient.get("polls/user/$userId") {
-                parameter("limit", limit)
-                parameter("offset", offset)
-            }
-        }
-    }
-
-    suspend fun toggleFavorite(pollId: Int): Result<BaseResponse<String>> { //  TODO
+    suspend fun toggleFavorite(pollId: Int): Result<BaseResponse<String>> {
         return safeApiCall {
             httpClient.post("favorites/$pollId")
         }

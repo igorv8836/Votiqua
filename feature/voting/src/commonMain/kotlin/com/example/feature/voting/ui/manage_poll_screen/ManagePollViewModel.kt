@@ -4,9 +4,15 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.models.Participant
+import com.example.feature.voting.utils.formatDate
+import com.example.feature.voting.utils.formatTime
 import com.example.feature.voting.utils.toPoll
+import com.example.feature.voting.utils.toState
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.votiqua.models.common.ErrorType
@@ -16,43 +22,16 @@ import org.orbitmvi.orbit.ContainerHost
 internal class ManagePollViewModel(
     private val pollRepository: PollRepository,
 ) : ContainerHost<ManagePollState, ManagePollSideEffect>, ViewModel() {
-
-    override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState()) {
-        val participants = (0..30).map {
-            Participant(
-                it,
-                "Person $it",
-//                null,
-                "https://avatars.mds.yandex.net/i?id=9785f59e5d941e55882930681a09a53932226e63-11376477-images-thumbs&n=13",
-                it % 3 == 0,
-                it.toString()
-            )
-        }
-
-        intent {
-            reduce {
-                state.copy(participants = participants)
-            }
-        }
-    }
-
-    init {
-        loadPoll(1)
-    }
+    override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState())
 
     private fun loadPoll(pollId: Int) = intent {
         val result = pollRepository.getPoll(pollId)
         result.onSuccess { poll ->
             reduce {
-                state.copy(
-                    title = poll.question,
-                    description = poll.description.orEmpty(),
-                    options = poll.options.map { it.optionText },
-                    votesExist = poll.options.any { it.voteCount > 0 }
-                )
+                poll.toState()
             }
         }.onFailure {
-            //  TODO
+            postSideEffect(ManagePollSideEffect.ErrorMessage(it.message ?: ErrorType.GENERAL.message))
         }
     }
 
@@ -116,10 +95,9 @@ internal class ManagePollViewModel(
     }
 
 
-
-
     fun setPollId(id: Int) = blockingIntent {
         reduce { state.copy(pollId = id) }
+        loadPoll(id)
     }
 
     fun onTitleChanged(newTitle: String) = blockingIntent {
@@ -137,7 +115,12 @@ internal class ManagePollViewModel(
     fun onStartTimeChanged(newStartTime: Long) = blockingIntent {
         val h = newStartTime / 1000 / 3600
         val m = newStartTime / 1000 / 60 % 60
-        val formatted = formatTime(h.toInt(), m.toInt())
+        val formatted = formatTime(
+            LocalDateTime(
+                date = LocalDate(1, 1, 1),
+                time = LocalTime(h.toInt(), m.toInt()),
+            )
+        )
         reduce {
             state.copy(
                 startTime = formatted,
@@ -149,7 +132,7 @@ internal class ManagePollViewModel(
     fun onStartDateChanged(newStartDate: Long) = blockingIntent {
         val picked = Instant.fromEpochMilliseconds(newStartDate)
             .toLocalDateTime(TimeZone.currentSystemDefault())
-        val formatted = formatDate(picked.year, picked.monthNumber, picked.dayOfMonth)
+        val formatted = formatDate(picked)
         reduce {
             state.copy(
                 startDate = formatted,
@@ -161,7 +144,12 @@ internal class ManagePollViewModel(
     fun onEndTimeChanged(newEndTime: Long) = blockingIntent {
         val h = newEndTime / 1000 / 3600
         val m = newEndTime / 1000 / 60 % 60
-        val formatted = formatTime(h.toInt(), m.toInt())
+        val formatted = formatTime(
+            LocalDateTime(
+                date = LocalDate(1, 1, 1),
+                time = LocalTime(h.toInt(), m.toInt()),
+            )
+        )
         reduce {
             state.copy(
                 endTime = formatted,
@@ -173,7 +161,7 @@ internal class ManagePollViewModel(
     fun onEndDateChanged(newEndDate: Long) = blockingIntent {
         val picked = Instant.fromEpochMilliseconds(newEndDate)
             .toLocalDateTime(TimeZone.currentSystemDefault())
-        val formatted = formatDate(picked.year, picked.monthNumber, picked.dayOfMonth)
+        val formatted = formatDate(picked)
         reduce {
             state.copy(
                 endDate = formatted,
@@ -243,18 +231,4 @@ sealed interface ManagePollSideEffect {
     data object Saved : ManagePollSideEffect
     data object Deleted : ManagePollSideEffect
     data class ErrorMessage(val message: String) : ManagePollSideEffect
-}
-
-private fun formatDate(year: Int, month: Int, day: Int): String = buildString {
-    append(day.toString().padStart(2, '0'))
-    append('-')
-    append(month.toString().padStart(2, '0'))
-    append('-')
-    append(year.toString().padStart(4, '0'))
-}
-
-private fun formatTime(hour: Int, minute: Int): String = buildString {
-    append(hour.toString().padStart(2, '0'))
-    append(':')
-    append(minute.toString().padStart(2, '0'))
 }

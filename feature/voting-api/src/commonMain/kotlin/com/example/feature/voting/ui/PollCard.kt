@@ -34,13 +34,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.feature.voting.data.shareCard
-import com.example.feature.voting.domain.models.Poll
+import com.example.feature.voting.domain.models.UiPoll
+import com.example.votiqua.core.ui_common.navigation.navigateToManagingPoll
 import com.example.votiqua.core.ui_common.navigation.navigateToPollViewer
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PollCard(
-    poll: Poll,
+    poll: UiPoll,
+    isMyPoll: Boolean = false,
     navController: NavController,
     modifier: Modifier = Modifier,
     isLiked: Boolean = false,
@@ -51,7 +53,11 @@ fun PollCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigateToPollViewer()
+                if (!isMyPoll) {
+                    navController.navigateToPollViewer()
+                } else {
+                    navController.navigateToManagingPoll(poll.id)
+                }
             },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f)
@@ -78,7 +84,7 @@ fun PollCard(
             ) {
                 InfoChip(
                     icon = Icons.Default.DateRange,
-                    text = "До ${poll.endDate}"
+                    text = poll.endDate
                 )
                 InfoChip(
                     icon = Icons.Default.Group,
