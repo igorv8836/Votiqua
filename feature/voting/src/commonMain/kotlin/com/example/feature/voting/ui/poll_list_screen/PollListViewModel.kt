@@ -3,6 +3,7 @@
 package com.example.feature.voting.ui.poll_list_screen
 
 import androidx.lifecycle.ViewModel
+import com.example.common.SnackbarManager
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.models.UiPoll
 import com.example.feature.voting.utils.formatDate
@@ -10,7 +11,6 @@ import com.example.orbit_mvi.viewmodel.container
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.models.poll.Poll
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 
 class PollListViewModel(
     private val pollRepository: PollRepository,
+    private val snackbarManager: SnackbarManager,
 ) : ViewModel(), ContainerHost<PollListState, PollListEffect> {
     override val container: Container<PollListState, PollListEffect> = container(PollListState())
 
@@ -48,7 +49,7 @@ class PollListViewModel(
                 )
             }
         }.onFailure {
-            postSideEffect(PollListEffect.ShowError(it.message ?: ErrorType.GENERAL.message))
+            snackbarManager.sendMessage(it.message)
         }
     }
 
@@ -63,7 +64,7 @@ class PollListViewModel(
                 )
             }
         }.onFailure {
-            postSideEffect(PollListEffect.ShowError(it.message ?: ErrorType.GENERAL.message))
+            snackbarManager.sendMessage(it.message)
         }
     }
 }

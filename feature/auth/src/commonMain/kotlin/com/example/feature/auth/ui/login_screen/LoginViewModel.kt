@@ -2,13 +2,15 @@ package com.example.feature.auth.ui.login_screen
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
+import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.AuthRepository
 import com.example.feature.auth.ui.common.AuthStringResources
 import com.example.orbit_mvi.viewmodel.container
 import org.orbitmvi.orbit.ContainerHost
 
 internal class LoginViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val snackbarManager: SnackbarManager,
 ) : ContainerHost<LoginState, LoginEffect>, ViewModel() {
     override val container = container<LoginState, LoginEffect>(LoginState())
 
@@ -30,10 +32,11 @@ internal class LoginViewModel(
                 )
 
                 result.onSuccess {
-                    postSideEffect(LoginEffect.SuccessPasswordReset(AuthStringResources.PASSWORD_CHANGED))
+                    snackbarManager.sendMessage(AuthStringResources.PASSWORD_CHANGED)
+                    postSideEffect(LoginEffect.SuccessPasswordReset)
                 }.onFailure {
                     val exceptionMessage = result.exceptionOrNull()?.message
-                    postSideEffect(LoginEffect.ShowMessage(exceptionMessage))
+                    snackbarManager.sendMessage(exceptionMessage)
                 }
                 reduce { state.copy(codeErrorText = null) }
             } ?: run {
@@ -46,10 +49,11 @@ internal class LoginViewModel(
         val result = authRepository.login(email, password)
 
         result.onSuccess {
-            postSideEffect(LoginEffect.ShowSuccessLogin(AuthStringResources.SUCCESS_LOGIN))
+            snackbarManager.sendMessage(AuthStringResources.SUCCESS_LOGIN)
+            postSideEffect(LoginEffect.ShowSuccessLogin)
         }.onFailure {
             val exceptionMessage = it.message
-            postSideEffect(LoginEffect.ShowMessage(exceptionMessage))
+            snackbarManager.sendMessage(exceptionMessage)
         }
 
         reduce { state.copy(isLoading = false) }
@@ -59,10 +63,10 @@ internal class LoginViewModel(
         val result = authRepository.sendResetCode(email)
 
         result.onSuccess {
-            postSideEffect(LoginEffect.ShowMessage("Код отправлен"))
+            snackbarManager.sendMessage("Код отправлен")
         }.onFailure {
             val exceptionMessage = result.exceptionOrNull()?.message
-            postSideEffect(LoginEffect.ErrorInSendCode(exceptionMessage))
+            snackbarManager.sendMessage(exceptionMessage)
         }
     }
 }
@@ -88,8 +92,6 @@ data class LoginState(
 
 @Stable
 internal sealed interface LoginEffect {
-    data class ShowMessage(val message: String?) : LoginEffect
-    data class SuccessPasswordReset(val message: String?) : LoginEffect
-    data class ErrorInSendCode(val message: String?) : LoginEffect
-    data class ShowSuccessLogin(val message: String) : LoginEffect
+    data object SuccessPasswordReset : LoginEffect
+    data object ShowSuccessLogin : LoginEffect
 }

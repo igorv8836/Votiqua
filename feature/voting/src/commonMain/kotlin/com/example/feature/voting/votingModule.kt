@@ -17,7 +17,7 @@ fun votingModule() = module {
     single<PollRepository> { PollRepositoryImpl(get()) }
     single<PollRemoteDataSource> { PollRemoteDataSource(get()) }
 
-    viewModel { ManagePollViewModel(get()) }
+    viewModel { ManagePollViewModel(get(), get()) }
     viewModel { PollViewerViewModel(get()) }
-    viewModel { PollListViewModel(get()) }
+    viewModel { PollListViewModel(get(), get()) }
 }

@@ -2,6 +2,7 @@ package com.example.feature.voting.ui.manage_poll_screen
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
+import com.example.common.SnackbarManager
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.models.Participant
 import com.example.feature.voting.utils.formatDate
@@ -15,12 +16,12 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.example.votiqua.models.common.ErrorType
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
 internal class ManagePollViewModel(
     private val pollRepository: PollRepository,
+    private val snackbarManager: SnackbarManager,
 ) : ContainerHost<ManagePollState, ManagePollSideEffect>, ViewModel() {
     override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState())
 
@@ -31,7 +32,7 @@ internal class ManagePollViewModel(
                 poll.toState()
             }
         }.onFailure {
-            postSideEffect(ManagePollSideEffect.ErrorMessage(it.message ?: ErrorType.GENERAL.message))
+            snackbarManager.sendMessage(it.message)
         }
     }
 
@@ -60,7 +61,7 @@ internal class ManagePollViewModel(
         }
 
         errorText?.let {
-            postSideEffect(ManagePollSideEffect.ErrorMessage(it))
+            snackbarManager.sendMessage(it)
             reduce { state.copy(isSaving = false) }
             return@intent
         }
@@ -75,7 +76,7 @@ internal class ManagePollViewModel(
         result.onSuccess {
             postSideEffect(ManagePollSideEffect.Saved)
         }.onFailure {
-            postSideEffect(ManagePollSideEffect.ErrorMessage(it.message ?: ErrorType.GENERAL.message))
+            snackbarManager.sendMessage(it.message)
         }
         reduce { state.copy(isSaving = false) }
     }
@@ -230,5 +231,4 @@ data class ManagePollState(
 sealed interface ManagePollSideEffect {
     data object Saved : ManagePollSideEffect
     data object Deleted : ManagePollSideEffect
-    data class ErrorMessage(val message: String) : ManagePollSideEffect
 }

@@ -3,6 +3,7 @@ package com.example.feature.profile.ui.profile_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.SnackbarManager
 import com.example.common.ThemeMode
 import com.example.common.toThemeMode
 import com.example.feature.auth.data.repository.AuthRepository
@@ -15,6 +16,7 @@ import org.orbitmvi.orbit.ContainerHost
 internal class ProfileViewModel(
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
+    private val snackbarManager: SnackbarManager,
 ) : ContainerHost<ProfileState, ProfileSideEffect>, ViewModel() {
 
     override val container: Container<ProfileState, ProfileSideEffect> = container(ProfileState())
@@ -42,9 +44,7 @@ internal class ProfileViewModel(
                 )
             }
         }.onFailure { e ->
-            reduce {
-                state.copy(helpingText = "Ошибка загрузки профиля: ${e.message}")
-            }
+            snackbarManager.sendMessage("Ошибка загрузки профиля: ${e.message}")
         }
     }
 
@@ -70,13 +70,11 @@ internal class ProfileViewModel(
             reduce {
                 state.copy(
                     nickname = updatedUser.nickname,
-                    helpingText = "Никнейм успешно изменён"
                 )
             }
+            snackbarManager.sendMessage("Никнейм успешно изменён")
         }.onFailure {
-            reduce {
-                state.copy(helpingText = it.message ?: "Ошибка изменения никнейма")
-            }
+            snackbarManager.sendMessage(it.message ?: "Ошибка изменения никнейма")
         }
 
         reduce {
@@ -91,11 +89,9 @@ internal class ProfileViewModel(
         )
 
         result.onSuccess {
-            reduce { state.copy(helpingText = "Пароль успешно изменён") }
+            snackbarManager.sendMessage("Пароль успешно изменён")
         }.onFailure {
-            reduce {
-                state.copy(helpingText = it.message ?: "Ошибка изменения пароля")
-            }
+            snackbarManager.sendMessage(it.message ?: "Ошибка изменения пароля")
         }
 
         reduce { state.copy(showPasswordDialog = false) }
@@ -116,9 +112,7 @@ internal class ProfileViewModel(
 //                )
 //            }
         } catch (e: Exception) {
-            reduce {
-                state.copy(helpingText = e.message ?: "Ошибка обновления фото")
-            }
+            snackbarManager.sendMessage(e.message ?: "Ошибка обновления фото")
         }
     }
 
@@ -126,7 +120,7 @@ internal class ProfileViewModel(
         authRepository.logout().onSuccess {
             postSideEffect(ProfileSideEffect.SignedOut)
         }.onFailure {
-            // TODO
+            snackbarManager.sendMessage(message = null)
         }
     }
 
@@ -140,7 +134,6 @@ data class ProfileState(
     val email: String = "",
     val nickname: String = "",
     val photoFile: String? = null,
-    val helpingText: String = "",
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val showNicknameDialog: Boolean = false,
     val showPasswordDialog: Boolean = false,

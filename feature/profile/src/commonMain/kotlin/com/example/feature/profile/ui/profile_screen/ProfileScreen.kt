@@ -21,14 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,7 +54,6 @@ internal fun ProfileScreen(
 ) {
     val state by viewModel.collectAsState()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
 
     viewModel.collectSideEffect {
@@ -86,83 +80,73 @@ internal fun ProfileScreen(
         }
     }
 
-    LaunchedEffect(state.helpingText) {
-        if (state.helpingText.isNotEmpty())
-            snackbarHostState.showSnackbar(state.helpingText)
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        modifier = Modifier.padding(top = Dimens.small)
+    Column(
+        modifier = Modifier
+            .padding(top = Dimens.small)
+            .fillMaxHeight()
+            .verticalScroll(scrollState)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxHeight()
-                .verticalScroll(scrollState)
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(top = Dimens.medium),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(top = Dimens.medium),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                ProfilePhoto(state.photoFile)
-            }
+            ProfilePhoto(state.photoFile)
+        }
 
-            Text(
-                text = state.nickname,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = Dimens.small)
-            )
-            Text(
-                text = state.email,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+        Text(
+            text = state.nickname,
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onBackground,
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = Dimens.small)
+        )
+        Text(
+            text = state.email,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.onBackground,
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            Surface(
-                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-                shadowElevation = 4.dp,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = Dimens.small)
-                    .padding(top = Dimens.large)
+        Surface(
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            shadowElevation = 4.dp,
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = Dimens.small)
+                .padding(top = Dimens.large)
+        ) {
+            Column(
+                modifier = Modifier.padding(Dimens.small)
             ) {
-                Column(
-                    modifier = Modifier.padding(Dimens.small)
-                ) {
-                    SectionTitle(title = "Настройки аккаунта")
-                    SettingsItem("Избранное") {
-                        navController.navigateToFavourite()
-                    }
-                    SettingsItem("Изменить никнейм") {
-                        viewModel.onEvent(ProfileEvent.SetShowNicknameDialog(true))
-                    }
-                    SettingsItem("Изменить пароль") {
-                        viewModel.onEvent(ProfileEvent.SetShowPasswordDialog(true))
-                    }
-                    SettingsItem(
-                        "Выйти с аккаунта",
-                        isLast = true,
-                        textColor = Color.Red,
-                    ) {
-                        viewModel.onEvent(ProfileEvent.SignOut)
-                    }
-                    SectionTitle(title = "Настройки приложения")
-                    ThreeStateSwitcher(
-                        state = state.themeMode.value,
-                        onEvent = viewModel::onEvent,
-                    )
+                SectionTitle(title = "Настройки аккаунта")
+                SettingsItem("Избранное") {
+                    navController.navigateToFavourite()
                 }
-
+                SettingsItem("Изменить никнейм") {
+                    viewModel.onEvent(ProfileEvent.SetShowNicknameDialog(true))
+                }
+                SettingsItem("Изменить пароль") {
+                    viewModel.onEvent(ProfileEvent.SetShowPasswordDialog(true))
+                }
+                SettingsItem(
+                    "Выйти с аккаунта",
+                    isLast = true,
+                    textColor = Color.Red,
+                ) {
+                    viewModel.onEvent(ProfileEvent.SignOut)
+                }
+                SectionTitle(title = "Настройки приложения")
+                ThreeStateSwitcher(
+                    state = state.themeMode.value,
+                    onEvent = viewModel::onEvent,
+                )
             }
+
         }
     }
 }

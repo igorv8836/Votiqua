@@ -11,5 +11,4 @@ data class PollListState(
 
 sealed class PollListEffect {
     data class NavigateToDetails(val pollId: Int) : PollListEffect()
-    data class ShowError(val message: String) : PollListEffect()
 }

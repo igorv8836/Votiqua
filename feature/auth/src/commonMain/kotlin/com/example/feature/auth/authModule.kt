@@ -20,7 +20,7 @@ fun authModule() = module {
 
     single<AuthNavigator> { AuthNavigatorImpl() }
 
-    viewModel { LoginViewModel(get()) }
-    viewModel { RegisterViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
+    viewModel { RegisterViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }
 }

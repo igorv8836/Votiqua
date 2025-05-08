@@ -14,14 +14,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.feature.voting.ui.manage_poll_screen.elements.ParticipantsBlock
@@ -38,16 +35,12 @@ internal fun ManagePollScreen(
     onDeleted: () -> Unit
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(viewModel) {
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is ManagePollSideEffect.Saved -> onClose()
                 is ManagePollSideEffect.Deleted -> onDeleted()
-                is ManagePollSideEffect.ErrorMessage -> {
-                    snackBarHostState.showSnackbar(effect.message)
-                }
             }
         }
     }
@@ -75,7 +68,6 @@ internal fun ManagePollScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

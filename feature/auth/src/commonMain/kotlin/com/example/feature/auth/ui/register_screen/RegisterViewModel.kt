@@ -3,13 +3,15 @@ package com.example.feature.auth.ui.register_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.AuthRepository
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 
 internal class RegisterViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val snackbarManager: SnackbarManager,
 ) : ContainerHost<RegisterState, RegisterEffect>, ViewModel() {
     override val container = container<RegisterState, RegisterEffect>(RegisterState())
 
@@ -32,14 +34,13 @@ internal class RegisterViewModel(
             postSideEffect(RegisterEffect.NavigateToMain)
         }.onFailure {
             val exceptionMessage = result.exceptionOrNull()?.message
-            postSideEffect(RegisterEffect.ShowError(exceptionMessage))
+            snackbarManager.sendMessage(exceptionMessage)
             reduce { state.copy(isLoading = false) }
         }
     }
 }
 
 internal sealed interface RegisterEffect {
-    data class ShowError(val message: String?) : RegisterEffect
     data object NavigateToMain: RegisterEffect
 
 }

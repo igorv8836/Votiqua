@@ -17,8 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -36,10 +34,7 @@ import com.example.orbit_mvi.compose.collectAsState
 import com.example.orbit_mvi.compose.collectSideEffect
 import com.example.votiqua.core.ui_common.components.text_fields.PasswordOutlinedTextField
 import com.example.votiqua.core.ui_common.navigation.navigateToMain
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import votiqua.core.ui_common.generated.resources.Res
-import votiqua.core.ui_common.generated.resources.basic_error
 
 
 @Composable
@@ -49,15 +44,9 @@ internal fun RegisterScreen(
     viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val basicErrorText = stringResource(Res.string.basic_error)
 
     viewModel.collectSideEffect {
         when (it) {
-            is RegisterEffect.ShowError -> {
-                snackBarHostState.showSnackbar(it.message ?: basicErrorText)
-            }
-
             RegisterEffect.NavigateToMain -> {
                 navController.navigateToMain()
             }
@@ -68,7 +57,6 @@ internal fun RegisterScreen(
         popBackStack = navController::popBackStack,
         state = state,
         startEmail = startEmail ?: "",
-        snackBarHostState = snackBarHostState
     ) {
         viewModel.onEvent(it)
     }
@@ -80,7 +68,6 @@ internal fun RegisterScreen(
     popBackStack: () -> Unit,
     state: RegisterState,
     startEmail: String,
-    snackBarHostState: SnackbarHostState,
     onEvent: (RegisterEvent) -> Unit
 ) {
     var email by remember { mutableStateOf(startEmail) }
@@ -88,7 +75,6 @@ internal fun RegisterScreen(
     var nickname by remember { mutableStateOf("") }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Регистрация") },

@@ -1,5 +1,6 @@
 package com.example.common.di
 
+import com.example.common.SnackbarManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ fun commonModule() = module {
         )
     }
 
+    single { SnackbarManager() }
 }
 
 internal fun provideIoDispatcher() = Dispatchers.IO

@@ -25,10 +25,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,10 +46,8 @@ import com.example.votiqua.core.ui_common.constants.AppPaddings
 import com.example.votiqua.core.ui_common.navigation.navigateToMain
 import com.example.votiqua.core.ui_common.navigation.navigateToRegister
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import votiqua.core.ui_common.generated.resources.Res
-import votiqua.core.ui_common.generated.resources.basic_error
 import votiqua.core.ui_common.generated.resources.icon
 
 @Composable
@@ -63,46 +57,30 @@ internal fun LoginScreen(
 ) {
     var showRecoveryDialog by remember { mutableStateOf(false) }
     val state by viewModel.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
-    val basicErrorText = stringResource(Res.string.basic_error)
 
     viewModel.collectSideEffect {
         when (it) {
-            is LoginEffect.ShowMessage -> {
-                snackBarHostState.showSnackbar(it.message ?: basicErrorText)
-            }
-
             is LoginEffect.ShowSuccessLogin -> {
-                snackBarHostState.showSnackbar(it.message, duration = SnackbarDuration.Short)
                 navController.navigateToMain()
-            }
-
-            is LoginEffect.ErrorInSendCode -> {
-                snackBarHostState.showSnackbar(it.message ?: basicErrorText)
             }
 
             is LoginEffect.SuccessPasswordReset -> {
                 showRecoveryDialog = false
-                snackBarHostState.showSnackbar(it.message ?: basicErrorText)
             }
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
-    ) {
-        LoginScreen(
-            state = state,
-            showRecoveryDialog = showRecoveryDialog,
-            onEvent = viewModel::onEvent,
-            setShowRecoveryDialog = {
-                showRecoveryDialog = it
-            },
-            navigateToRegister = { email ->
-                navController.navigateToRegister(email)
-            }
-        )
-    }
+    LoginScreen(
+        state = state,
+        showRecoveryDialog = showRecoveryDialog,
+        onEvent = viewModel::onEvent,
+        setShowRecoveryDialog = {
+            showRecoveryDialog = it
+        },
+        navigateToRegister = { email ->
+            navController.navigateToRegister(email)
+        }
+    )
 }
 
 @Composable

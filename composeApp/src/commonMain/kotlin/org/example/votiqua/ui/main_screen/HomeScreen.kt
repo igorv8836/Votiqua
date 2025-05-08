@@ -21,7 +21,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -74,17 +73,14 @@ fun HomeScreen(
         UiPoll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01")
     )
 
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            AppSearchBar(true, navController = navController)
-            NotificationBlock(notifications)
-            PollsBlock("Открытые голосования", activePolls, navController, isHorizontal = true)
-            PollsBlock("Недавно открытые", myPolls, navController)
-        }
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        AppSearchBar(true, navController = navController)
+        NotificationBlock(notifications)
+        PollsBlock("Открытые голосования", activePolls, navController, isHorizontal = true)
+        PollsBlock("Недавно открытые", myPolls, navController)
     }
 }
 

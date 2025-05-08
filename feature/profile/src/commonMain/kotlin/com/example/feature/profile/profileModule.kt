@@ -16,7 +16,7 @@ fun profileModule() = module {
 
     single<ProfileRemoteDataSource> { ProfileRemoteDataSource(get()) }
 
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
 }
 
 //expect fun profilePlatformModule()
