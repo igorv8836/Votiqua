@@ -3,6 +3,7 @@ package org.example.votiqua.plugins
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
@@ -23,15 +24,6 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.BadRequest,
                 BaseResponse(
                     message = exception.message ?: ErrorType.INCORRECT_BODY.message,
-                )
-            )
-        }
-
-        exception<Exception> { call, exception ->
-            call.respond(
-                status = HttpStatusCode.BadRequest,
-                message = BaseResponse(
-                    message = exception.message ?: ErrorType.GENERAL.message,
                 )
             )
         }
@@ -58,13 +50,33 @@ fun Application.configureStatusPages() {
             call.handleUnauthorized(exception.message)
         }
 
-        exception<HTTPForbiddenException> { call, _ ->
-            call.handleForbidden()
+        exception<HTTPForbiddenException> { call, exception ->
+            call.handleForbidden(
+                message = exception.message,
+            )
         }
 
         exception<OutOfConfigRangeException> { call, exception ->
             call.respond(
                 status = HttpStatusCode.UnprocessableEntity,
+                message = BaseResponse(
+                    message = exception.message ?: ErrorType.GENERAL.message,
+                )
+            )
+        }
+
+        exception<BadRequestException> { call, exception ->
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = BaseResponse(
+                    message = exception.message ?: ErrorType.GENERAL.message,
+                )
+            )
+        }
+
+        exception<Exception> { call, exception ->
+            call.respond(
+                status = HttpStatusCode.BadRequest,
                 message = BaseResponse(
                     message = exception.message ?: ErrorType.GENERAL.message,
                 )

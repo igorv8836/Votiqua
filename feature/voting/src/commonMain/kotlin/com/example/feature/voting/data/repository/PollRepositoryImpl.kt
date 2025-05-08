@@ -1,11 +1,29 @@
 package com.example.feature.voting.data.repository
 
+import com.example.common.SnackbarManager
 import com.example.feature.voting.data.PollRemoteDataSource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.example.votiqua.models.poll.Poll
 
 class PollRepositoryImpl(
-    private val remoteDataSource: PollRemoteDataSource
+    private val remoteDataSource: PollRemoteDataSource,
+    private val snackbarManager: SnackbarManager,
 ) : PollRepository {
+    private val _myPolls = MutableStateFlow<List<Poll>>(emptyList())
+    override val myPolls = _myPolls.asStateFlow()
+    private val _otherPolls = MutableStateFlow<List<Poll>>(emptyList())
+    override val otherPolls = _otherPolls.asStateFlow()
+
+    private suspend fun updatePolls() {
+        getMyPolls().onSuccess {
+            _myPolls.emit(it)
+        }.onFailure { snackbarManager.sendMessage(it.message) }
+
+        getOtherPolls().onSuccess {
+            _otherPolls.emit(it)
+        }.onFailure { snackbarManager.sendMessage(it.message) }
+    }
 
     override suspend fun getMyPolls(limit: Int, offset: Int): Result<List<Poll>> {
         return remoteDataSource.getMyPolls(limit, offset)
@@ -22,11 +40,19 @@ class PollRepositoryImpl(
     }
 
     override suspend fun createPoll(poll: Poll): Result<Poll> {
-        return remoteDataSource.createPoll(poll)
+        return remoteDataSource.createPoll(poll).also {
+            updatePolls()
+        }
     }
 
     override suspend fun updatePoll(poll: Poll): Result<Poll> {
-        return remoteDataSource.updatePoll(poll)
+        return remoteDataSource.updatePoll(poll).also {
+            updatePolls()
+        }
+    }
+
+    override suspend fun regeneratePollLink(pollId: Int): Result<String> {
+        return remoteDataSource.regenerateLink(pollId).map { it.link }
     }
 
     override suspend fun vote(pollId: Int, optionId: Int): Result<Poll> {
@@ -40,5 +66,17 @@ class PollRepositoryImpl(
 
     override suspend fun getFavorites(): Result<List<Poll>> {
         return remoteDataSource.getFavorites()
+    }
+
+    override suspend fun deletePoll(pollId: Int): Result<Unit> {
+        return remoteDataSource.deletePoll(pollId = pollId).also {
+            updatePolls()
+        }
+    }
+
+    override suspend fun startPoll(pollId: Int): Result<Unit> {
+        return remoteDataSource.startPoll(pollId).also {
+            updatePolls()
+        }
     }
 }

@@ -4,11 +4,11 @@ import org.example.votiqua.models.poll.Poll
 import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
-import org.example.votiqua.server.common.utils.toLocalDateTimeMoscow
 import org.example.votiqua.server.common.utils.toUtcDateTime
 import org.example.votiqua.server.feature.voting.database.PollParticipantTable
 import org.example.votiqua.server.feature.voting.database.PollTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
+import org.example.votiqua.server.feature.voting.utils.pollLink
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -17,6 +17,7 @@ import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
+import java.util.UUID
 
 class PollRepository(
     private val tagRepository: TagRepository,
@@ -46,6 +47,7 @@ class PollRepository(
                 it[startDate] = poll.startTime?.toUtcDateTime()
                 it[endDate] = poll.endTime?.toUtcDateTime()
                 it[PollTable.authorId] = authorId
+                it[link] = generatePollLink()
             } get PollTable.id
 
             pollOptionRepository.insertOptions(
@@ -65,7 +67,7 @@ class PollRepository(
         return getPollById(pollId) ?: throw HTTPConflictException("Error in creating")
     }
 
-    suspend fun deletePoll(pollId: Int, userId: Int): Boolean {
+    suspend fun deletePoll(pollId: Int): Boolean {
         return dbQuery {
             val deleted = PollTable.deleteWhere {
                 PollTable.id eq pollId
@@ -82,8 +84,8 @@ class PollRepository(
                 it[isMultiple] = poll.isMultiple
                 it[isAnonymous] = poll.isAnonymous
                 it[isOpen] = poll.isOpen
-                it[startDate] = poll.startTime?.toLocalDateTimeMoscow()
-                it[endDate] = poll.endTime?.toLocalDateTimeMoscow()
+                it[startDate] = poll.startTime?.toUtcDateTime()
+                it[endDate] = poll.endTime?.toUtcDateTime()
             }
 
             pollOptionRepository.updateOptions(
@@ -93,6 +95,28 @@ class PollRepository(
             tagRepository.updatePollTags(poll)
         }
         return getPollById(poll.id)
+    }
+
+    suspend fun regeneratePollLink(pollId: Int): String {
+        val newLink = generatePollLink()
+        dbQuery {
+            PollTable.update({ PollTable.id eq pollId }) {
+                it[link] = newLink
+            }
+        }
+        return newLink
+    }
+
+    private fun generatePollLink(): String {
+        return pollLink + UUID.randomUUID().toString().take(20)
+    }
+
+    suspend fun startPoll(pollId: Int) {
+        dbQuery {
+            PollTable.update({ PollTable.id eq pollId }) {
+                it[isStarted] = true
+            }
+        }
     }
 
     suspend fun searchPolls(query: String, limit: Int, offset: Int = 0): List<Poll> {

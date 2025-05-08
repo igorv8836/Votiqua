@@ -20,4 +20,6 @@ data class Poll(
     val authorId: Int = 0,
     val isFavorite: Boolean = false,
     val members: List<SimpleUser> = emptyList(),
+    val isStarted: Boolean = false,
+    val link: String? = null,
 ) 

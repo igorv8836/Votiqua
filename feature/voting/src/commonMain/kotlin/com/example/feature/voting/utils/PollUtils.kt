@@ -39,6 +39,8 @@ fun ManagePollState.toPoll(): Poll {
         authorId = 0,
         isFavorite = false,
         members = emptyList(),
+        link = link,
+        isStarted = isStarted,
     )
 }
 
@@ -66,11 +68,12 @@ fun Poll.toState(): ManagePollState {
         description = this.description ?: "",
         anonymous = isAnonymous,
         isOpen = isOpen,
-        link = "link", // TODO
+        link = link,
         votesExist = false, // TODO
         isSaving = false,
         isDeleting = false,
         multipleChoice = isMultiple,
+        isStarted = isStarted,
 
         startTime = lStartTime?.let {
             formatTime(

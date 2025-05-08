@@ -14,7 +14,7 @@ import org.koin.dsl.module
 fun votingModule() = module {
     single<VotingNavigator> { VotingNavigatorImpl() }
 
-    single<PollRepository> { PollRepositoryImpl(get()) }
+    single<PollRepository> { PollRepositoryImpl(get(), get()) }
     single<PollRemoteDataSource> { PollRemoteDataSource(get()) }
 
     viewModel { ManagePollViewModel(get(), get()) }

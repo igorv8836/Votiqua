@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.NotStarted
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,7 +36,9 @@ fun TopBlock(
     onEndTimeChanged: (Long) -> Unit,
     onEndDateChanged: (Long) -> Unit,
     onTagAdded: (String) -> Unit,
-    onTagRemoved: (String) -> Unit
+    onTagRemoved: (String) -> Unit,
+    onRegenerateLink: () -> Unit,
+    onCopyLink: (String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -114,7 +117,11 @@ fun TopBlock(
             checked = state.anonymous,
             onClick = onAnonClicked
         )
-        LinkBox(state.link)
+        LinkBox(
+            link = state.link,
+            onRegenerateLink = onRegenerateLink,
+            onCopyLink = onCopyLink
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,9 +129,17 @@ fun TopBlock(
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             ManagingButton(
-                icon = Icons.Filled.NotStarted,
-                text = "Запустить",
-                isAbled = !isCreating,
+                icon = if (!state.isStarted) {
+                    Icons.Filled.NotStarted
+                } else {
+                    Icons.Filled.Pause
+                },
+                text = if (!state.isStarted) {
+                    "Запустить"
+                } else {
+                    "Запущено"
+                },
+                isAbled = !isCreating && !state.isStarted,
                 onClick = onStartClicked
             )
             ManagingButton(

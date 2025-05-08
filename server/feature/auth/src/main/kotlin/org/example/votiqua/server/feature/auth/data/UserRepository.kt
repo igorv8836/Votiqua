@@ -5,7 +5,7 @@ import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.models.auth.UserModel
 import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
-import org.example.votiqua.server.common.utils.toTimestampMoscow
+import org.example.votiqua.server.common.utils.toUtcTimestamp
 import org.example.votiqua.server.feature.auth.api.database.UserTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -84,7 +84,7 @@ class UserRepository {
             notificationEnabled = row[UserTable.notificationEnabled],
             isActive = row[UserTable.isActive],
             banReason = row[UserTable.banReason],
-            createdAt = row[UserTable.createdAt].toTimestampMoscow(),
+            createdAt = row[UserTable.createdAt].toUtcTimestamp(),
             isAdmin = row[UserTable.isAdmin]
         )
     }

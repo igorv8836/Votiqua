@@ -14,37 +14,36 @@ import org.example.votiqua.server.feature.voting.database.TagTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
 import org.jetbrains.exposed.sql.SchemaUtils
 
+private val tables = arrayOf(
+    PollOptionTable,
+    PollTable,
+    UserTable,
+    VoteTable,
+    PasswordResetTable,
+    TagTable,
+    PollTagTable,
+    NotificationTable,
+    FavoritePollTable,
+    RecommendedFeedTable,
+    SearchHistoryTable,
+    PollParticipantTable
+)
+
 
 fun createDbTables() {
     SchemaUtils.create(
-        PollOptionTable,
-        PollTable,
-        UserTable,
-        VoteTable,
-        PasswordResetTable,
-        TagTable,
-        PollTagTable,
-        NotificationTable,
-        FavoritePollTable,
-        RecommendedFeedTable,
-        SearchHistoryTable,
-        PollParticipantTable
+        tables = tables,
     )
 }
 
 fun deleteDbTables() {
     SchemaUtils.drop(
-        PollOptionTable,
-        PollTable,
-        UserTable,
-        VoteTable,
-        PasswordResetTable,
-        TagTable,
-        PollTagTable,
-        NotificationTable,
-        FavoritePollTable,
-        RecommendedFeedTable,
-        SearchHistoryTable,
-        PollParticipantTable
+        tables = tables,
+    )
+}
+
+fun createMissingColumns() {
+    SchemaUtils.createMissingTablesAndColumns(
+        tables = tables,
     )
 }

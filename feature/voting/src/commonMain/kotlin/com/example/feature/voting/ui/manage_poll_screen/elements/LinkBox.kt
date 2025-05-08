@@ -18,11 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun LinkBox(
-    link: String,
+    link: String?,
+    onRegenerateLink: () -> Unit,
+    onCopyLink: (String) -> Unit = {},
 ) {
     Box(
         modifier = Modifier
@@ -38,28 +41,34 @@ fun LinkBox(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = "Ссылка на голосование",
                     style = MaterialTheme.typography.labelMedium
                 )
                 Text(
-                    text = link,
+                    text = link ?: "Отсутствует",
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                IconButton(onClick = {}) {
+                IconButton(
+                    onClick = { link?.let { onCopyLink(it) } },
+                    enabled = link != null,
+                ) {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
-                        contentDescription = null
+                        contentDescription = "Копировать ссылку"
                     )
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = onRegenerateLink) {
                     Icon(
                         imageVector = Icons.Default.Autorenew,
-                        contentDescription = null
+                        contentDescription = "Обновить ссылку"
                     )
                 }
             }

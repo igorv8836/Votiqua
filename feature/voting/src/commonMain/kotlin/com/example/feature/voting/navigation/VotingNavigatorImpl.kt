@@ -1,5 +1,6 @@
 package com.example.feature.voting.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -23,12 +24,16 @@ internal class VotingNavigatorImpl : VotingNavigator {
         navGraphBuilder.apply {
             composable<ManagePollRoute> {
                 val viewModel: ManagePollViewModel = koinViewModel()
-                val args = it.toRoute<ManagePollRoute>().pollId?.apply {
-                    viewModel.setPollId(this)
+                val pollId = it.toRoute<ManagePollRoute>().pollId
+
+                LaunchedEffect(pollId) {
+                    pollId?.let { id ->
+                        viewModel.setPollId(id)
+                    }
                 }
 
                 ManagePollScreen(
-                    isCreating = args != null,
+                    isCreating = pollId == null,
                     viewModel = viewModel,
                     onClose = {
                         mainNavController.popBackStack()

@@ -5,8 +5,9 @@ import org.example.votiqua.server.feature.voting.data.repository.PollOptionRepos
 import org.example.votiqua.server.feature.voting.data.repository.PollRepository
 import org.example.votiqua.server.feature.voting.data.repository.TagRepository
 import org.example.votiqua.server.feature.voting.domain.usecase.FavoritePollUseCase
+import org.example.votiqua.server.feature.voting.domain.usecase.GetPollUseCase
+import org.example.votiqua.server.feature.voting.domain.usecase.PollManageUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.PollUpdateUseCase
-import org.example.votiqua.server.feature.voting.domain.usecase.PollUseCase
 import org.koin.dsl.module
 
 fun votingModule() = module {
@@ -15,7 +16,8 @@ fun votingModule() = module {
     single<PollOptionRepository> { PollOptionRepository() }
     single<PollFavoriteRepository> { PollFavoriteRepository() }
     
-    single { PollUseCase(get(), get()) }
+    single { PollManageUseCase(get(), get()) }
     single { FavoritePollUseCase(get(), get()) }
-    single { PollUpdateUseCase(get()) }
+    single { PollUpdateUseCase(get(), get(), get()) }
+    single { GetPollUseCase(get(), get()) }
 }

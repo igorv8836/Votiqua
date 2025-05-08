@@ -2,6 +2,7 @@ package com.example.feature.voting.data
 
 import com.example.votiqua.network.util.safeApiCall
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -9,6 +10,7 @@ import io.ktor.client.request.setBody
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.poll.Poll
 import org.example.votiqua.models.poll.PollsResponse
+import org.example.votiqua.models.poll.RegenerateLinkResponse
 
 class PollRemoteDataSource(
     private val httpClient: HttpClient
@@ -50,6 +52,24 @@ class PollRemoteDataSource(
             httpClient.post("polls/edit") {
                 setBody(poll)
             }
+        }
+    }
+
+    suspend fun deletePoll(pollId: Int): Result<Unit> {
+        return safeApiCall {
+            httpClient.delete("polls/$pollId")
+        }
+    }
+
+    suspend fun startPoll(pollId: Int): Result<Unit> {
+        return safeApiCall {
+            httpClient.post("polls/$pollId/start")
+        }
+    }
+
+    suspend fun regenerateLink(pollId: Int): Result<RegenerateLinkResponse> {
+        return safeApiCall {
+            httpClient.post("polls/$pollId/regenerate-link")
         }
     }
 

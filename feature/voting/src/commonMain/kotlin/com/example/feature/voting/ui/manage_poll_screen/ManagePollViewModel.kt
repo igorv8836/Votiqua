@@ -82,19 +82,39 @@ internal class ManagePollViewModel(
     }
 
     fun startPoll() = intent {
-        TODO()
+        pollRepository.startPoll(state.pollId).onSuccess {
+            reduce {
+                state.copy(
+                    isStarted = true,
+                )
+            }
+        }.onFailure { snackbarManager.sendMessage(it.message) }
+    }
+
+    fun regenerateLink() = intent {
+        if (state.pollId <= 0) return@intent
+        reduce { state.copy(isRegeneratingLink = true) }
+        
+        pollRepository.regeneratePollLink(state.pollId)
+            .onSuccess { newLink ->
+                reduce { state.copy(link = newLink, isRegeneratingLink = false) }
+            }
+            .onFailure { 
+                snackbarManager.sendMessage(it.message ?: "Ошибка при обновлении ссылки")
+                reduce { state.copy(isRegeneratingLink = false) }
+            }
     }
 
     fun deletePoll() = intent {
         reduce { state.copy(isDeleting = true) }
         try {
-//            pollRepository.deletePoll(state.pollId) //  TODO
+            pollRepository.deletePoll(state.pollId)
             postSideEffect(ManagePollSideEffect.Deleted)
         } catch (e: Exception) {
-//            reduce { state.copy(error = e.message, isDeleting = false) }
+            snackbarManager.sendMessage(e.message)
+            reduce { state.copy(isDeleting = false) }
         }
     }
-
 
     fun setPollId(id: Int) = blockingIntent {
         reduce { state.copy(pollId = id) }
@@ -208,13 +228,15 @@ data class ManagePollState(
     val anonymous: Boolean = false,
     val participants: List<Participant> = emptyList(),
     val isOpen: Boolean = false,
-    val link: String = "link",
+    val link: String? = null,
     val description: String = "",
     val options: List<String> = emptyList(),
     val votesExist: Boolean = false,
+    val isStarted: Boolean = false,
 
     val isSaving: Boolean = false,
     val isDeleting: Boolean = false,
+    val isRegeneratingLink: Boolean = false,
 
     val multipleChoice: Boolean = false,
     val startTime: String? = null,

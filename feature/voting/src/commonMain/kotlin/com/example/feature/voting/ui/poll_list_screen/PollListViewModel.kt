@@ -3,11 +3,14 @@
 package com.example.feature.voting.ui.poll_list_screen
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.common.SnackbarManager
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.models.UiPoll
 import com.example.feature.voting.utils.formatDate
 import com.example.orbit_mvi.viewmodel.container
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -24,6 +27,30 @@ class PollListViewModel(
 
     init {
         loadPolls()
+
+        viewModelScope.launch {
+            pollRepository.myPolls.collectLatest {
+                intent {
+                    reduce {
+                        state.copy(
+                            myPolls = it.map { it.toUiPoll() },
+                        )
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            pollRepository.otherPolls.collectLatest {
+                intent {
+                    reduce {
+                        state.copy(
+                            otherPolls = it.map { it.toUiPoll() },
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun loadPolls() = intent {

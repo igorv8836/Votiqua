@@ -21,10 +21,12 @@ suspend fun ApplicationCall.handleUnauthorized(
     )
 }
 
-suspend fun ApplicationCall.handleForbidden() {
+suspend fun ApplicationCall.handleForbidden(
+    message: String? = null,
+) {
     this.respond(
         HttpStatusCode.Forbidden,
-        BaseResponse(ErrorType.FORBIDDEN.message)
+        BaseResponse(message ?: ErrorType.FORBIDDEN.message)
     )
 }
 

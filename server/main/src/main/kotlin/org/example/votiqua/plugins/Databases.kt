@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.Application
 import io.ktor.server.config.ApplicationConfig
 import org.example.votiqua.database.utils.createDbTables
+import org.example.votiqua.database.utils.createMissingColumns
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -14,6 +15,7 @@ object DatabaseFactory {
 
         transaction {
             createDbTables()
+            createMissingColumns()
         }
     }
 

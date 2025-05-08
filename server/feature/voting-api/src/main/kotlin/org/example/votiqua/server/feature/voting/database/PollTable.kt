@@ -16,5 +16,7 @@ object PollTable : Table() {
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()
     val authorId = integer("author_id").references(UserTable.id, onDelete = ReferenceOption.CASCADE)
+    val isStarted = bool("is_started").default(false)
+    val link = text("link").nullable().uniqueIndex()
     override val primaryKey = PrimaryKey(id)
 }

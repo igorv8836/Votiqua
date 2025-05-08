@@ -22,9 +22,12 @@ abstract class BasePollRepository(
             isMultiple = row[PollTable.isMultiple],
             isAnonymous = row[PollTable.isAnonymous],
             isOpen = row[PollTable.isOpen],
+            authorId = row[PollTable.authorId],
             createdAt = row[PollTable.createdAt].toUtcTimestamp(),
             startTime = row[PollTable.startDate]?.toUtcTimestamp(),
-            endTime = row[PollTable.endDate]?.toUtcTimestamp()
+            endTime = row[PollTable.endDate]?.toUtcTimestamp(),
+            isStarted = row[PollTable.isStarted],
+            link = row[PollTable.link],
         )
     }
 

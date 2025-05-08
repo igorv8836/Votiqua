@@ -7,11 +7,11 @@ import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 import org.example.votiqua.server.common.utils.handleBadRequest
 import org.example.votiqua.server.common.utils.requireAuthorization
-import org.example.votiqua.server.feature.voting.domain.usecase.PollUseCase
+import org.example.votiqua.server.feature.voting.domain.usecase.PollManageUseCase
 import org.koin.ktor.ext.inject
 
 fun Route.pollMemberRoute() {
-    val pollUseCase by application.inject<PollUseCase>()
+    val pollUseCase by application.inject<PollManageUseCase>()
 
     post("/{pollId}/vote") {
         val userId = call.requireAuthorization()

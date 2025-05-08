@@ -6,3 +6,9 @@ import kotlinx.serialization.Serializable
 data class PollsResponse(
     val polls: List<Poll>,
 )
+
+@Serializable
+data class RegenerateLinkResponse(
+    val link: String,
+    val pollId: Int,
+)
