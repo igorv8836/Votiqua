@@ -123,7 +123,11 @@ internal class ProfileViewModel(
     }
 
     private fun signOut() = intent {
-        postSideEffect(ProfileSideEffect.SignedOut)
+        authRepository.logout().onSuccess {
+            postSideEffect(ProfileSideEffect.SignedOut)
+        }.onFailure {
+            // TODO
+        }
     }
 
     private fun changeThemeMode() = intent {

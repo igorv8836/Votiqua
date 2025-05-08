@@ -8,9 +8,4 @@ interface ProfileNavigator {
         navGraphBuilder: NavGraphBuilder,
         mainNavController: NavController
     )
-
-    fun registerBottomNavigation(
-        navGraphBuilder: NavGraphBuilder,
-        mainNavController: NavController
-    )
 }

@@ -19,14 +19,7 @@ internal class ProfileNavigatorImpl : ProfileNavigator {
             composable<FavouriteScreenRoute> {
                 FavoritesScreen(mainNavController)
             }
-        }
-    }
 
-    override fun registerBottomNavigation(
-        navGraphBuilder: NavGraphBuilder,
-        mainNavController: NavController
-    ) {
-        navGraphBuilder.apply {
             composable<ProfileRoute> {
                 ProfileScreen(
                     viewModel = koinViewModel(),

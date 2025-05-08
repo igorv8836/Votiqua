@@ -24,7 +24,7 @@ fun NavController.navigateToLogin() = navigate(LoginRoute)
 fun NavController.navigateToRegister(email: String?) = navigate(RegisterRoute(email))
 
 fun NavController.navigateToMain() {
-    navigate(MainScreenRoute)
+    navigate(HomeRoute)
 }
 
 fun NavController.navigateToSearch() {
@@ -36,9 +36,6 @@ data object HomeRoute : ScreenRoute
 
 @Serializable
 data object MyPollsRoute : ScreenRoute
-
-@Serializable
-data object BottomPollCreateRoute : ScreenRoute
 
 @Serializable
 data object PollCreateRoute : ScreenRoute

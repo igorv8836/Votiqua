@@ -8,9 +8,4 @@ interface VotingNavigator {
         navGraphBuilder: NavGraphBuilder,
         mainNavController: NavController
     )
-
-    fun registerBottomNavigation(
-        navGraphBuilder: NavGraphBuilder,
-        mainNavController: NavController
-    )
 }

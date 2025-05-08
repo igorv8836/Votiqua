@@ -41,6 +41,7 @@ import com.example.feature.profile.ui.profile_screen.elements.ProfileAdditionalD
 import com.example.feature.profile.ui.profile_screen.elements.SectionTitle
 import com.example.feature.profile.ui.profile_screen.elements.SettingsItem
 import com.example.orbit_mvi.compose.collectAsState
+import com.example.orbit_mvi.compose.collectSideEffect
 import com.example.votiqua.core.ui_common.constants.Dimens
 import com.example.votiqua.core.ui_common.navigation.navigateToFavourite
 import com.example.votiqua.core.ui_common.navigation.navigateToLogin
@@ -60,6 +61,12 @@ internal fun ProfileScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
+
+    viewModel.collectSideEffect {
+        when (it) {
+            ProfileSideEffect.SignedOut -> navController.navigateToLogin()
+        }
+    }
 
     if (state.showNicknameDialog) {
         ProfileAdditionalDialog(
@@ -146,7 +153,7 @@ internal fun ProfileScreen(
                         isLast = true,
                         textColor = Color.Red,
                     ) {
-                        navController.navigateToLogin()
+                        viewModel.onEvent(ProfileEvent.SignOut)
                     }
                     SectionTitle(title = "Настройки приложения")
                     ThreeStateSwitcher(

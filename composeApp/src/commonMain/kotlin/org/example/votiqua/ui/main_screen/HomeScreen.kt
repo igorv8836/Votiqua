@@ -62,8 +62,7 @@ val mockPolls = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    bottomNavController: NavController,
-    mainNavController: NavController,
+    navController: NavController,
 ) {
     val notifications = listOf("Новое голосование доступно", "Ваше голосование завершено")
     val activePolls = listOf(
@@ -81,10 +80,10 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            AppSearchBar(true, navController = mainNavController)
+            AppSearchBar(true, navController = navController)
             NotificationBlock(notifications)
-            PollsBlock("Открытые голосования", activePolls, mainNavController, isHorizontal = true)
-            PollsBlock("Недавно открытые", myPolls, mainNavController)
+            PollsBlock("Открытые голосования", activePolls, navController, isHorizontal = true)
+            PollsBlock("Недавно открытые", myPolls, navController)
         }
     }
 }

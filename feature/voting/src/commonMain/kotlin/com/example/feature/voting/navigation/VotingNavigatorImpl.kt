@@ -63,14 +63,7 @@ internal class VotingNavigatorImpl : VotingNavigator {
                     }
                 )
             }
-        }
-    }
 
-    override fun registerBottomNavigation(
-        navGraphBuilder: NavGraphBuilder,
-        mainNavController: NavController
-    ) {
-        navGraphBuilder.apply {
             composable<MyPollsRoute> {
                 PollListScreen(
                     navController = mainNavController
