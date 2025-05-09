@@ -22,16 +22,14 @@ import java.util.UUID
 class PollRepository(
     private val tagRepository: TagRepository,
     private val pollOptionRepository: PollOptionRepository,
-) : BasePollRepository(tagRepository, pollOptionRepository) {
+    private val pollParticipantRepository: PollParticipantRepository,
+) : BasePollRepository(tagRepository, pollOptionRepository, pollParticipantRepository) {
     suspend fun getPollById(id: Int): Poll? {
         return dbQuery {
             val pollRow = PollTable.select { PollTable.id eq id }.singleOrNull() ?: return@dbQuery null
             val poll = mapRowToPoll(pollRow)
 
-            val options = pollOptionRepository.getOptions(id)
-            val tags = tagRepository.getPollTags(id)
-
-            poll.copy(options = options, tags = tags)
+            return@dbQuery fillPollWithOptionsAndTags(poll)
         }
     }
 
@@ -56,11 +54,10 @@ class PollRepository(
             )
             tagRepository.insertTags(poll.tags, pollId)
 
-            PollParticipantTable.insert {
-                it[PollParticipantTable.pollId] = pollId
-                it[PollParticipantTable.userId] = authorId
-                it[PollParticipantTable.createdAt] = currentDateTime()
-            }
+            pollParticipantRepository.insert(
+                userId = authorId,
+                pollId = pollId,
+            )
 
             pollId
         }

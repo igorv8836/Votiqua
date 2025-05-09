@@ -62,7 +62,7 @@ internal fun PollListScreen(
                             item { PlaceholderScreen("Голосований пока нет") }
                         } else {
                             items(state.myPolls) { it1 ->
-                                PollCard(it1, navController = navController, isMyPoll = true)
+                                PollCard(it1, navController = navController)
                             }
                         }
                     }

@@ -3,6 +3,7 @@ package com.example.feature.profile.ui.profile_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.ResultExceptionHandler
 import com.example.common.SnackbarManager
 import com.example.common.ThemeMode
 import com.example.common.toThemeMode
@@ -16,8 +17,8 @@ import org.orbitmvi.orbit.ContainerHost
 internal class ProfileViewModel(
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
-    private val snackbarManager: SnackbarManager,
-) : ContainerHost<ProfileState, ProfileSideEffect>, ViewModel() {
+    override val snackbarManager: SnackbarManager,
+) : ContainerHost<ProfileState, ProfileSideEffect>, ViewModel(), ResultExceptionHandler {
 
     override val container: Container<ProfileState, ProfileSideEffect> = container(ProfileState())
 
@@ -43,9 +44,9 @@ internal class ProfileViewModel(
                     photoFile = user.photoUrl,
                 )
             }
-        }.onFailure { e ->
-            snackbarManager.sendMessage("Ошибка загрузки профиля: ${e.message}")
-        }
+        }.handleException(
+            customMessage = { "Ошибка загрузки профиля: ${it.message}" },
+        )
     }
 
     fun onEvent(event: ProfileEvent) {
@@ -73,9 +74,7 @@ internal class ProfileViewModel(
                 )
             }
             snackbarManager.sendMessage("Никнейм успешно изменён")
-        }.onFailure {
-            snackbarManager.sendMessage(it.message ?: "Ошибка изменения никнейма")
-        }
+        }.handleException("Ошибка изменения никнейма")
 
         reduce {
             state.copy(showNicknameDialog = false)
@@ -90,9 +89,7 @@ internal class ProfileViewModel(
 
         result.onSuccess {
             snackbarManager.sendMessage("Пароль успешно изменён")
-        }.onFailure {
-            snackbarManager.sendMessage(it.message ?: "Ошибка изменения пароля")
-        }
+        }.handleException("Ошибка изменения пароля")
 
         reduce { state.copy(showPasswordDialog = false) }
     }
@@ -119,9 +116,7 @@ internal class ProfileViewModel(
     private fun signOut() = intent {
         authRepository.logout().onSuccess {
             postSideEffect(ProfileSideEffect.SignedOut)
-        }.onFailure {
-            snackbarManager.sendMessage(message = null)
-        }
+        }.handleException()
     }
 
     private fun changeThemeMode() = intent {

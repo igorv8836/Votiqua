@@ -27,3 +27,33 @@ enum class SnackbarDuration {
     Long,
     Indefinite
 }
+
+suspend fun <T> Result<T>.handleException(
+    snackbarManager: SnackbarManager,
+    fallbackMessage: String? = null,
+    customMessage: (Throwable) -> String? = { null },
+    action: suspend () -> Unit = { },
+): Result<T> {
+    exceptionOrNull()?.let {
+        snackbarManager.sendMessage(customMessage(it) ?: it.message ?: fallbackMessage)
+        action()
+    }
+    return this
+}
+
+interface ResultExceptionHandler {
+    val snackbarManager: SnackbarManager
+
+    suspend fun <T> Result<T>.handleException(
+        fallbackMessage: String? = null,
+        customMessage: (Throwable) -> String? = { null },
+        action: suspend () -> Unit = { },
+    ): Result<T> {
+        return handleException(
+            snackbarManager = snackbarManager,
+            customMessage = customMessage,
+            fallbackMessage = fallbackMessage,
+            action = action,
+        )
+    }
+}

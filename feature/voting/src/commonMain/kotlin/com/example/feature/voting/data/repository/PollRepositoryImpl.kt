@@ -1,6 +1,7 @@
 package com.example.feature.voting.data.repository
 
 import com.example.common.SnackbarManager
+import com.example.common.handleException
 import com.example.feature.voting.data.PollRemoteDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,11 +19,11 @@ class PollRepositoryImpl(
     private suspend fun updatePolls() {
         getMyPolls().onSuccess {
             _myPolls.emit(it)
-        }.onFailure { snackbarManager.sendMessage(it.message) }
+        }.handleException(snackbarManager)
 
         getOtherPolls().onSuccess {
             _otherPolls.emit(it)
-        }.onFailure { snackbarManager.sendMessage(it.message) }
+        }.handleException(snackbarManager)
     }
 
     override suspend fun getMyPolls(limit: Int, offset: Int): Result<List<Poll>> {

@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,6 +88,7 @@ internal fun ManagePollScreen(
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            val context = currentCompositionLocalContext
             TopBlock(
                 state = state,
                 isCreating = isCreating,
@@ -104,7 +106,10 @@ internal fun ManagePollScreen(
                 onTagAdded = viewModel::onTagAdded,
                 onTagRemoved = viewModel::onTagRemoved,
                 onRegenerateLink = viewModel::regenerateLink,
-                onCopyLink = { /* TODO */ }
+                onCopyLink = {
+                    copyToClipboard(it, context)
+                    viewModel.sendMessage("Ссылка успешно скопирована")
+                }
             )
 
             PollOptionsBlock(
@@ -153,3 +158,5 @@ fun DeleteDialog(
         }
     )
 }
+
+expect fun copyToClipboard(text: String, context: Any? = null)

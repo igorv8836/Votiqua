@@ -24,7 +24,7 @@ fun currentTimestamp(): Long {
 }
 
 fun currentDateTime(): LocalDateTime {
-    return LocalDateTime.now()
+    return LocalDateTime.now(Clock.systemUTC())
 }
 
 fun LocalDateTime.toUtcTimestamp(): Long {
@@ -32,5 +32,5 @@ fun LocalDateTime.toUtcTimestamp(): Long {
 }
 
 fun Long.toUtcDateTime(): LocalDateTime {
-    return LocalDateTime.ofEpochSecond(this / 1000, 0, ZoneOffset.UTC)
+    return LocalDateTime.ofEpochSecond(this, 0, ZoneOffset.UTC)
 }

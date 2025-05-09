@@ -52,7 +52,9 @@ data class ManagePollRoute(
 ) : ScreenRoute
 
 @Serializable
-data object PollViewerRoute : ScreenRoute
+data class PollViewerRoute(
+    val pollId: Int,
+) : ScreenRoute
 
 @Serializable
 data object FavouriteScreenRoute : ScreenRoute
@@ -63,6 +65,8 @@ fun NavController.navigateToCreate() = navigate(PollCreateRoute)
 fun NavController.navigateToNotifications() = navigate(NotificationsRoute)
 fun NavController.navigateToProfile() = navigate(ProfileRoute)
 fun NavController.navigateToManagingPoll(pollId: Int? = null) = navigate(ManagePollRoute(pollId))
-fun NavController.navigateToPollViewer() = navigate(PollViewerRoute)
+fun NavController.navigateToPollViewer(
+    pollId: Int,
+) = navigate(PollViewerRoute(pollId))
 fun NavController.navigateToFavourite() = navigate(FavouriteScreenRoute)
 

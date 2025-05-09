@@ -5,6 +5,7 @@ package com.example.feature.voting.ui.poll_list_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.SnackbarManager
+import com.example.common.handleException
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.models.UiPoll
 import com.example.feature.voting.utils.formatDate
@@ -75,9 +76,7 @@ class PollListViewModel(
                     myPollsIsLoading = false,
                 )
             }
-        }.onFailure {
-            snackbarManager.sendMessage(it.message)
-        }
+        }.handleException(snackbarManager)
     }
 
     private suspend fun loadOtherPolls() = subIntent {
@@ -90,9 +89,7 @@ class PollListViewModel(
                     otherPollsIsLoading = false,
                 )
             }
-        }.onFailure {
-            snackbarManager.sendMessage(it.message)
-        }
+        }.handleException(snackbarManager)
     }
 }
 

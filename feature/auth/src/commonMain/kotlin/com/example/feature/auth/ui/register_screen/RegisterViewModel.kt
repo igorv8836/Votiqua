@@ -3,6 +3,7 @@ package com.example.feature.auth.ui.register_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.ResultExceptionHandler
 import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.AuthRepository
 import com.example.orbit_mvi.viewmodel.container
@@ -11,8 +12,8 @@ import org.orbitmvi.orbit.ContainerHost
 
 internal class RegisterViewModel(
     private val authRepository: AuthRepository,
-    private val snackbarManager: SnackbarManager,
-) : ContainerHost<RegisterState, RegisterEffect>, ViewModel() {
+    override val snackbarManager: SnackbarManager,
+) : ContainerHost<RegisterState, RegisterEffect>, ViewModel(), ResultExceptionHandler {
     override val container = container<RegisterState, RegisterEffect>(RegisterState())
 
     fun onEvent(event: RegisterEvent) {
@@ -32,9 +33,7 @@ internal class RegisterViewModel(
         result.onSuccess {
             reduce { RegisterState(isLoading = false) }
             postSideEffect(RegisterEffect.NavigateToMain)
-        }.onFailure {
-            val exceptionMessage = result.exceptionOrNull()?.message
-            snackbarManager.sendMessage(exceptionMessage)
+        }.handleException {
             reduce { state.copy(isLoading = false) }
         }
     }

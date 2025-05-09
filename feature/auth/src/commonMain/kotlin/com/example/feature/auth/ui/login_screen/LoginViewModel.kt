@@ -2,6 +2,7 @@ package com.example.feature.auth.ui.login_screen
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
+import com.example.common.ResultExceptionHandler
 import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.AuthRepository
 import com.example.feature.auth.ui.common.AuthStringResources
@@ -10,8 +11,8 @@ import org.orbitmvi.orbit.ContainerHost
 
 internal class LoginViewModel(
     private val authRepository: AuthRepository,
-    private val snackbarManager: SnackbarManager,
-) : ContainerHost<LoginState, LoginEffect>, ViewModel() {
+    override val snackbarManager: SnackbarManager,
+) : ContainerHost<LoginState, LoginEffect>, ViewModel(), ResultExceptionHandler {
     override val container = container<LoginState, LoginEffect>(LoginState())
 
     fun onEvent(event: LoginEvent) {
@@ -34,10 +35,7 @@ internal class LoginViewModel(
                 result.onSuccess {
                     snackbarManager.sendMessage(AuthStringResources.PASSWORD_CHANGED)
                     postSideEffect(LoginEffect.SuccessPasswordReset)
-                }.onFailure {
-                    val exceptionMessage = result.exceptionOrNull()?.message
-                    snackbarManager.sendMessage(exceptionMessage)
-                }
+                }.handleException()
                 reduce { state.copy(codeErrorText = null) }
             } ?: run {
                 reduce { state.copy(codeErrorText = AuthStringResources.USE_DIGITS) }
@@ -51,10 +49,7 @@ internal class LoginViewModel(
         result.onSuccess {
             snackbarManager.sendMessage(AuthStringResources.SUCCESS_LOGIN)
             postSideEffect(LoginEffect.ShowSuccessLogin)
-        }.onFailure {
-            val exceptionMessage = it.message
-            snackbarManager.sendMessage(exceptionMessage)
-        }
+        }.handleException()
 
         reduce { state.copy(isLoading = false) }
     }
@@ -64,10 +59,7 @@ internal class LoginViewModel(
 
         result.onSuccess {
             snackbarManager.sendMessage("Код отправлен")
-        }.onFailure {
-            val exceptionMessage = result.exceptionOrNull()?.message
-            snackbarManager.sendMessage(exceptionMessage)
-        }
+        }.handleException()
     }
 }
 

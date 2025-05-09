@@ -3,12 +3,12 @@ package com.example.feature.voting.ui.manage_poll_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import com.example.common.SnackbarManager
+import com.example.common.handleException
 import com.example.feature.voting.data.repository.PollRepository
+import com.example.feature.voting.domain.PollMapper
 import com.example.feature.voting.domain.models.Participant
 import com.example.feature.voting.utils.formatDate
 import com.example.feature.voting.utils.formatTime
-import com.example.feature.voting.utils.toPoll
-import com.example.feature.voting.utils.toState
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -20,20 +20,26 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
 internal class ManagePollViewModel(
+    pollId: Int?,
     private val pollRepository: PollRepository,
     private val snackbarManager: SnackbarManager,
+    private val pollMapper: PollMapper,
 ) : ContainerHost<ManagePollState, ManagePollSideEffect>, ViewModel() {
     override val container: Container<ManagePollState, ManagePollSideEffect> = container(ManagePollState())
+
+    init {
+        pollId?.let {
+            setPollId(it)
+        }
+    }
 
     private fun loadPoll(pollId: Int) = intent {
         val result = pollRepository.getPoll(pollId)
         result.onSuccess { poll ->
             reduce {
-                poll.toState()
+                pollMapper.mapToPollState(poll)
             }
-        }.onFailure {
-            snackbarManager.sendMessage(it.message)
-        }
+        }.handleException(snackbarManager)
     }
 
     fun saveChanges() = intent {
@@ -66,7 +72,7 @@ internal class ManagePollViewModel(
             return@intent
         }
 
-        val poll = state.toPoll()
+        val poll = pollMapper.mapToPoll(state)
         val result = if (state.pollId <= 0) {
             pollRepository.createPoll(poll)
         } else {
@@ -75,9 +81,7 @@ internal class ManagePollViewModel(
 
         result.onSuccess {
             postSideEffect(ManagePollSideEffect.Saved)
-        }.onFailure {
-            snackbarManager.sendMessage(it.message)
-        }
+        }.handleException(snackbarManager)
         reduce { state.copy(isSaving = false) }
     }
 
@@ -88,7 +92,7 @@ internal class ManagePollViewModel(
                     isStarted = true,
                 )
             }
-        }.onFailure { snackbarManager.sendMessage(it.message) }
+        }.handleException(snackbarManager)
     }
 
     fun regenerateLink() = intent {
@@ -99,10 +103,13 @@ internal class ManagePollViewModel(
             .onSuccess { newLink ->
                 reduce { state.copy(link = newLink, isRegeneratingLink = false) }
             }
-            .onFailure { 
-                snackbarManager.sendMessage(it.message ?: "Ошибка при обновлении ссылки")
+            .handleException(snackbarManager, "Ошибка при обновлении ссылки") {
                 reduce { state.copy(isRegeneratingLink = false) }
             }
+    }
+
+    fun sendMessage(message: String) = intent {
+        snackbarManager.sendMessage(message)
     }
 
     fun deletePoll() = intent {
