@@ -2,6 +2,7 @@ package org.example.votiqua.di
 
 import com.example.common.di.commonModule
 import com.example.feature.auth.authModule
+import com.example.feature.auth.recomModule
 import com.example.feature.profile.profileModule
 import com.example.feature.voting.data.platformModule
 import com.example.feature.voting.votingModule
@@ -10,7 +11,6 @@ import com.example.votiqua.datastore.datastoreModule
 import com.example.votiqua.network.di.networkModule
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import org.example.votiqua.data.dataModule
 import org.example.votiqua.ui.uiModule
 import org.koin.core.Koin
 import org.koin.core.context.startKoin
@@ -22,7 +22,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
         appDeclaration()
         modules(
             commonModule(),
-            dataModule(),
             uiModule(),
             platformModule(),
             networkModule(),
@@ -31,6 +30,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             authModule(),
             profileModule(),
             votingModule(),
+            recomModule(),
         )
     }
 

@@ -1,4 +1,4 @@
-package org.example.votiqua.domain.model.search
+package com.example.feature.auth.domain
 
 data class QueryRecommendModel(
     val query: String,

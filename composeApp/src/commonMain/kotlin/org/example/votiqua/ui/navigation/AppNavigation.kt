@@ -13,20 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.example.common.SnackbarManager
 import com.example.feature.auth.navigation.AuthNavigator
+import com.example.feature.auth.navigation.RecomNavigator
 import com.example.feature.profile.api.navigation.ProfileNavigator
 import com.example.feature.voting.navigation.VotingNavigator
-import com.example.votiqua.core.ui_common.navigation.HomeRoute
-import com.example.votiqua.core.ui_common.navigation.SearchScreenRoute
 import com.example.votiqua.core.ui_common.navigation.SplashRoute
 import kotlinx.coroutines.flow.collectLatest
-import org.example.votiqua.ui.main_screen.HomeScreen
-import org.example.votiqua.ui.search_screen.SearchScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 import votiqua.core.ui_common.generated.resources.Res
 import votiqua.core.ui_common.generated.resources.basic_error
 import com.example.common.SnackbarDuration as MySnackbarDuration
@@ -36,6 +31,7 @@ fun AppNavigation(navController: NavHostController) {
     val authNavigator: AuthNavigator = koinInject<AuthNavigator>()
     val profileNavigator: ProfileNavigator = koinInject<ProfileNavigator>()
     val votingNavigator: VotingNavigator = koinInject<VotingNavigator>()
+    val recomNavigator: RecomNavigator = koinInject<RecomNavigator>()
     val snackbarManager: SnackbarManager = koinInject<SnackbarManager>()
 
     val basicErrorText = stringResource(Res.string.basic_error)
@@ -71,19 +67,7 @@ fun AppNavigation(navController: NavHostController) {
             authNavigator.registerNavigation(this, navController)
             profileNavigator.registerNavigation(this, navController)
             votingNavigator.registerNavigation(this, navController)
-
-            composable<SearchScreenRoute> {
-                SearchScreen(
-                    navController = navController,
-                    viewModel = koinViewModel(),
-                )
-            }
-
-            composable<HomeRoute> {
-                HomeScreen(
-                    navController = navController,
-                )
-            }
+            recomNavigator.registerNavigation(this, navController)
         }
     }
 }

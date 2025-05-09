@@ -1,4 +1,4 @@
-package org.example.votiqua.ui.main_screen
+package com.example.feature.auth.ui.home_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,57 +23,40 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.feature.auth.ui.common.AppSearchBar
 import com.example.feature.voting.domain.models.PollCardState
 import com.example.feature.voting.ui.PollCard
+import com.example.orbit_mvi.compose.collectAsState
 import com.example.votiqua.core.ui_common.constants.AppPaddings
 import com.example.votiqua.core.ui_common.constants.Dimens
-import org.example.votiqua.ui.common.AppSearchBar
-
-val mockPolls = listOf(
-    PollCardState(
-        "Открытие Голосование",
-        "2023-12-31",
-        100,
-        "Открыто",
-        "Голосование в честь открытия",
-        "Праздники",
-        "2023-09-01",
-        isFavorite = false,
-    ),
-)
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
-    val notifications = listOf("Новое голосование доступно", "Ваше голосование завершено")
-    val activePolls = listOf(
-        PollCardState("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01", false),
-        PollCardState("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01", false),
-    )
-    val myPolls = listOf(
-        PollCardState("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год", "Праздники", "2023-09-01", false),
-        PollCardState("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01", false)
-    )
+    val state by viewModel.collectAsState()
 
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
         AppSearchBar(true, navController = navController)
-        NotificationBlock(notifications)
-        PollsBlock("Открытые голосования", activePolls, navController, isHorizontal = true)
-        PollsBlock("Недавно открытые", myPolls, navController)
+        MessagesBlock(state.messages)
+        PollsBlock("Новые голосования", state.newPolls, navController, isHorizontal = true)
+        PollsBlock("Популярные голосования", state.popularPolls, navController)
     }
 }
 
 @Composable
-fun NotificationBlock(notifications: List<String>) {
+fun MessagesBlock(notifications: List<String>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,7 +76,7 @@ fun NotificationBlock(notifications: List<String>) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Уведомления",
+                    "Новости",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Icon(

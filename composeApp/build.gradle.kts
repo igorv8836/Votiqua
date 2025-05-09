@@ -77,6 +77,8 @@ kotlin {
             implementation(projects.feature.profileImpl)
             implementation(projects.feature.votingApi)
             implementation(projects.feature.votingImpl)
+            implementation(projects.feature.recomApi)
+            implementation(projects.feature.recomImpl)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

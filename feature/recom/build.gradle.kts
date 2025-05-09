@@ -11,6 +11,12 @@ kotlin {
             implementation(projects.core.network)
             implementation(projects.core.datastore)
             implementation(projects.shared)
+            implementation(projects.orbitMvi)
+            implementation(projects.feature.recomApi)
+            implementation(projects.feature.votingApi)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

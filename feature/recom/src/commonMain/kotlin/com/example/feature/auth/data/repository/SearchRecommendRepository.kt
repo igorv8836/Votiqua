@@ -1,10 +1,10 @@
-package org.example.votiqua.data.repository
+package com.example.feature.auth.data.repository
 
+import com.example.feature.auth.data.network.SearchRecommendRemoteDataSource
+import com.example.feature.auth.domain.QueryRecommendModel
+import com.example.feature.auth.domain.QueryType
 import com.example.votiqua.datastore.search.SearchDataStore
 import kotlinx.coroutines.flow.first
-import org.example.votiqua.data.network.SearchRecommendRemoteDataSource
-import org.example.votiqua.domain.model.search.QueryRecommendModel
-import org.example.votiqua.domain.model.search.QueryType
 import org.example.votiqua.models.search.PollSearchResponse
 
 class SearchRecommendRepository(

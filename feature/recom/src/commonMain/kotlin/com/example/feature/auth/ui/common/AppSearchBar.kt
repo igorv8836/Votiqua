@@ -1,4 +1,4 @@
-package org.example.votiqua.ui.common
+package com.example.feature.auth.ui.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -38,11 +38,11 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.example.feature.auth.domain.QueryRecommendModel
+import com.example.feature.auth.domain.QueryType
+import com.example.feature.auth.ui.search_screen.SearchEvent
 import com.example.votiqua.core.ui_common.constants.AppPaddings
 import com.example.votiqua.core.ui_common.navigation.navigateToSearch
-import org.example.votiqua.domain.model.search.QueryRecommendModel
-import org.example.votiqua.domain.model.search.QueryType
-import org.example.votiqua.ui.search_screen.SearchEvent
 import org.jetbrains.compose.resources.stringResource
 import votiqua.core.ui_common.generated.resources.Res
 import votiqua.core.ui_common.generated.resources.back_or_search

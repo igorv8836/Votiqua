@@ -1,19 +1,18 @@
-package org.example.votiqua.ui.search_screen
+package com.example.feature.auth.ui.search_screen
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.feature.auth.data.repository.SearchRecommendRepository
+import com.example.feature.auth.domain.QueryRecommendModel
+import com.example.feature.auth.ui.search_screen.SearchState.Error
+import com.example.feature.auth.ui.search_screen.SearchState.Loading
+import com.example.feature.auth.ui.search_screen.SearchState.Success
 import com.example.feature.voting.domain.models.PollCardState
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.votiqua.data.repository.SearchRecommendRepository
-import org.example.votiqua.domain.model.search.QueryRecommendModel
-import org.example.votiqua.ui.main_screen.mockPolls
-import org.example.votiqua.ui.search_screen.SearchState.Error
-import org.example.votiqua.ui.search_screen.SearchState.Loading
-import org.example.votiqua.ui.search_screen.SearchState.Success
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 
@@ -99,12 +98,12 @@ class SearchViewModel(
         reduce { Loading(query = query) }
         delay(2000)
         try {
-            val filteredPolls = mockPolls.filter { it.title.contains(query, ignoreCase = true) }
+//            val filteredPolls = mockPolls.filter { it.title.contains(query, ignoreCase = true) }
             searchRecommendRepository.getPolls(query)
             reduce {
                 Success(
                     query = query,
-                    results = filteredPolls,
+                    results = emptyList(),
                     searchRecommends = emptyList()
                 )
             }
