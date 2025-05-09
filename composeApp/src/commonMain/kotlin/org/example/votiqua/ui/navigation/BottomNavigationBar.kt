@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,7 +21,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.votiqua.core.ui_common.navigation.HomeRoute
 import com.example.votiqua.core.ui_common.navigation.LoginRoute
 import com.example.votiqua.core.ui_common.navigation.MyPollsRoute
-import com.example.votiqua.core.ui_common.navigation.NotificationsRoute
 import com.example.votiqua.core.ui_common.navigation.PollCreateRoute
 import com.example.votiqua.core.ui_common.navigation.ProfileRoute
 import com.example.votiqua.core.ui_common.navigation.RegisterRoute
@@ -34,7 +32,6 @@ val items = listOf(
     BottomNavItem("Main", Icons.Default.Home, HomeRoute),
     BottomNavItem("Votes", Icons.Default.List, MyPollsRoute),
     BottomNavItem("Create", Icons.Default.Add, PollCreateRoute),
-    BottomNavItem("Notifications", Icons.Default.Notifications, NotificationsRoute),
     BottomNavItem("Profile", Icons.Default.Person, ProfileRoute)
 )
 

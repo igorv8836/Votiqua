@@ -19,12 +19,10 @@ import com.example.feature.auth.navigation.AuthNavigator
 import com.example.feature.profile.api.navigation.ProfileNavigator
 import com.example.feature.voting.navigation.VotingNavigator
 import com.example.votiqua.core.ui_common.navigation.HomeRoute
-import com.example.votiqua.core.ui_common.navigation.NotificationsRoute
 import com.example.votiqua.core.ui_common.navigation.SearchScreenRoute
 import com.example.votiqua.core.ui_common.navigation.SplashRoute
 import kotlinx.coroutines.flow.collectLatest
 import org.example.votiqua.ui.main_screen.HomeScreen
-import org.example.votiqua.ui.notifications_screen.NotificationsScreen
 import org.example.votiqua.ui.search_screen.SearchScreen
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -85,10 +83,6 @@ fun AppNavigation(navController: NavHostController) {
                 HomeScreen(
                     navController = navController,
                 )
-            }
-
-            composable<NotificationsRoute> {
-                NotificationsScreen()
             }
         }
     }
