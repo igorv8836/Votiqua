@@ -9,6 +9,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.example.votiqua.models.common.BaseResponse
+import org.example.votiqua.models.poll.PollsResponse
 import org.example.votiqua.server.common.utils.handleBadRequest
 import org.example.votiqua.server.common.utils.requireAuthorization
 import org.example.votiqua.server.feature.voting.domain.usecase.FavoritePollUseCase
@@ -36,7 +37,7 @@ fun Route.favoritePollRoute() {
                 val userId = call.requireAuthorization()
 
                 val polls = favoritePollUseCase.getPolls(userId)
-                call.respond(HttpStatusCode.OK, mapOf("count" to polls.size, "results" to polls))
+                call.respond(HttpStatusCode.OK, PollsResponse(polls = polls))
             }
         }
     }

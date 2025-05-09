@@ -4,7 +4,10 @@ import com.example.feature.voting.data.PollMemberRemoteDataSource
 import com.example.feature.voting.data.PollRemoteDataSource
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.data.repository.PollRepositoryImpl
+import com.example.feature.voting.domain.PollCardMapper
+import com.example.feature.voting.domain.PollCardMapperImpl
 import com.example.feature.voting.domain.PollMapper
+import com.example.feature.voting.domain.PollStatusMapper
 import com.example.feature.voting.navigation.VotingNavigator
 import com.example.feature.voting.navigation.VotingNavigatorImpl
 import com.example.feature.voting.ui.manage_poll_screen.ManagePollViewModel
@@ -20,9 +23,11 @@ fun votingModule() = module {
     single<PollRemoteDataSource> { PollRemoteDataSource(get()) }
     single<PollMemberRemoteDataSource> { PollMemberRemoteDataSource(get()) }
 
-    factory<PollMapper> { PollMapper() }
+    factory<PollMapper> { PollMapper(get()) }
+    factory<PollCardMapper> { PollCardMapperImpl(get()) }
+    factory<PollStatusMapper> { PollStatusMapper() }
 
     viewModel { (pollId: Int?) -> ManagePollViewModel(pollId, get(), get(), get()) }
     viewModel { (pollId: Int) -> PollViewerViewModel(pollId, get(), get(), get()) }
-    viewModel { PollListViewModel(get(), get()) }
+    viewModel { PollListViewModel(get(), get(), get()) }
 }

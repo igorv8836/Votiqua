@@ -6,7 +6,7 @@ import org.example.votiqua.server.feature.voting.data.repository.PollRepository
 
 class GetPollUseCase(
     private val pollRepository: PollRepository,
-    private val favoritePollUseCase: FavoritePollUseCase,
+    private val favoritePollUseCase: Lazy<FavoritePollUseCase>,
 ) {
     suspend fun get(
         pollId: Int,
@@ -15,16 +15,7 @@ class GetPollUseCase(
         val poll = getPollOrException(pollId)
 
         return if (userId != null) {
-            val isFavorite = favoritePollUseCase.isFavorite(userId, pollId)
-            poll.copy(
-                isFavorite = isFavorite,
-                context = poll.context.copy(
-                    isAdmin = userId == poll.authorId,
-                    selectedOption = poll.members.firstOrNull { it.user.id == userId }?.optionId,
-                    totalVotes = poll.members.count { it.voted },
-                    memberCount = poll.members.size,
-                ),
-            )
+            fillContext(poll, userId)
         } else {
             poll
         }
@@ -35,15 +26,32 @@ class GetPollUseCase(
     }
 
     suspend fun getUserPolls(userId: Int, limit: Int = 10, offset: Int = 0): List<Poll> {
-        return pollRepository.getUserPolls(userId, limit, offset)
+        return pollRepository.getUserPolls(userId, limit, offset).map {
+            fillContext(it, userId)
+        }
     }
 
     suspend fun getParticipatedPolls(userId: Int, limit: Int = 10, offset: Int = 0): List<Poll> {
-        return pollRepository.getParticipatedPolls(userId, limit, offset)
+        return pollRepository.getParticipatedPolls(userId, limit, offset).map {
+            fillContext(it, userId)
+        }
     }
 
     suspend fun getPollOrException(pollId: Int): Poll {
         return pollRepository.getPollById(pollId)
             ?: throw HTTPConflictException("Poll not found")
+    }
+
+    suspend fun fillContext(poll: Poll, userId: Int): Poll {
+        val isFavorite = favoritePollUseCase.value.isFavorite(userId, poll.id)
+        return poll.copy(
+            context = poll.context.copy(
+                isAdmin = userId == poll.authorId,
+                selectedOption = poll.members.firstOrNull { it.user.id == userId }?.optionId,
+                totalVotes = poll.members.count { it.voted },
+                memberCount = poll.members.size,
+                isFavorite = isFavorite,
+            ),
+        )
     }
 }

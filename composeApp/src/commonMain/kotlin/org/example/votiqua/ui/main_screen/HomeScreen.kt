@@ -27,35 +27,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.feature.voting.domain.models.UiPoll
+import com.example.feature.voting.domain.models.PollCardState
 import com.example.feature.voting.ui.PollCard
 import com.example.votiqua.core.ui_common.constants.AppPaddings
 import com.example.votiqua.core.ui_common.constants.Dimens
 import org.example.votiqua.ui.common.AppSearchBar
 
 val mockPolls = listOf(
-    UiPoll(
+    PollCardState(
         "Открытие Голосование",
         "2023-12-31",
         100,
         "Открыто",
         "Голосование в честь открытия",
         "Праздники",
-        "2023-09-01"
+        "2023-09-01",
+        isFavorite = false,
     ),
-    UiPoll("Выбор Подарка", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-    UiPoll("Пикник Место", "2023-10-15", 75, "Открыто", "Выбор места для пикника", "Отдых", "2023-08-01"),
-    UiPoll("Тема Вечеринки", "2023-09-25", 30, "Закрыто", "Выбор темы вечеринки", "Развлечения", "2023-07-01"),
-    UiPoll("Новый Логотип", "2023-08-20", 120, "Открыто", "Выбор нового логотипа", "Работа", "2023-06-01"),
-    UiPoll(
-        "Благотворительная Акция",
-        "2023-07-10",
-        200,
-        "Закрыто",
-        "Выбор благотворительной акции",
-        "Благотворительность",
-        "2023-05-01"
-    )
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,12 +53,12 @@ fun HomeScreen(
 ) {
     val notifications = listOf("Новое голосование доступно", "Ваше голосование завершено")
     val activePolls = listOf(
-        UiPoll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
+        PollCardState("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01", false),
+        PollCardState("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01", false),
     )
     val myPolls = listOf(
-        UiPoll("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год", "Праздники", "2023-09-01"),
-        UiPoll("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01")
+        PollCardState("Мое голосование 1", "2023-10-15", 30, "Открыто", "Новый год", "Праздники", "2023-09-01", false),
+        PollCardState("Мое голосование 2", "2023-09-20", 20, "Закрыто", "ПОдарок", "Подарки", "2023-09-01", false)
     )
 
     Column(
@@ -152,7 +140,7 @@ fun NotificationBlock(notifications: List<String>) {
 @Composable
 fun PollsBlock(
     title: String,
-    polls: List<UiPoll>,
+    polls: List<PollCardState>,
     navController: NavController,
     isHorizontal: Boolean = false
 ) {
@@ -174,13 +162,13 @@ fun PollsBlock(
                         poll = poll,
                         navController = navController,
                         modifier = Modifier.width(240.dp)
-                    )
+                    ) { }
                 }
             }
         } else {
             Column(modifier = Modifier.padding(horizontal = AppPaddings.HORIZONTAL_PADDING)) {
                 polls.forEach { poll ->
-                    PollCard(poll = poll, navController = navController)
+                    PollCard(poll = poll, navController = navController) {  }
                 }
             }
         }

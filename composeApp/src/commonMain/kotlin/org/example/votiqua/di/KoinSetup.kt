@@ -31,9 +31,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             authModule(),
             profileModule(),
             votingModule(),
-            pollModule()
         )
-
     }
 
 object KoinFactory {

@@ -62,7 +62,9 @@ internal fun PollListScreen(
                             item { PlaceholderScreen("Голосований пока нет") }
                         } else {
                             items(state.myPolls) { it1 ->
-                                PollCard(it1, navController = navController)
+                                PollCard(it1, navController = navController) {
+                                    viewModel.onClickFavourite(it1.id)
+                                }
                             }
                         }
                     }
@@ -74,7 +76,9 @@ internal fun PollListScreen(
                             item { PlaceholderScreen("Голосований пока нет") }
                         } else {
                             items(state.otherPolls) { it1 ->
-                                PollCard(it1, navController = navController)
+                                PollCard(it1, navController = navController) {
+                                    viewModel.onClickFavourite(it1.id)
+                                }
                             }
                         }
                     }

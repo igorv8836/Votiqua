@@ -1,10 +1,10 @@
 package com.example.feature.voting.ui.poll_list_screen
 
-import com.example.feature.voting.domain.models.UiPoll
+import com.example.feature.voting.domain.models.PollCardState
 
 data class PollListState(
-    val myPolls: List<UiPoll> = emptyList(),
-    val otherPolls: List<UiPoll> = emptyList(),
+    val myPolls: List<PollCardState> = emptyList(),
+    val otherPolls: List<PollCardState> = emptyList(),
     val myPollsIsLoading: Boolean = false,
     val otherPollsIsLoading: Boolean = false,
 )

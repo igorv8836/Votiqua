@@ -1,4 +1,4 @@
-package com.example.feature.profile.ui.profile_screen
+package com.example.feature.profile.ui.favorites_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,26 +17,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.feature.voting.domain.models.UiPoll
 import com.example.feature.voting.ui.PollCard
+import com.example.orbit_mvi.compose.collectAsState
 import com.example.votiqua.core.ui_common.constants.Dimens
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(
+internal fun FavoritesScreen(
     navController: NavController,
+    viewModel: FavoritePollsViewModel = koinViewModel(),
 ) {
-    val favoritePolls: List<UiPoll> = listOf(
-        UiPoll("Голосование 1", "2023-12-31", 100, "Открыто", "Голосование в честь открытия", "Праздники", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-        UiPoll("Голосование 2", "2023-11-30", 50, "Закрыто", "Выбор подарка на ДР", "Подарки", "2023-09-01"),
-    )
+    val state by viewModel.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -52,11 +49,9 @@ fun FavoritesScreen(
             )
         }
     ) { innerPadding ->
-        if (favoritePolls.isEmpty()) {
+        if (state.polls.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -75,12 +70,13 @@ fun FavoritesScreen(
                 verticalArrangement = Arrangement.spacedBy(Dimens.small),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(favoritePolls) { poll ->
+                items(state.polls) { poll ->
                     PollCard(
                         poll = poll,
                         navController = navController,
-                        isLiked = true,
-                    )
+                    ) {
+                        viewModel.removeFromFavorites(poll.id)
+                    }
                 }
             }
         }

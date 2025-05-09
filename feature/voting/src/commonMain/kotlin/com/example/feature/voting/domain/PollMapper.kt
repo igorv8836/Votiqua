@@ -6,7 +6,6 @@ import com.example.feature.voting.ui.poll_viewer_screen.OptionAndCounts
 import com.example.feature.voting.ui.poll_viewer_screen.PollViewerState
 import com.example.feature.voting.utils.formatDate
 import com.example.feature.voting.utils.formatTime
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -17,7 +16,9 @@ import org.example.votiqua.models.poll.Poll
 import org.example.votiqua.models.poll.PollOption
 import org.example.votiqua.models.poll.Tag
 
-class PollMapper {
+class PollMapper(
+    private val pollStatusMapper: PollStatusMapper,
+) {
 
     fun mapToPoll(
         pollState: ManagePollState,
@@ -57,7 +58,6 @@ class PollMapper {
                 )
             },
             authorId = 0,
-            isFavorite = false,
             members = emptyList(),
             link = pollState.link,
             isStarted = pollState.isStarted,
@@ -89,7 +89,7 @@ class PollMapper {
             anonymous = poll.isAnonymous,
             isOpen = poll.isOpen,
             link = poll.link,
-            votesExist = false, // TODO
+            votesExist = poll.context.totalVotes != 0,
             isSaving = false,
             isDeleting = false,
             multipleChoice = poll.isMultiple,
@@ -163,22 +163,12 @@ class PollMapper {
 
         val startTime = poll.startTime
         val endTime = poll.endTime
-        val now = Clock.System.now().epochSeconds
 
-        val statusText = when {
-            !poll.isStarted -> "Не запущено"
-            endTime != null && endTime < now -> "Завершено"
-            startTime != null && endTime != null -> {
-                if (startTime < now && endTime > now) {
-                    "Активно"
-                } else {
-                    "Ожидание"
-                }
-            }
-            else -> {
-                "Не запущено"
-            }
-        }
+        val statusText = pollStatusMapper.map(
+            isStarted = poll.isStarted,
+            startTime = poll.startTime,
+            endTime = poll.endTime,
+        )
 
         val votingAvailable = statusText == "Активно"
 

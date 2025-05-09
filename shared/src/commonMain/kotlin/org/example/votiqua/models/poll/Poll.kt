@@ -16,7 +16,6 @@ data class Poll(
     val options: List<PollOption> = emptyList(),
     val tags: List<Tag> = emptyList(),
     val authorId: Int = 0,
-    val isFavorite: Boolean = false,
     val members: List<PollParticipant> = emptyList(),
     val isStarted: Boolean = false,
     val link: String? = null,
@@ -26,6 +25,7 @@ data class Poll(
 
 @Serializable
 data class PollContext(
+    val isFavorite: Boolean = false,
     val isAdmin: Boolean = false,
     val selectedOption: Int? = null,
     val totalVotes: Int = 0,

@@ -79,7 +79,7 @@ class PollRemoteDataSource(
         }
     }
 
-    suspend fun getFavorites(): Result<List<Poll>> {
+    suspend fun getFavorites(): Result<PollsResponse> {
         return safeApiCall {
             httpClient.get("favorites")
         }

@@ -22,6 +22,6 @@ fun votingModule() = module {
     single { PollManageUseCase(get(), get()) }
     single { FavoritePollUseCase(get(), get()) }
     single { PollUpdateUseCase(get(), get(), get()) }
-    single { GetPollUseCase(get(), get()) }
+    single { GetPollUseCase(get(), lazy { get() }) }
     single { PollMemberUseCase(get(), get(), get()) }
 }

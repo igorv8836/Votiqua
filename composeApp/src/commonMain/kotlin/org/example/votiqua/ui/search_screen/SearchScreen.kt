@@ -113,7 +113,7 @@ fun SearchScreen(
                                 )
                             }
                             items(successState.results) { poll ->
-                                PollCard(poll = poll, navController = navController)
+                                PollCard(poll = poll, navController = navController) {  }
                             }
                         }
                     }

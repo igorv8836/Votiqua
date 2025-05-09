@@ -24,9 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,18 +31,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.feature.voting.data.shareCard
-import com.example.feature.voting.domain.models.UiPoll
+import com.example.feature.voting.domain.models.PollCardState
 import com.example.votiqua.core.ui_common.navigation.navigateToPollViewer
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PollCard(
-    poll: UiPoll,
+    poll: PollCardState,
     navController: NavController,
     modifier: Modifier = Modifier,
-    isLiked: Boolean = false,
+    onClickFavorite: () -> Unit,
 ) {
-    var isLiked by mutableStateOf(isLiked)
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -113,13 +109,13 @@ fun PollCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { isLiked = !isLiked },
+                    onClick = onClickFavorite,
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
                         Icons.Filled.Favorite,
                         contentDescription = "Понравилось",
-                        tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.primary
+                        tint = if (poll.isFavorite) Color.Red else MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(

@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.feature.profile.api.navigation.ProfileNavigator
-import com.example.feature.profile.ui.profile_screen.FavoritesScreen
+import com.example.feature.profile.ui.favorites_screen.FavoritesScreen
 import com.example.feature.profile.ui.profile_screen.ProfileScreen
 import com.example.votiqua.core.ui_common.navigation.FavouriteScreenRoute
 import com.example.votiqua.core.ui_common.navigation.ProfileRoute

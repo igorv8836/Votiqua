@@ -64,7 +64,7 @@ class PollRepositoryImpl(
     }
 
     override suspend fun getFavorites(): Result<List<Poll>> {
-        return remoteDataSource.getFavorites()
+        return remoteDataSource.getFavorites().map { it.polls }
     }
 
     override suspend fun deletePoll(pollId: Int): Result<Unit> {
