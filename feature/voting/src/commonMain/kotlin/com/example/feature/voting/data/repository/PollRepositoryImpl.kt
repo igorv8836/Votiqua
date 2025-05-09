@@ -2,6 +2,7 @@ package com.example.feature.voting.data.repository
 
 import com.example.common.SnackbarManager
 import com.example.common.handleException
+import com.example.feature.voting.data.PollMemberRemoteDataSource
 import com.example.feature.voting.data.PollRemoteDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,6 +10,7 @@ import org.example.votiqua.models.poll.Poll
 
 class PollRepositoryImpl(
     private val remoteDataSource: PollRemoteDataSource,
+    private val pollMemberRemoteDataSource: PollMemberRemoteDataSource,
     private val snackbarManager: SnackbarManager,
 ) : PollRepository {
     private val _myPolls = MutableStateFlow<List<Poll>>(emptyList())
@@ -56,10 +58,6 @@ class PollRepositoryImpl(
         return remoteDataSource.regenerateLink(pollId).map { it.link }
     }
 
-    override suspend fun vote(pollId: Int, optionId: Int): Result<Poll> {
-        return remoteDataSource.vote(pollId, optionId)
-    }
-
     override suspend fun toggleFavorite(pollId: Int): Result<Boolean> {
         return remoteDataSource.toggleFavorite(pollId)
             .map { true }
@@ -79,5 +77,17 @@ class PollRepositoryImpl(
         return remoteDataSource.startPoll(pollId).also {
             updatePolls()
         }
+    }
+
+    override suspend fun vote(pollId: Int, optionId: Int): Result<Unit> {
+        return pollMemberRemoteDataSource.vote(pollId, optionId)
+    }
+
+    override suspend fun leaveFromPoll(pollId: Int): Result<Unit> {
+        return pollMemberRemoteDataSource.leavePoll(pollId)
+    }
+
+    override suspend fun joinByLink(link: String): Result<Poll> {
+        return pollMemberRemoteDataSource.joinByLink(link)
     }
 }

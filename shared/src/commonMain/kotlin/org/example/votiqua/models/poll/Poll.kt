@@ -1,7 +1,6 @@
 package org.example.votiqua.models.poll
 
 import kotlinx.serialization.Serializable
-import org.example.votiqua.models.auth.SimpleUser
 
 @Serializable
 data class Poll(
@@ -16,10 +15,19 @@ data class Poll(
     val endTime: Long? = null,
     val options: List<PollOption> = emptyList(),
     val tags: List<Tag> = emptyList(),
-    val totalVotes: Int = 0,
     val authorId: Int = 0,
     val isFavorite: Boolean = false,
-    val members: List<SimpleUser> = emptyList(),
+    val members: List<PollParticipant> = emptyList(),
     val isStarted: Boolean = false,
     val link: String? = null,
-) 
+
+    val context: PollContext = PollContext(),
+)
+
+@Serializable
+data class PollContext(
+    val isAdmin: Boolean = false,
+    val selectedOption: Int? = null,
+    val totalVotes: Int = 0,
+    val memberCount: Int = 0,
+)

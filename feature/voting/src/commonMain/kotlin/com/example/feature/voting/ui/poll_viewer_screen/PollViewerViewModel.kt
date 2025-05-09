@@ -1,6 +1,8 @@
 package com.example.feature.voting.ui.poll_viewer_screen
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
+import com.example.common.ResultExceptionHandler
 import com.example.common.SnackbarManager
 import com.example.common.handleException
 import com.example.feature.voting.data.repository.PollRepository
@@ -14,9 +16,8 @@ internal class PollViewerViewModel(
     pollId: Int,
     private val pollRepository: PollRepository,
     private val pollMapper: PollMapper,
-    private val snackbarManager: SnackbarManager,
-) : ContainerHost<PollViewerState, PollViewerSideEffect>, ViewModel() {
-
+    override val snackbarManager: SnackbarManager,
+) : ContainerHost<PollViewerState, PollViewerSideEffect>, ViewModel(), ResultExceptionHandler {
     override val container: Container<PollViewerState, PollViewerSideEffect> = container(PollViewerState())
 
     init {
@@ -34,20 +35,49 @@ internal class PollViewerViewModel(
     }
 
     fun onEditClicked() = intent {
-        postSideEffect(PollViewerSideEffect.EditRequested)
+        postSideEffect(PollViewerSideEffect.EditRequested(state.pollId))
+    }
+
+    fun selectOption(optionId: Int) = intent {
+        val res = pollRepository.vote(state.pollId, optionId)
+
+        res.onSuccess {
+            reduce {
+                state.copy(
+                    selectedOption = optionId,
+                )
+            }
+        }.handleException()
     }
 }
 
+@Stable
 data class PollViewerState(
     val pollId: Int = -1,
     val title: String = "",
+    val statusText: String = "",
     val description: String = "",
-    val options: List<String> = emptyList(),
+    val options: List<OptionAndCounts> = emptyList(),
     val participants: List<Participant> = emptyList(),
     val anonymous: Boolean = false,
-    val isAdmin: Boolean = false
+    val isAdmin: Boolean = false,
+
+    val selectedOption: Int? = null,
+    val votingAvailable: Boolean = false,
+    val voteCount: Int = 0,
+    val memberCount: Int = 0,
+    val votingPeriod: String? = null,
+)
+
+data class OptionAndCounts(
+    val id: Int,
+    val index: Int,
+    val option: String,
+    val count: Int,
 )
 
 sealed interface PollViewerSideEffect {
-    object EditRequested : PollViewerSideEffect
+    data class EditRequested(
+        val pollId: Int,
+    ) : PollViewerSideEffect
 }

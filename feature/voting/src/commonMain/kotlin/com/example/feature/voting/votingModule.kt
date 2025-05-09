@@ -1,5 +1,6 @@
 package com.example.feature.voting
 
+import com.example.feature.voting.data.PollMemberRemoteDataSource
 import com.example.feature.voting.data.PollRemoteDataSource
 import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.data.repository.PollRepositoryImpl
@@ -15,8 +16,9 @@ import org.koin.dsl.module
 fun votingModule() = module {
     single<VotingNavigator> { VotingNavigatorImpl() }
 
-    single<PollRepository> { PollRepositoryImpl(get(), get()) }
+    single<PollRepository> { PollRepositoryImpl(get(), get(), get()) }
     single<PollRemoteDataSource> { PollRemoteDataSource(get()) }
+    single<PollMemberRemoteDataSource> { PollMemberRemoteDataSource(get()) }
 
     factory<PollMapper> { PollMapper() }
 

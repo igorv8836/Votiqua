@@ -27,7 +27,7 @@ abstract class BasePollRepository(
         )
     }
 
-    protected fun fillPollWithOptionsAndTags(poll: Poll): Poll {
+    protected fun fillPollInfo(poll: Poll): Poll {
         val tags = tagRepository.getPollTags(poll.id)
         val options = pollOptionRepository.getOptions(poll.id)
         val members = pollParticipantRepository.getPollParticipants(poll.id)
@@ -43,7 +43,7 @@ abstract class BasePollRepository(
         if (polls.isEmpty()) return emptyList()
 
         return polls.map { poll ->
-            fillPollWithOptionsAndTags(poll)
+            fillPollInfo(poll)
         }
     }
 }

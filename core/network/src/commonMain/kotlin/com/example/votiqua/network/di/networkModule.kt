@@ -89,6 +89,13 @@ private fun getReadyHttpClient(
                         refreshToken = null,
                     )
                 }
+                refreshTokens {
+                    val token = tokenDataStore.tokenFlow.first() ?: ""
+                    BearerTokens(
+                        accessToken = token,
+                        refreshToken = null,
+                    )
+                }
             }
         }
     }

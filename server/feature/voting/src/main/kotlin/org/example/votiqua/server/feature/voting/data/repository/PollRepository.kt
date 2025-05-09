@@ -29,7 +29,7 @@ class PollRepository(
             val pollRow = PollTable.select { PollTable.id eq id }.singleOrNull() ?: return@dbQuery null
             val poll = mapRowToPoll(pollRow)
 
-            return@dbQuery fillPollWithOptionsAndTags(poll)
+            return@dbQuery fillPollInfo(poll)
         }
     }
 
@@ -182,18 +182,24 @@ class PollRepository(
         }
     }
 
-    suspend fun votePoll(pollId: Int, optionId: Int, userId: Int): Boolean {
+    suspend fun votePoll(pollId: Int, optionId: Int, userId: Int) {
         return dbQuery {
-            val poll = PollTable.select { PollTable.id eq pollId }.singleOrNull() ?: return@dbQuery false
-
             VoteTable.insert {
                 it[VoteTable.pollId] = pollId
                 it[VoteTable.optionId] = optionId
                 it[VoteTable.userId] = userId
                 it[VoteTable.votedAt] = currentDateTime()
             }
+        }
+    }
 
-            true
+    suspend fun findByLink(link: String): Poll? {
+        return dbQuery {
+            if (link.isBlank()) return@dbQuery null
+            val pollRow = PollTable.select { PollTable.link eq link }.singleOrNull() ?: return@dbQuery null
+            val poll = mapRowToPoll(pollRow)
+
+            return@dbQuery fillPollInfo(poll)
         }
     }
 }

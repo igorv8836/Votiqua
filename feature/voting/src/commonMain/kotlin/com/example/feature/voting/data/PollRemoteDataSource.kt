@@ -84,12 +84,4 @@ class PollRemoteDataSource(
             httpClient.get("favorites")
         }
     }
-
-    suspend fun vote(pollId: Int, optionId: Int): Result<Poll> {
-        return safeApiCall {
-            httpClient.post("polls/$pollId/vote") {
-                parameter("optionId", optionId)
-            }
-        }
-    }
 }

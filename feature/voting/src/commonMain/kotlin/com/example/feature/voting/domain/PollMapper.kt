@@ -2,9 +2,11 @@ package com.example.feature.voting.domain
 
 import com.example.feature.voting.domain.models.Participant
 import com.example.feature.voting.ui.manage_poll_screen.ManagePollState
+import com.example.feature.voting.ui.poll_viewer_screen.OptionAndCounts
 import com.example.feature.voting.ui.poll_viewer_screen.PollViewerState
 import com.example.feature.voting.utils.formatDate
 import com.example.feature.voting.utils.formatTime
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -54,7 +56,6 @@ class PollMapper {
                     name = it,
                 )
             },
-            totalVotes = 0,
             authorId = 0,
             isFavorite = false,
             members = emptyList(),
@@ -125,11 +126,11 @@ class PollMapper {
             tags = poll.tags.map { it.name },
             participants = poll.members.map {
                 Participant(
-                    id = it.id,
-                    name = it.username,
-                    avatarUrl = it.photoUrl,
-                    voted = false,
-                    selectedOption = null,
+                    id = it.user.id,
+                    name = it.user.username,
+                    avatarUrl = it.user.photoUrl,
+                    voted = it.voted,
+                    selectedOption = it.optionText,
                 )
             },
             options = poll.options.map { it.optionText },
@@ -141,16 +142,53 @@ class PollMapper {
     ): PollViewerState {
         val options = poll.options
             .sortedBy { it.orderIndex }
-            .map { it.optionText }
+            .mapIndexed { index, item ->
+                OptionAndCounts(
+                    id = item.id,
+                    index = index,
+                    option = item.optionText,
+                    count = item.voteCount,
+                )
+            }
 
         val participants = poll.members.map {
             Participant(
-                id = it.id,
-                name = it.username,
-                avatarUrl = it.photoUrl,
-                voted = false,
-                selectedOption = null,
+                id = it.user.id,
+                name = it.user.username,
+                avatarUrl = it.user.photoUrl,
+                voted = it.voted,
+                selectedOption = it.optionText,
             )
+        }
+
+        val startTime = poll.startTime
+        val endTime = poll.endTime
+        val now = Clock.System.now().epochSeconds
+
+        val statusText = when {
+            !poll.isStarted -> "Не запущено"
+            endTime != null && endTime < now -> "Завершено"
+            startTime != null && endTime != null -> {
+                if (startTime < now && endTime > now) {
+                    "Активно"
+                } else {
+                    "Ожидание"
+                }
+            }
+            else -> {
+                "Не запущено"
+            }
+        }
+
+        val votingAvailable = statusText == "Активно"
+
+        val votingPeriod = if (startTime != null && endTime != null) {
+            val zone = TimeZone.currentSystemDefault()
+            val startDt = Instant.fromEpochSeconds(startTime).toLocalDateTime(zone)
+            val endDt = Instant.fromEpochSeconds(endTime).toLocalDateTime(zone)
+            "${formatDate(startDt)} ${formatTime(startDt)} - ${formatDate(endDt)} ${formatTime(endDt)}"
+        } else {
+            null
         }
 
         return PollViewerState(
@@ -158,9 +196,15 @@ class PollMapper {
             title = poll.question,
             description = poll.description ?: "",
             options = options,
+            statusText = statusText,
             participants = participants,
             anonymous = poll.isAnonymous,
-            isAdmin = false,
+            isAdmin = poll.context.isAdmin,
+            voteCount = poll.context.totalVotes,
+            memberCount = poll.context.memberCount,
+            votingAvailable = votingAvailable,
+            selectedOption = poll.context.selectedOption,
+            votingPeriod = votingPeriod,
         )
     }
 }

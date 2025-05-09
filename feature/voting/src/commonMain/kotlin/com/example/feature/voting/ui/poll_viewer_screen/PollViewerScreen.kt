@@ -4,12 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.LinearProgressIndicator
@@ -29,30 +26,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.feature.voting.ui.manage_poll_screen.elements.ParticipantsBlock
 import com.example.votiqua.core.ui_common.constants.Dimens
+import com.example.votiqua.core.ui_common.navigation.navigateToManagingPoll
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollViewerScreen(
+    navController: NavController,
     viewModel: PollViewerViewModel,
     onClose: () -> Unit,
-    onEdit: () -> Unit
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
-    var option by remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(viewModel) {
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
-                PollViewerSideEffect.EditRequested -> onEdit()
+                is PollViewerSideEffect.EditRequested -> navController.navigateToManagingPoll(effect.pollId)
             }
         }
     }
@@ -92,18 +87,16 @@ internal fun PollViewerScreen(
             PollViewerTopBlock(
                 title = state.title,
                 description = state.description,
-                status = "Активно",
-                totalParticipants = state.participants.size,
-                votersCount = state.participants.count { it.voted }
+                status = state.statusText,
+                totalParticipants = state.memberCount,
+                votersCount = state.voteCount,
+                periodText = state.votingPeriod,
             )
             PollOptionsViewerBlock(
-                options = state.options,
-                voteCounts = state.options.mapIndexed { index, _ -> index },
-                hasVoted = option != null,
+                state = state,
                 onOptionSelected = { index ->
-                    option = index
+                    viewModel.selectOption(index)
                 },
-                selectedOption = option
             )
             ParticipantsBlock(
                 participants = state.participants,
@@ -119,6 +112,7 @@ fun PollViewerTopBlock(
     description: String,
     status: String,
     totalParticipants: Int,
+    periodText: String?,
     votersCount: Int
 ) {
     Surface(
@@ -135,17 +129,16 @@ fun PollViewerTopBlock(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 InfoItem(
@@ -159,6 +152,13 @@ fun PollViewerTopBlock(
                 InfoItem(
                     label = "Проголосовали",
                     value = "$votersCount"
+                )
+            }
+            periodText?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }
@@ -185,49 +185,24 @@ private fun InfoItem(label: String, value: String) {
 
 @Composable
 fun PollOptionsViewerBlock(
-    options: List<String>,
-    voteCounts: List<Int>,
-    hasVoted: Boolean,
+    state: PollViewerState,
     onOptionSelected: (Int) -> Unit,
-    selectedOption: Int? = null
 ) {
-    if (hasVoted) {
-        val totalVotes = voteCounts.sumOf { it }
+    if (state.selectedOption != null) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Text(
                 text = "Варианты ответов",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp),
             )
-            Spacer(modifier = Modifier.size(12.dp))
-            options.forEachIndexed { index, option ->
-                val votes = voteCounts.getOrElse(index) { 0 }
-                val percentage = if (totalVotes > 0) votes.toFloat() / totalVotes else 0f
-                val percentageText = if (totalVotes > 0) "${(percentage * 100).toInt()}%" else "0%"
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = option,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = percentageText,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(4.dp))
-                    LinearProgressIndicator(
-                        progress = percentage,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                Spacer(modifier = Modifier.size(Dimens.medium))
+            state.options.map {
+                SelectedOption(
+                    option = it,
+                    state = state,
+                )
             }
         }
     } else {
@@ -237,31 +212,76 @@ fun PollOptionsViewerBlock(
             Text(
                 text = "Варианты ответов",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp)
             )
-            Spacer(modifier = Modifier.size(12.dp))
-            options.forEachIndexed { index, option ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onOptionSelected(index)
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    RadioButton(
-                        selected = selectedOption == index,
-                        onClick = { onOptionSelected(index) }
-                    )
-                    Spacer(modifier = Modifier.size(Dimens.small))
-                    Text(
-                        text = option,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-                Spacer(modifier = Modifier.size(Dimens.medium))
+            state.options.map {
+                UnselectedOption(
+                    state = state,
+                    option = it,
+                    onOptionSelected = { onOptionSelected(it.id) }
+                )
             }
         }
+    }
+}
+
+@Composable
+fun SelectedOption(
+    option: OptionAndCounts,
+    state: PollViewerState,
+) {
+    val votes = option.count
+    val percentage = if (state.voteCount > 0) votes.toFloat() / state.voteCount else 0f
+    val percentageText = if (state.voteCount > 0) "${(percentage * 100).toInt()}%" else "0%"
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.medium)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.tiny),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = option.option,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = percentageText,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        LinearProgressIndicator(
+            progress = percentage,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+
+@Composable
+fun UnselectedOption(
+    state: PollViewerState,
+    option: OptionAndCounts,
+    onOptionSelected: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth().padding(bottom = Dimens.medium)
+            .clickable(enabled = state.votingAvailable) {
+                onOptionSelected()
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        RadioButton(
+            enabled = false,
+            selected = false,
+            onClick = {  },
+        )
+        Text(
+            text = option.option,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }

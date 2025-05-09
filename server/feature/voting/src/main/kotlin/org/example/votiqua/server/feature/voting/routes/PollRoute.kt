@@ -1,9 +1,7 @@
 package org.example.votiqua.server.feature.voting.routes
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.authenticate
-import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
@@ -22,6 +20,7 @@ import org.example.votiqua.server.common.utils.requireAuthorization
 import org.example.votiqua.server.feature.voting.domain.usecase.GetPollUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.PollManageUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.PollUpdateUseCase
+import org.example.votiqua.server.feature.voting.utils.requireUserIdAndPollId
 import org.koin.ktor.ext.inject
 
 fun Route.pollRoute() {
@@ -146,19 +145,4 @@ fun Route.pollRoute() {
 //            }
         }
     }
-}
-
-data class UserAndPoll(
-    val userId: Int,
-    val pollId: Int,
-)
-
-private suspend fun ApplicationCall.requireUserIdAndPollId(): UserAndPoll {
-    val pollId = parameters["id"]?.toIntOrNull() ?: throw BadRequestException("Invalid poll ID")
-    val userId = this.requireAuthorization()
-
-    return UserAndPoll(
-        userId = userId,
-        pollId = pollId,
-    )
 }

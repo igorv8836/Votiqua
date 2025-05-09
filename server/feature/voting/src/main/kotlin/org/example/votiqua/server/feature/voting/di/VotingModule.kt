@@ -8,6 +8,7 @@ import org.example.votiqua.server.feature.voting.data.repository.TagRepository
 import org.example.votiqua.server.feature.voting.domain.usecase.FavoritePollUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.GetPollUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.PollManageUseCase
+import org.example.votiqua.server.feature.voting.domain.usecase.PollMemberUseCase
 import org.example.votiqua.server.feature.voting.domain.usecase.PollUpdateUseCase
 import org.koin.dsl.module
 
@@ -22,4 +23,5 @@ fun votingModule() = module {
     single { FavoritePollUseCase(get(), get()) }
     single { PollUpdateUseCase(get(), get(), get()) }
     single { GetPollUseCase(get(), get()) }
+    single { PollMemberUseCase(get(), get(), get()) }
 }

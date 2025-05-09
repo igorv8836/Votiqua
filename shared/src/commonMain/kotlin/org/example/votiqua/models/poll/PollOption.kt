@@ -10,5 +10,4 @@ data class PollOption(
     val orderIndex: Int = 0,
     val voteCount: Int = 0,
     val percentage: Double = 0.0,
-    val isSelected: Boolean = false
 )

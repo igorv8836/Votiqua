@@ -13,7 +13,6 @@ import com.example.votiqua.core.ui_common.navigation.ManagePollRoute
 import com.example.votiqua.core.ui_common.navigation.MyPollsRoute
 import com.example.votiqua.core.ui_common.navigation.PollCreateRoute
 import com.example.votiqua.core.ui_common.navigation.PollViewerRoute
-import com.example.votiqua.core.ui_common.navigation.navigateToManagingPoll
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -67,13 +66,11 @@ internal class VotingNavigatorImpl : VotingNavigator {
                 )
 
                 PollViewerScreen(
+                    navController = mainNavController,
                     viewModel = viewModel,
                     onClose = {
                         mainNavController.popBackStack()
                     },
-                    onEdit = {
-                        mainNavController.navigateToManagingPoll()
-                    }
                 )
             }
 

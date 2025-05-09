@@ -16,7 +16,15 @@ class GetPollUseCase(
 
         return if (userId != null) {
             val isFavorite = favoritePollUseCase.isFavorite(userId, pollId)
-            poll.copy(isFavorite = isFavorite)
+            poll.copy(
+                isFavorite = isFavorite,
+                context = poll.context.copy(
+                    isAdmin = userId == poll.authorId,
+                    selectedOption = poll.members.firstOrNull { it.user.id == userId }?.optionId,
+                    totalVotes = poll.members.count { it.voted },
+                    memberCount = poll.members.size,
+                ),
+            )
         } else {
             poll
         }

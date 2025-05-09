@@ -14,10 +14,13 @@ interface PollRepository {
     suspend fun updatePoll(poll: Poll): Result<Poll>
     suspend fun regeneratePollLink(pollId: Int): Result<String>
 
-    suspend fun vote(pollId: Int, optionId: Int): Result<Poll>
     suspend fun toggleFavorite(pollId: Int): Result<Boolean>
     suspend fun getFavorites(): Result<List<Poll>>
 
     suspend fun deletePoll(pollId: Int): Result<Unit>
     suspend fun startPoll(pollId: Int): Result<Unit>
+
+    suspend fun vote(pollId: Int, optionId: Int): Result<Unit>
+    suspend fun leaveFromPoll(pollId: Int): Result<Unit>
+    suspend fun joinByLink(link: String): Result<Poll>
 }

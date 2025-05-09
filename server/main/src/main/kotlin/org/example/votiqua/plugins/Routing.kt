@@ -12,6 +12,7 @@ import org.example.votiqua.server.feature.profile.routes.profileRoute
 import org.example.votiqua.server.feature.recom.routes.recommendationRoute
 import org.example.votiqua.server.feature.recom.routes.searchRoute
 import org.example.votiqua.server.feature.voting.routes.favoritePollRoute
+import org.example.votiqua.server.feature.voting.routes.pollMemberRoute
 import org.example.votiqua.server.feature.voting.routes.pollRoute
 
 fun Application.configureRouting(config: ApplicationConfig) {
@@ -21,6 +22,7 @@ fun Application.configureRouting(config: ApplicationConfig) {
             searchRoute()
             authRoute()
             pollRoute()
+            pollMemberRoute()
             profileRoute()
             recommendationRoute()
             notificationRoute()

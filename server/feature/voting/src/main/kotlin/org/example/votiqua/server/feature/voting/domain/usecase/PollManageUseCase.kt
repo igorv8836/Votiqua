@@ -22,15 +22,6 @@ class PollManageUseCase(
 
         return createdPoll
     }
-    
-    suspend fun vote(pollId: Int, optionId: Int, userId: Int): Poll {
-        val success = pollRepository.votePoll(pollId, optionId, userId)
-        if (!success) {
-            throw HTTPConflictException("Poll or option not found")
-        }
-        
-        return getPollUseCase.get(pollId, userId)
-    }
 
     suspend fun deletePoll(pollId: Int, userId: Int) {
         val poll = getPollUseCase.getPollOrException(pollId)
