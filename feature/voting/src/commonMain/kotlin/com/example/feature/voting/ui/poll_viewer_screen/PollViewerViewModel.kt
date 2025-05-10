@@ -53,6 +53,28 @@ internal class PollViewerViewModel(
             }
         }.handleException()
     }
+
+    fun setShowExitDialog(value: Boolean) = intent {
+        reduce {
+            state.copy(showExitDialog = value)
+        }
+    }
+
+    fun confirmExiting() = intent {
+        val res = pollRepository.leaveFromPoll(state.pollId)
+
+        res.onSuccess {
+            postSideEffect(PollViewerSideEffect.NavigateToLastScreen)
+        }.handleException()
+    }
+
+    fun joinPoll() = intent {
+        val res = pollRepository.joinByButton(state.pollId)
+
+        res.onSuccess {
+            loadPoll(state.pollId)
+        }.handleException()
+    }
 }
 
 @Stable
@@ -71,6 +93,9 @@ data class PollViewerState(
     val voteCount: Int = 0,
     val memberCount: Int = 0,
     val votingPeriod: String? = null,
+
+    val showExitDialog: Boolean = false,
+    val isMember: Boolean = false,
 )
 
 data class OptionAndCounts(
@@ -84,4 +109,6 @@ sealed interface PollViewerSideEffect {
     data class EditRequested(
         val pollId: Int,
     ) : PollViewerSideEffect
+
+    data object NavigateToLastScreen : PollViewerSideEffect
 }

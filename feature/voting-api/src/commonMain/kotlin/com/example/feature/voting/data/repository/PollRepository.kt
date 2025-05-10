@@ -23,4 +23,5 @@ interface PollRepository {
     suspend fun vote(pollId: Int, optionId: Int): Result<Unit>
     suspend fun leaveFromPoll(pollId: Int): Result<Unit>
     suspend fun joinByLink(link: String): Result<Poll>
+    suspend fun joinByButton(pollId: Int): Result<Unit>
 }

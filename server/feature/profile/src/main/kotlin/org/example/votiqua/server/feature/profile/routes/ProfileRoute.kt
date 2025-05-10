@@ -78,7 +78,7 @@ fun Route.profileRoute() {
                 }
 
                 val updatedProfile = if (photo != null && fileExtension != null) {
-                    profilePhotoUseCase.updateUserPhoto(userId, photo!!, fileExtension!!)
+                    profilePhotoUseCase.updateUserPhoto(userId, photo, fileExtension as String)
                 } else {
                     return@post call.respond(HttpStatusCode.BadRequest, BaseResponse("No valid update data provided"))
                 }

@@ -98,7 +98,6 @@ internal fun ManagePollScreen(
                 onOpenClicked = viewModel::onOpenClicked,
                 onDeleteClicked = { showDeleteConfirmation = true },
                 onAnonClicked = viewModel::onAnonClicked,
-                onMultipleChoiceClicked = viewModel::onMultipleChoiceClicked,
                 onStartTimeChanged = viewModel::onStartTimeChanged,
                 onStartDateChanged = viewModel::onStartDateChanged,
                 onEndTimeChanged = viewModel::onEndTimeChanged,

@@ -25,6 +25,7 @@ class PollUpdateUseCase(
             throw HTTPForbiddenException("it is forbidden to edit after the start of voting")
         }
 
-        return pollRepository.updatePoll(poll) ?: throw HTTPConflictException()
+        val updatedPoll = pollRepository.updatePoll(poll) ?: throw HTTPConflictException()
+        return getPollUseCase.fillContext(updatedPoll, userId)
     }
 }

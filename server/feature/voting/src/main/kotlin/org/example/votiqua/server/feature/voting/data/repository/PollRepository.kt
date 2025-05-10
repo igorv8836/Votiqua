@@ -42,7 +42,6 @@ class PollRepository(
             val pollId = PollTable.insert {
                 it[question] = poll.question
                 it[description] = poll.description
-                it[isMultiple] = poll.isMultiple
                 it[isAnonymous] = poll.isAnonymous
                 it[isOpen] = poll.isOpen
                 it[createdAt] = currentDateTime()
@@ -82,7 +81,6 @@ class PollRepository(
             PollTable.update({ PollTable.id eq poll.id }) {
                 it[question] = poll.question
                 it[description] = poll.description
-                it[isMultiple] = poll.isMultiple
                 it[isAnonymous] = poll.isAnonymous
                 it[isOpen] = poll.isOpen
                 it[startDate] = poll.startTime?.toUtcDateTime()

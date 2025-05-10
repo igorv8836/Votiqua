@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 @Stable
 data class PollCardState(
     val title: String,
+    val link: String,
     val endDate: String,
     val participants: Int,
     val status: String,

@@ -15,7 +15,6 @@ abstract class BasePollRepository(
             id = row[PollTable.id],
             question = row[PollTable.question],
             description = row[PollTable.description],
-            isMultiple = row[PollTable.isMultiple],
             isAnonymous = row[PollTable.isAnonymous],
             isOpen = row[PollTable.isOpen],
             authorId = row[PollTable.authorId],

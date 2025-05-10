@@ -136,10 +136,6 @@ internal class ManagePollViewModel(
         reduce { state.copy(description = newDescription) }
     }
 
-    fun onMultipleChoiceClicked() = blockingIntent {
-        reduce { state.copy(multipleChoice = !state.multipleChoice) }
-    }
-
     fun onStartTimeChanged(newStartTime: Long) = blockingIntent {
         val h = newStartTime / 1000 / 3600
         val m = newStartTime / 1000 / 60 % 60
@@ -245,7 +241,6 @@ data class ManagePollState(
     val isDeleting: Boolean = false,
     val isRegeneratingLink: Boolean = false,
 
-    val multipleChoice: Boolean = false,
     val startTime: String? = null,
     val startTimeLong: Long? = null,
     val startDate: String? = null,

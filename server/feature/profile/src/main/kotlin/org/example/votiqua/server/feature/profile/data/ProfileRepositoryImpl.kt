@@ -11,7 +11,9 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
-class ProfileRepositoryImpl : ProfileRepository {
+class ProfileRepositoryImpl(
+    private val profilePhotoUrlConverter: ProfilePhotoUrlConverter,
+) : ProfileRepository {
 
     private fun getUserProfileWithoutDbBlocking(userId: Int): UserProfile? {
         val userRow = UserTable.select { UserTable.id eq userId }.singleOrNull() ?: return null
@@ -24,11 +26,16 @@ class ProfileRepositoryImpl : ProfileRepository {
             .select { VoteTable.userId eq userId }
             .count()
 
+        val photoUrl = if (userRow[UserTable.photoUrl] != null)
+            profilePhotoUrlConverter.getUserPhotoUrl(userRow[UserTable.id])
+        else
+            null
+
         return UserProfile(
             id = userRow[UserTable.id],
             username = userRow[UserTable.username],
             email = userRow[UserTable.email],
-            photoUrl = userRow[UserTable.photoUrl],
+            photoUrl = photoUrl,
             description = userRow[UserTable.description],
             pollsCreated = pollsCreated.toInt(),
             pollsVoted = pollsVoted.toInt()
@@ -77,11 +84,17 @@ class ProfileRepositoryImpl : ProfileRepository {
             }
                 .limit(limit)
                 .map { row ->
+
+                    val photoUrl = if (row[UserTable.photoUrl] != null)
+                        profilePhotoUrlConverter.getUserPhotoUrl(row[UserTable.id])
+                    else
+                        null
+
                     UserProfile(
                         id = row[UserTable.id],
                         username = row[UserTable.username],
                         email = row[UserTable.email],
-                        photoUrl = row[UserTable.photoUrl],
+                        photoUrl = photoUrl,
                         description = row[UserTable.description]
                     )
                 }

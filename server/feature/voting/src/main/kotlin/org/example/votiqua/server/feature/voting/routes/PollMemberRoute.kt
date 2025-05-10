@@ -56,6 +56,14 @@ fun Route.pollMemberRoute() {
                 
                 call.respond(HttpStatusCode.OK, poll)
             }
+
+            post("/{id}/join") {
+                val data = call.requireUserIdAndPollId()
+
+                pollMemberUseCase.joinToPoll(data.pollId, data.userId)
+
+                call.handleSuccess()
+            }
         }
     }
 }

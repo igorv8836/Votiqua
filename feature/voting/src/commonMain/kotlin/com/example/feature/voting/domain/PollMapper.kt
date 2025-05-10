@@ -39,7 +39,6 @@ class PollMapper(
             id = pollState.pollId,
             question = pollState.title,
             description = pollState.description,
-            isMultiple = pollState.multipleChoice,
             isAnonymous = pollState.anonymous,
             isOpen = pollState.isOpen,
             createdAt = 0L,
@@ -92,7 +91,6 @@ class PollMapper(
             votesExist = poll.context.totalVotes != 0,
             isSaving = false,
             isDeleting = false,
-            multipleChoice = poll.isMultiple,
             isStarted = poll.isStarted,
 
             startTime = lStartTime?.let {
@@ -195,6 +193,7 @@ class PollMapper(
             votingAvailable = votingAvailable,
             selectedOption = poll.context.selectedOption,
             votingPeriod = votingPeriod,
+            isMember = poll.context.isMember,
         )
     }
 }

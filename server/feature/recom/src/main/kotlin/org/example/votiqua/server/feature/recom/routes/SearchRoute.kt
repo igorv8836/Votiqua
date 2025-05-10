@@ -11,11 +11,11 @@ import org.example.votiqua.models.search.PollSearchResponse
 import org.example.votiqua.models.search.PollTitlesSearchResponse
 import org.example.votiqua.server.common.utils.handleBadRequest
 import org.example.votiqua.server.common.utils.requireAuthorization
-import org.example.votiqua.server.feature.voting.data.repository.PollRepository
+import org.example.votiqua.server.feature.voting.domain.usecase.GetPollUseCase
 import org.koin.ktor.ext.inject
 
 fun Route.searchRoute() {
-    val pollRepository by application.inject<PollRepository>()
+    val getPollUseCase by application.inject<GetPollUseCase>()
 
     route("search") {
         get {
@@ -30,7 +30,7 @@ fun Route.searchRoute() {
                 return@get
             }
 
-            val pollTitles = pollRepository.searchPollTitles(query, limit)
+            val pollTitles = getPollUseCase.searchPollTitles(query, limit)
             call.respond(HttpStatusCode.OK, PollTitlesSearchResponse(query, pollTitles.size, pollTitles))
         }
 
@@ -48,9 +48,9 @@ fun Route.searchRoute() {
                     return@get
                 }
 
-                call.requireAuthorization()
+                val userId = call.requireAuthorization()
 
-                val polls = pollRepository.searchPolls(query, limit)
+                val polls = getPollUseCase.searchPolls(userId, query, limit)
                 call.respond(HttpStatusCode.OK, PollSearchResponse(query, polls.size, polls))
             }
         }

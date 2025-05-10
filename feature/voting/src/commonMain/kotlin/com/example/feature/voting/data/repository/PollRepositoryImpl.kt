@@ -90,4 +90,8 @@ class PollRepositoryImpl(
     override suspend fun joinByLink(link: String): Result<Poll> {
         return pollMemberRemoteDataSource.joinByLink(link)
     }
+
+    override suspend fun joinByButton(pollId: Int): Result<Unit> {
+        return pollMemberRemoteDataSource.joinToPoll(pollId)
+    }
 }

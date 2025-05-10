@@ -30,7 +30,6 @@ fun TopBlock(
     onOpenClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onAnonClicked: () -> Unit,
-    onMultipleChoiceClicked: () -> Unit,
     onStartDateChanged: (Long) -> Unit,
     onStartTimeChanged: (Long) -> Unit,
     onEndTimeChanged: (Long) -> Unit,
@@ -101,11 +100,6 @@ fun TopBlock(
             tags = state.tags,
             onTagAdded = onTagAdded,
             onTagRemoved = onTagRemoved
-        )
-        PollCheckBox(
-            text = "Множественный выбор",
-            checked = state.multipleChoice,
-            onClick = onMultipleChoiceClicked
         )
         PollCheckBox(
             text = "Публичное голосование",

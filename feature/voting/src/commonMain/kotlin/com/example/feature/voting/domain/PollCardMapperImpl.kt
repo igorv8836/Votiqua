@@ -37,6 +37,7 @@ class PollCardMapperImpl(
         return PollCardState(
             id = poll.id,
             title = poll.question,
+            link = poll.link ?: "",
             endDate = endDate,
             participants = poll.members.size,
             status = statusText,

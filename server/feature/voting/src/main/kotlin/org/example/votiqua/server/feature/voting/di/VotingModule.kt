@@ -17,11 +17,12 @@ fun votingModule() = module {
     single<TagRepository> { TagRepository() }
     single<PollOptionRepository> { PollOptionRepository() }
     single<PollFavoriteRepository> { PollFavoriteRepository() }
-    single<PollParticipantRepository> { PollParticipantRepository() }
+    single<PollParticipantRepository> { PollParticipantRepository(get()) }
 
+    single { GetPollUseCase(get(), lazy { get() }) }
+    
     single { PollManageUseCase(get(), get()) }
     single { FavoritePollUseCase(get(), get()) }
     single { PollUpdateUseCase(get(), get(), get()) }
-    single { GetPollUseCase(get(), lazy { get() }) }
     single { PollMemberUseCase(get(), get(), get()) }
 }

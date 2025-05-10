@@ -3,7 +3,7 @@ package org.example.votiqua.server.feature.voting.domain.usecase
 import org.example.votiqua.models.poll.Poll
 import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.common.models.HTTPUnauthorizedException
-import org.example.votiqua.server.common.utils.currentTimestamp
+import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.feature.voting.data.repository.PollParticipantRepository
 import org.example.votiqua.server.feature.voting.data.repository.PollRepository
 
@@ -33,21 +33,33 @@ class PollMemberUseCase(
     }
 
     suspend fun joinByLink(link: String, userId: Int): Poll {
-        val poll = pollRepository.findByLink(link)
+        val poll = getPollUseCase.findByLink(link)
             ?: throw HTTPConflictException("Poll not found")
 
-        pollParticipantRepository.insert(userId, poll.id)
+        dbQuery {
+            pollParticipantRepository.insert(userId, poll.id)
+        }
 
-        return getPollUseCase.getPollOrException(poll.id)
+        return getPollUseCase.get(poll.id, userId)
+    }
+
+    suspend fun joinToPoll(pollId: Int, userId: Int) {
+        val poll = getPollUseCase.get(pollId, userId)
+
+        if (poll.isOpen) {
+            dbQuery {
+                pollParticipantRepository.insert(userId, poll.id)
+            }
+        } else {
+            throw HTTPUnauthorizedException("Poll is private")
+        }
     }
 
     private fun checkAccessForVoting(userId: Int, poll: Poll): Boolean {
-        if (poll.members.firstOrNull { it.user.id == userId } == null ) {
-            return false
+        return if (poll.isOpen) {
+            true
+        } else {
+            poll.members.any { it.user.id == userId }
         }
-
-        val currentTime = currentTimestamp()
-
-        return poll.isStarted && (poll.startTime ?: 0L) < currentTime && (poll.endTime ?: Long.MAX_VALUE) > currentTime
     }
 } 

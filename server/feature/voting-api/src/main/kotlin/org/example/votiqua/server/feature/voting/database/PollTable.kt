@@ -9,7 +9,6 @@ object PollTable : Table() {
     val id = integer("id").autoIncrement()
     val question = text("question")
     val description = text("description").nullable()
-    val isMultiple = bool("is_multiple").default(false)
     val isAnonymous = bool("is_anonymous").default(false)
     val isOpen = bool("is_open").default(false)
     val createdAt = datetime("created_at")

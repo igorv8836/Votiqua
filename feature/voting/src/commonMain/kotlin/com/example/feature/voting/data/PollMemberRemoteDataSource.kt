@@ -33,4 +33,10 @@ class PollMemberRemoteDataSource(
             }
         }
     }
+
+    suspend fun joinToPoll(pollId: Int): Result<Unit> {
+        return safeApiCall {
+            httpClient.post("poll-member/$pollId/join")
+        }
+    }
 } 

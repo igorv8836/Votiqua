@@ -120,7 +120,7 @@ fun PollCard(
                 }
                 IconButton(
                     onClick = {
-                        shareCard(poll.title, "https://votiqua.com/poll/")
+                        shareCard(poll.title, poll.link)
                     },
                     modifier = Modifier.size(32.dp)
                 ) {

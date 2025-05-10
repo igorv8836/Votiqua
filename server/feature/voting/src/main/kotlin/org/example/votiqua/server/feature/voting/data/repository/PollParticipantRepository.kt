@@ -5,6 +5,7 @@ import org.example.votiqua.models.poll.PollParticipant
 import org.example.votiqua.server.common.utils.currentDateTime
 import org.example.votiqua.server.common.utils.dbQuery
 import org.example.votiqua.server.feature.auth.api.database.UserTable
+import org.example.votiqua.server.feature.profile.data.ProfilePhotoUrlConverter
 import org.example.votiqua.server.feature.voting.database.PollOptionTable
 import org.example.votiqua.server.feature.voting.database.PollParticipantTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
@@ -15,7 +16,9 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
-class PollParticipantRepository {
+class PollParticipantRepository(
+    private val profilePhotoUrlConverter: ProfilePhotoUrlConverter,
+) {
     fun insert(
         userId: Int,
         pollId: Int,
@@ -47,10 +50,16 @@ class PollParticipantRepository {
 
         val users = query.map { row ->
             val userId = row[UserTable.id]
+
+            val photoUrl = if (row[UserTable.photoUrl] != null)
+                profilePhotoUrlConverter.getUserPhotoUrl(row[UserTable.id])
+            else
+                null
+
             val user = SimpleUser(
                 id = userId,
                 username = row[UserTable.username],
-                photoUrl = row[UserTable.photoUrl]
+                photoUrl = photoUrl,
             )
 
             val voteQuery = VoteTable

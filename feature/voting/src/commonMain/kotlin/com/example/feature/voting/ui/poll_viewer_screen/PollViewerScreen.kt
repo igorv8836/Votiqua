@@ -1,27 +1,31 @@
 package com.example.feature.voting.ui.poll_viewer_screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,8 +52,33 @@ internal fun PollViewerScreen(
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is PollViewerSideEffect.EditRequested -> navController.navigateToManagingPoll(effect.pollId)
+                PollViewerSideEffect.NavigateToLastScreen -> navController.popBackStack()
             }
         }
+    }
+
+    if (state.showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.setShowExitDialog(false) },
+            title = { Text("Выход из голосования") },
+            text = { Text("Вы уверены, что хотите выйти из голосования?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.confirmExiting()
+                    }
+                ) {
+                    Text("Да")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { viewModel.setShowExitDialog(false) }
+                ) {
+                    Text("Отмена")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -65,6 +94,14 @@ internal fun PollViewerScreen(
                     }
                 },
                 actions = {
+                    if (state.isMember && !state.isMember) {
+                        IconButton(onClick = { viewModel.setShowExitDialog(true) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                contentDescription = "Выйти из голосования"
+                            )
+                        }
+                    }
                     if (state.isAdmin) {
                         IconButton(onClick = viewModel::onEditClicked) {
                             Icon(
@@ -75,6 +112,11 @@ internal fun PollViewerScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            if (!state.isMember) {
+                JoinPollButton(onJoin = { viewModel.joinPoll() })
+            }
         }
     ) { innerPadding ->
         Column(
@@ -185,104 +227,32 @@ private fun InfoItem(label: String, value: String) {
 }
 
 @Composable
-fun PollOptionsViewerBlock(
-    state: PollViewerState,
-    onOptionSelected: (Int) -> Unit,
-) {
-    if (state.selectedOption != null) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
+private fun JoinPollButton(onJoin: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shadowElevation = 8.dp
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.small, vertical = Dimens.small),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Варианты ответов",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 12.dp),
-            )
-            state.options.map {
-                SelectedOption(
-                    option = it,
-                    state = state,
+            Button(
+                onClick = onJoin,
+                modifier = Modifier
+                    .height(48.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    "Присоединиться к голосованию",
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
         }
-    } else {
-        Column(
-            modifier = Modifier.padding(horizontal = Dimens.medium)
-        ) {
-            Text(
-                text = "Варианты ответов",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-            state.options.map {
-                UnselectedOption(
-                    state = state,
-                    option = it,
-                    onOptionSelected = { onOptionSelected(it.id) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SelectedOption(
-    option: OptionAndCounts,
-    state: PollViewerState,
-) {
-    val votes = option.count
-    val percentage = if (state.voteCount > 0) votes.toFloat() / state.voteCount else 0f
-    val percentageText = if (state.voteCount > 0) "${(percentage * 100).toInt()}%" else "0%"
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.medium)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.tiny),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = option.option,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = percentageText,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-        LinearProgressIndicator(
-            progress = percentage,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-
-@Composable
-fun UnselectedOption(
-    state: PollViewerState,
-    option: OptionAndCounts,
-    onOptionSelected: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth().padding(bottom = Dimens.medium)
-            .clickable(enabled = state.votingAvailable) {
-                onOptionSelected()
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
-    ) {
-        RadioButton(
-            enabled = false,
-            selected = false,
-            onClick = {  },
-        )
-        Text(
-            text = option.option,
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }
