@@ -32,7 +32,6 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(libs.ktor.client.engine.java)
-//            implementation("io.coil-kt.coil3:coil-skiko:0.9.4")
         }
 
         iosMain.dependencies {

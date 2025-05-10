@@ -10,11 +10,14 @@ import com.example.common.toThemeMode
 import com.example.feature.auth.data.repository.AuthRepository
 import com.example.feature.profile.api.data.repository.ProfileRepository
 import com.example.orbit_mvi.viewmodel.container
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.asSource
 import kotlinx.coroutines.launch
+import kotlinx.io.buffered
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
-internal class ProfileViewModel(
+class ProfileViewModel(
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
     override val snackbarManager: SnackbarManager,
@@ -55,7 +58,7 @@ internal class ProfileViewModel(
             ProfileEvent.ChangeThemeMode -> changeThemeMode()
             is ProfileEvent.ChangeNickname -> changeNickname(event.newNickname)
             is ProfileEvent.ChangePassword -> changePassword(event.last, event.new)
-            is ProfileEvent.ChangePhoto -> changePhoto(event.uri)
+            is ProfileEvent.ChangePhoto -> changePhoto(event.input)
             is ProfileEvent.SetShowNicknameDialog -> intent { reduce { state.copy(showNicknameDialog = event.value) } }
             is ProfileEvent.SetShowPasswordDialog -> intent { reduce { state.copy(showPasswordDialog = event.value) } }
         }
@@ -64,7 +67,7 @@ internal class ProfileViewModel(
     private fun changeNickname(newNickname: String) = intent {
         val result = profileRepository.updateUserProfile(
             username = newNickname,
-            description = null, //  TODO
+            description = null,
         )
 
         result.onSuccess { updatedUser ->
@@ -94,23 +97,21 @@ internal class ProfileViewModel(
         reduce { state.copy(showPasswordDialog = false) }
     }
 
-    private fun changePhoto(uri: String) = intent {
-        try {
-//            val file = File(uri) //  TODO
-//            val fileExtension = file.extension
-//            val updatedUser = profileRepository.updateUserPhoto(
-//                file.inputStream().asInput(),
-//                fileExtension
-//            ).getOrThrow()
-//            reduce {
-//                state.copy(
-//                    photoFile = updatedUser.photoUrl,
-//                    helpingText = "Фото успешно обновлено"
-//                )
-//            }
-        } catch (e: Exception) {
-            snackbarManager.sendMessage(e.message ?: "Ошибка обновления фото")
+    private fun changePhoto(data: Pair<ByteReadChannel, String>?) = intent {
+        val input = data ?: kotlin.run {
+            snackbarManager.sendMessage("Фотография - null")
+            return@intent
         }
+        val result = profileRepository.updateUserPhoto(input.first.asSource().buffered(), input.second)
+        
+        result.onSuccess { updatedUser ->
+            reduce {
+                state.copy(
+                    photoFile = updatedUser.photoUrl,
+                )
+            }
+            snackbarManager.sendMessage("Фото успешно обновлено")
+        }.handleException("Ошибка обновления фото")
     }
 
     private fun signOut() = intent {
@@ -141,9 +142,9 @@ sealed interface ProfileSideEffect {
 sealed interface ProfileEvent {
     data class ChangeNickname(val newNickname: String) : ProfileEvent
     data class ChangePassword(val last: String, val new: String) : ProfileEvent
-    data class ChangePhoto(val uri: String) : ProfileEvent
-    object SignOut : ProfileEvent
-    object ChangeThemeMode: ProfileEvent
+    data class ChangePhoto(val input: Pair<ByteReadChannel, String>?) : ProfileEvent
+    data object SignOut : ProfileEvent
+    data object ChangeThemeMode: ProfileEvent
     data class SetShowNicknameDialog(val value: Boolean): ProfileEvent
     data class SetShowPasswordDialog(val value: Boolean): ProfileEvent
 }

@@ -21,6 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.maxBitmapSize
+import coil3.size.Size
 import com.example.feature.voting.domain.models.Participant
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
@@ -39,8 +44,16 @@ fun ParticipantItem(participant: Participant) {
             modifier = Modifier.size(40.dp)
         ) {
             if (participant.avatarUrl != null) {
+                val context = LocalPlatformContext.current
                 CoilImage(
-                    imageModel = { participant.avatarUrl },
+                    imageRequest = {
+                        ImageRequest.Builder(context)
+                            .data(participant.avatarUrl)
+                            .size(Size.ORIGINAL)
+                            .maxBitmapSize(Size(800, 800))
+                            .crossfade(true)
+                            .build()
+                    },
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,

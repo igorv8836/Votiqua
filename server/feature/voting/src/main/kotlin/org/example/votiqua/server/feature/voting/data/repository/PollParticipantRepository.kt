@@ -52,7 +52,10 @@ class PollParticipantRepository(
             val userId = row[UserTable.id]
 
             val photoUrl = if (row[UserTable.photoUrl] != null)
-                profilePhotoUrlConverter.getUserPhotoUrl(row[UserTable.id])
+                profilePhotoUrlConverter.getUserPhotoUrl(
+                    imageName = row[UserTable.photoUrl],
+                    row[UserTable.id]
+                )
             else
                 null
 

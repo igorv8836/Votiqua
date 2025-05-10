@@ -27,7 +27,10 @@ class ProfileRepositoryImpl(
             .count()
 
         val photoUrl = if (userRow[UserTable.photoUrl] != null)
-            profilePhotoUrlConverter.getUserPhotoUrl(userRow[UserTable.id])
+            profilePhotoUrlConverter.getUserPhotoUrl(
+                imageName = userRow[UserTable.photoUrl],
+                userRow[UserTable.id],
+            )
         else
             null
 
@@ -36,6 +39,7 @@ class ProfileRepositoryImpl(
             username = userRow[UserTable.username],
             email = userRow[UserTable.email],
             photoUrl = photoUrl,
+            originalPhotoUrl = userRow[UserTable.photoUrl],
             description = userRow[UserTable.description],
             pollsCreated = pollsCreated.toInt(),
             pollsVoted = pollsVoted.toInt()
@@ -86,7 +90,10 @@ class ProfileRepositoryImpl(
                 .map { row ->
 
                     val photoUrl = if (row[UserTable.photoUrl] != null)
-                        profilePhotoUrlConverter.getUserPhotoUrl(row[UserTable.id])
+                        profilePhotoUrlConverter.getUserPhotoUrl(
+                            imageName = row[UserTable.photoUrl],
+                            row[UserTable.id]
+                        )
                     else
                         null
 
@@ -95,6 +102,7 @@ class ProfileRepositoryImpl(
                         username = row[UserTable.username],
                         email = row[UserTable.email],
                         photoUrl = photoUrl,
+                        originalPhotoUrl = row[UserTable.photoUrl],
                         description = row[UserTable.description]
                     )
                 }

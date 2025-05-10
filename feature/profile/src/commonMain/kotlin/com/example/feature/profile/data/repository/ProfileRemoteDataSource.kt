@@ -6,8 +6,10 @@ import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.utils.io.core.Input
-import io.ktor.utils.io.core.readBytes
+import kotlinx.io.readByteArray
 import org.example.votiqua.models.profile.ProfileUpdateRequest
 import org.example.votiqua.models.profile.UserProfile
 
@@ -29,7 +31,8 @@ internal class ProfileRemoteDataSource(
 
     suspend fun updateUserPhoto(photo: Input, fileExtension: String): Result<UserProfile> = safeApiCall {
         httpClient.post("profile/photo") {
-            setBody(photo.readBytes())
+            contentType(ContentType.parse("image/$fileExtension"))
+            setBody(photo.readByteArray())
         }
     }
 

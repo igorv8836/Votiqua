@@ -90,7 +90,7 @@ internal fun ProfileScreen(
             modifier = Modifier.fillMaxWidth().padding(top = Dimens.medium),
             contentAlignment = Alignment.TopCenter
         ) {
-            ProfilePhoto(state.photoFile)
+            ProfilePhoto(state.photoFile, viewModel)
         }
 
         Text(
@@ -205,4 +205,5 @@ fun ThreeStateSwitcher(
 @Composable
 expect fun ProfilePhoto(
     url: String?,
+    viewModel: ProfileViewModel,
 )

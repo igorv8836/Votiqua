@@ -1,11 +1,11 @@
 package org.example.votiqua.server.feature.profile.routes
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.authenticate
-import io.ktor.server.request.receiveMultipart
+import io.ktor.server.request.contentType
+import io.ktor.server.request.receiveChannel
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondFile
 import io.ktor.server.routing.Route
@@ -14,7 +14,9 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import io.ktor.utils.io.toByteArray
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readRemaining
+import kotlinx.io.readByteArray
 import org.example.votiqua.models.common.BaseResponse
 import org.example.votiqua.models.common.ErrorType
 import org.example.votiqua.models.profile.ProfileUpdateRequest
@@ -60,28 +62,17 @@ fun Route.profileRoute() {
             post("/photo") {
                 val userId = call.requireAuthorization()
 
-                val multipart = call.receiveMultipart()
-                var photo: ByteArray? = null
-                var fileExtension: String? = null
+                val channel: ByteReadChannel = call.receiveChannel()
+                val bytes: ByteArray = channel.readRemaining().readByteArray()
 
-                multipart.forEachPart { part ->
-                    when (part) {
-                        is PartData.FileItem -> {
-                            if (part.name == "photo") {
-                                photo = part.provider().toByteArray()
-                                fileExtension = part.originalFileName?.substringAfterLast('.')
-                            }
-                            part.dispose()
-                        }
-                        else -> part.dispose()
-                    }
+                val ct: ContentType = call.request.contentType()
+                if (!(ct == ContentType.Image.PNG || ct == ContentType.Image.JPEG) || ct.contentSubtype.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, BaseResponse("No valid update data provided"))
+                    return@post
                 }
+                val fileExtension: String = ct.contentSubtype
 
-                val updatedProfile = if (photo != null && fileExtension != null) {
-                    profilePhotoUseCase.updateUserPhoto(userId, photo, fileExtension as String)
-                } else {
-                    return@post call.respond(HttpStatusCode.BadRequest, BaseResponse("No valid update data provided"))
-                }
+                val updatedProfile = profilePhotoUseCase.updateUserPhoto(userId, bytes, fileExtension)
 
                 call.respond(HttpStatusCode.OK, updatedProfile)
             }
@@ -101,14 +92,14 @@ fun Route.profileRoute() {
             call.respond(HttpStatusCode.OK, profile)
         }
 
-        get("/{userId}/photo") {
+        get("/{userId}/photo/{id}") {
             val targetUserId = call.parameters["userId"]?.toIntOrNull() ?: run {
                 call.handleBadRequest("Invalid user ID")
                 return@get
             }
 
             try {
-                val photoUrl = profilePhotoUseCase.getOtherUserPhotoUrl(targetUserId)
+                val photoUrl = profilePhotoUseCase.getUserPhotoUrl(targetUserId)
                 val photoFile = profilePhotoUseCase.getPhotoFile(photoUrl)
 
                 call.respondFile(photoFile)

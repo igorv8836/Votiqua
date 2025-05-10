@@ -5,6 +5,7 @@ import org.example.votiqua.models.profile.UserProfile
 import org.example.votiqua.server.common.models.HTTPConflictException
 import org.example.votiqua.server.feature.profile.data.ProfileRepository
 import java.io.File
+import java.util.UUID
 
 class ProfilePhotoUseCase(
     private val profileRepository: ProfileRepository,
@@ -22,7 +23,9 @@ class ProfilePhotoUseCase(
             throw HTTPConflictException(ErrorType.INVALID_FILE_TYPE.message)
         }
 
-        val fileName = "$userId.$fileExtension"
+        val randomString = UUID.randomUUID().toString().take(8)
+
+        val fileName = "$userId-$randomString.$fileExtension"
         val uploadDir = File(ProfilePhotoConfig.UPLOAD_DIR)
         if (!uploadDir.exists()) {
             uploadDir.mkdirs()
@@ -39,11 +42,11 @@ class ProfilePhotoUseCase(
         ) ?: throw HTTPConflictException(ErrorType.PROFILE_NOT_FOUND.message)
     }
 
-    suspend fun getOtherUserPhotoUrl(userId: Int): String {
+    suspend fun getUserPhotoUrl(userId: Int): String {
         val profile = profileRepository.getUserProfile(userId)
             ?: throw HTTPConflictException(ErrorType.PROFILE_NOT_FOUND.message)
 
-        return profile.photoUrl ?: throw HTTPConflictException(ErrorType.PHOTO_NOT_FOUND.message)
+        return profile.originalPhotoUrl ?: throw HTTPConflictException(ErrorType.PHOTO_NOT_FOUND.message)
     }
 
     suspend fun getPhotoFile(photoUrl: String): File {
