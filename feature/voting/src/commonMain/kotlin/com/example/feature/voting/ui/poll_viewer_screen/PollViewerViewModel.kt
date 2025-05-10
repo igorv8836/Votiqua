@@ -45,6 +45,10 @@ internal class PollViewerViewModel(
             reduce {
                 state.copy(
                     selectedOption = optionId,
+                    options = state.options.map {
+                        if (it.id == optionId) it.copy(count = it.count + 1) else it
+                    },
+                    voteCount = state.voteCount + 1,
                 )
             }
         }.handleException()

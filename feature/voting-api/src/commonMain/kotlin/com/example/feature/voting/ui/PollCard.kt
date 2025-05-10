@@ -78,7 +78,7 @@ fun PollCard(
                 )
                 InfoChip(
                     icon = Icons.Default.Group,
-                    text = "${poll.participants} участников"
+                    text = poll.countChipText,
                 )
                 InfoChip(
                     icon = Icons.Default.Circle,

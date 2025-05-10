@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.common.ResultExceptionHandler
 import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.RecomRepository
+import com.example.feature.voting.data.repository.PollRepository
 import com.example.feature.voting.domain.PollCardMapper
 import com.example.feature.voting.domain.models.PollCardState
 import com.example.orbit_mvi.viewmodel.container
@@ -24,6 +25,7 @@ sealed interface HomeEffect {
 
 class HomeViewModel(
     private val recomRepository: RecomRepository,
+    private val pollRepository: PollRepository,
     private val pollCardMapper: PollCardMapper,
     override val snackbarManager: SnackbarManager,
 ) : ViewModel(), ContainerHost<HomeState, HomeEffect>, ResultExceptionHandler {
@@ -42,6 +44,25 @@ class HomeViewModel(
                     messages = response.adminMessages,
                     popularPolls = pollCardMapper.mapToState(response.popularPolls),
                     newPolls = pollCardMapper.mapToState(response.newPolls),
+                )
+            }
+        }.handleException()
+    }
+
+    fun onClickFavourite(pollId: Int) = intent {
+        val res = pollRepository.toggleFavorite(pollId)
+
+        res.onSuccess {
+            val newPolls = state.newPolls.map { card ->
+                if (card.id == pollId) card.copy(isFavorite = !card.isFavorite) else card
+            }
+            val popularPolls = state.popularPolls.map { card ->
+                if (card.id == pollId) card.copy(isFavorite = !card.isFavorite) else card
+            }
+            reduce {
+                state.copy(
+                    newPolls = newPolls,
+                    popularPolls = popularPolls,
                 )
             }
         }.handleException()

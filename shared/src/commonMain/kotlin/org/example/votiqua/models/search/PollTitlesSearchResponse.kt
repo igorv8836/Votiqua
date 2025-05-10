@@ -1,11 +1,10 @@
 package org.example.votiqua.models.search
 
 import kotlinx.serialization.Serializable
-import org.example.votiqua.models.poll.Poll
 
 @Serializable
-data class PollSearchResult(
+data class PollTitlesSearchResponse(
     val query: String,
     val count: Int,
-    val results: List<Poll>
-) 
+    val results: List<String>
+)

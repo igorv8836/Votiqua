@@ -50,8 +50,19 @@ fun HomeScreen(
     ) {
         AppSearchBar(true, navController = navController)
         MessagesBlock(state.messages)
-        PollsBlock("Новые голосования", state.newPolls, navController, isHorizontal = true)
-        PollsBlock("Популярные голосования", state.popularPolls, navController)
+        PollsBlock(
+            "Новые голосования",
+            state.newPolls,
+            navController,
+            isHorizontal = true,
+            onClickFavorite = { viewModel.onClickFavourite(it) },
+        )
+        PollsBlock(
+            "Популярные голосования",
+            state.popularPolls,
+            navController,
+            onClickFavorite = { viewModel.onClickFavourite(it) },
+        )
     }
 }
 
@@ -125,6 +136,7 @@ fun PollsBlock(
     title: String,
     polls: List<PollCardState>,
     navController: NavController,
+    onClickFavorite: (Int) -> Unit,
     isHorizontal: Boolean = false
 ) {
     Column(
@@ -144,14 +156,19 @@ fun PollsBlock(
                     PollCard(
                         poll = poll,
                         navController = navController,
-                        modifier = Modifier.width(240.dp)
-                    ) { }
+                        modifier = Modifier.width(240.dp),
+                        onClickFavorite = { onClickFavorite(poll.id) },
+                    )
                 }
             }
         } else {
             Column(modifier = Modifier.padding(horizontal = AppPaddings.HORIZONTAL_PADDING)) {
                 polls.forEach { poll ->
-                    PollCard(poll = poll, navController = navController) {  }
+                    PollCard(
+                        poll = poll,
+                        navController = navController,
+                        onClickFavorite = { onClickFavorite(poll.id) },
+                    )
                 }
             }
         }

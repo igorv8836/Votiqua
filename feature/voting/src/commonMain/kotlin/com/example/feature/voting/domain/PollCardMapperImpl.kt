@@ -32,6 +32,8 @@ class PollCardMapperImpl(
             endTime = poll.endTime,
         )
 
+        val countChipText = pluralizeParticipants(poll.members.size)
+
         return PollCardState(
             id = poll.id,
             title = poll.question,
@@ -42,6 +44,7 @@ class PollCardMapperImpl(
             category = category,
             creationDate = creationDate,
             isFavorite = poll.context.isFavorite,
+            countChipText = countChipText,
         )
     }
 
@@ -50,4 +53,16 @@ class PollCardMapperImpl(
             mapToState(it)
         }
     }
+
+    private fun pluralizeParticipants(count: Int): String {
+        val mod10 = count % 10
+        val mod100 = count % 100
+        val word = when {
+            mod10 == 1 && mod100 != 11 -> "участник"
+            mod10 in 2..4 && (mod100 !in 12..14) -> "участника"
+            else -> "участников"
+        }
+        return "$count $word"
+    }
+
 }

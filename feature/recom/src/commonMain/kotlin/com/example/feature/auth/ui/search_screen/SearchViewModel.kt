@@ -2,17 +2,18 @@ package com.example.feature.auth.ui.search_screen
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.common.ResultExceptionHandler
+import com.example.common.SnackbarManager
 import com.example.feature.auth.data.repository.RecomRepository
 import com.example.feature.auth.domain.QueryRecommendModel
 import com.example.feature.auth.ui.search_screen.SearchState.Error
 import com.example.feature.auth.ui.search_screen.SearchState.Loading
 import com.example.feature.auth.ui.search_screen.SearchState.Success
+import com.example.feature.voting.data.repository.PollRepository
+import com.example.feature.voting.domain.PollCardMapper
 import com.example.feature.voting.domain.models.PollCardState
 import com.example.orbit_mvi.viewmodel.container
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 
@@ -50,7 +51,10 @@ sealed class SearchEffect {
 @OptIn(OrbitExperimental::class)
 class SearchViewModel(
     private val recomRepository: RecomRepository,
-) : ViewModel(), ContainerHost<SearchState, SearchEffect> {
+    private val pollRepository: PollRepository,
+    override val snackbarManager: SnackbarManager,
+    private val pollCardMapper: PollCardMapper,
+) : ViewModel(), ContainerHost<SearchState, SearchEffect>, ResultExceptionHandler {
 
     private var autoSearchJob: Job? = null
 
@@ -96,19 +100,24 @@ class SearchViewModel(
             return@subIntent
         }
         reduce { Loading(query = query) }
-        delay(2000)
-        try {
-//            val filteredPolls = mockPolls.filter { it.title.contains(query, ignoreCase = true) }
-            recomRepository.getPolls(query)
+
+        val res = recomRepository.getPolls(query)
+
+        res.onSuccess {
             reduce {
                 Success(
                     query = query,
-                    results = emptyList(),
-                    searchRecommends = emptyList()
+                    results = pollCardMapper.mapToState(it.results),
+                    searchRecommends = emptyList(),
                 )
             }
-        } catch (e: Exception) {
-            reduce { Error(query = query, message = "Ошибка поиска: ${e.message}") }
+        }.onFailure {
+            reduce {
+                Error(
+                    query = query,
+                    message = it.message ?: "Ошибка при поиске"
+                )
+            }
         }
     }
 
@@ -116,13 +125,6 @@ class SearchViewModel(
         if (text.isEmpty()) {
             loadInitialHistory()
             return@subIntent
-        }
-
-        autoSearchJob?.cancel()
-        autoSearchJob = viewModelScope.launch {
-            delay(2000)
-            onEvent(SearchEvent.UpdateQuery(text))
-            subIntent { postSideEffect(SearchEffect.AutoQuerySendEffect) }
         }
 
         try {
@@ -145,7 +147,6 @@ class SearchViewModel(
         try {
             val recommends = recomRepository.getQueryRecommends(
                 query = state.query,
-                useLastResponse = true,
             )
             reduce {
                 Success(
@@ -164,5 +165,19 @@ class SearchViewModel(
             is Error -> onEvent(SearchEvent.UpdateQuery(currentState.query))
             else -> Unit
         }
+    }
+
+    fun onClickFavourite(pollId: Int) = intent {
+        val res = pollRepository.toggleFavorite(pollId)
+
+        res.onSuccess {
+            val state = state as? Success ?: return@onSuccess
+            val results = state.results.map { card ->
+                if (card.id == pollId) card.copy(isFavorite = !card.isFavorite) else card
+            }
+            reduce {
+                state.copy(results = results)
+            }
+        }.handleException()
     }
 }

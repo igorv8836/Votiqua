@@ -31,7 +31,7 @@ internal class VotingNavigatorImpl : VotingNavigator {
                 )
 
                 ManagePollScreen(
-                    isCreating = pollId == null,
+                    isCreating = false,
                     viewModel = viewModel,
                     onClose = {
                         mainNavController.popBackStack()

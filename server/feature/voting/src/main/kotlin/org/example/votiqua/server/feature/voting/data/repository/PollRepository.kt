@@ -123,7 +123,7 @@ class PollRepository(
     suspend fun searchPolls(query: String, limit: Int, offset: Int = 0): List<Poll> {
         return dbQuery {
             val polls = PollTable
-                .select { PollTable.question.like("%$query%") }
+                .select { PollTable.question.like("%$query%") and (PollTable.isOpen eq true) }
                 .orderBy(PollTable.createdAt, SortOrder.DESC)
                 .limit(limit, offset.toLong())
                 .map { mapRowToPoll(it) }
@@ -163,7 +163,7 @@ class PollRepository(
         return dbQuery {
             PollTable
                 .slice(PollTable.question)
-                .select { PollTable.question.like("%$query%") }
+                .select { PollTable.question.like("%$query%") and (PollTable.isOpen eq true) }
                 .orderBy(PollTable.createdAt, SortOrder.DESC)
                 .limit(limit)
                 .map { it[PollTable.question] }

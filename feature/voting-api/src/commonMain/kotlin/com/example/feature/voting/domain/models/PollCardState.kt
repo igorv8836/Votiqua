@@ -13,4 +13,6 @@ data class PollCardState(
     val creationDate: String,
     val isFavorite: Boolean,
     val id: Int = -1,
+
+    val countChipText: String,
 )

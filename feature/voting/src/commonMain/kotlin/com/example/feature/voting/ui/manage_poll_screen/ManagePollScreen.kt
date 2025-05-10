@@ -124,6 +124,7 @@ internal fun ManagePollScreen(
                 ParticipantsBlock(
                     participants = state.participants,
                     anonymous = state.anonymous,
+                    modifier = Modifier.weight(1f),
                 )
             }
         }

@@ -100,7 +100,8 @@ internal fun PollViewerScreen(
             )
             ParticipantsBlock(
                 participants = state.participants,
-                anonymous = state.anonymous
+                anonymous = state.anonymous,
+                modifier = Modifier.weight(1f),
             )
         }
     }

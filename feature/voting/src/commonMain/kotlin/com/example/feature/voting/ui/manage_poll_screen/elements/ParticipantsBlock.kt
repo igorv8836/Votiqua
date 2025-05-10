@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +20,14 @@ import com.example.feature.voting.domain.models.Participant
 import com.example.feature.voting.ui.common.ParticipantItem
 
 @Composable
-fun ParticipantsBlock(participants: List<Participant>, anonymous: Boolean) {
+fun ParticipantsBlock(
+    participants: List<Participant>,
+    anonymous: Boolean,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
+            .fillMaxSize()
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)

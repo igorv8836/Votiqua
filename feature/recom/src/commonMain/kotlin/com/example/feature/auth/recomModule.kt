@@ -11,9 +11,9 @@ import org.koin.dsl.module
 
 fun recomModule() = module {
     single<RecomNavigator> { RecomNavigatorImpl() }
-    single { RecomRepository(get(), get()) }
+    single { RecomRepository(get(), get(), get()) }
     single { RecomRemoteDataSource(get()) }
 
-    viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { SearchViewModel(get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { SearchViewModel(get(), get(), get(), get()) }
 }
