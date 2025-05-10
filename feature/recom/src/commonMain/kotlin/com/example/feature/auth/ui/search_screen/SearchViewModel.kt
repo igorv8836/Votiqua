@@ -3,7 +3,7 @@ package com.example.feature.auth.ui.search_screen
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.feature.auth.data.repository.SearchRecommendRepository
+import com.example.feature.auth.data.repository.RecomRepository
 import com.example.feature.auth.domain.QueryRecommendModel
 import com.example.feature.auth.ui.search_screen.SearchState.Error
 import com.example.feature.auth.ui.search_screen.SearchState.Loading
@@ -49,7 +49,7 @@ sealed class SearchEffect {
 
 @OptIn(OrbitExperimental::class)
 class SearchViewModel(
-    private val searchRecommendRepository: SearchRecommendRepository,
+    private val recomRepository: RecomRepository,
 ) : ViewModel(), ContainerHost<SearchState, SearchEffect> {
 
     private var autoSearchJob: Job? = null
@@ -61,7 +61,7 @@ class SearchViewModel(
     }
 
     private suspend fun loadInitialHistory() = subIntent {
-        val historyQueries = searchRecommendRepository.getHistoryQueries()
+        val historyQueries = recomRepository.getHistoryQueries()
         reduce {
             Success(
                 query = state.query,
@@ -99,7 +99,7 @@ class SearchViewModel(
         delay(2000)
         try {
 //            val filteredPolls = mockPolls.filter { it.title.contains(query, ignoreCase = true) }
-            searchRecommendRepository.getPolls(query)
+            recomRepository.getPolls(query)
             reduce {
                 Success(
                     query = query,
@@ -126,7 +126,7 @@ class SearchViewModel(
         }
 
         try {
-            val recommends = searchRecommendRepository.getQueryRecommends(text)
+            val recommends = recomRepository.getQueryRecommends(text)
             reduce {
                 Success(
                     query = text,
@@ -140,10 +140,10 @@ class SearchViewModel(
     }
 
     private suspend fun handleDeleteQuery(query: String) = subIntent {
-        searchRecommendRepository.deleteQueryFromHistory(query)
+        recomRepository.deleteQueryFromHistory(query)
 
         try {
-            val recommends = searchRecommendRepository.getQueryRecommends(
+            val recommends = recomRepository.getQueryRecommends(
                 query = state.query,
                 useLastResponse = true,
             )

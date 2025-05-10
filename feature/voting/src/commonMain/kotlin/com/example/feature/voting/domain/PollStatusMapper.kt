@@ -11,6 +11,7 @@ class PollStatusMapper {
         val now = Clock.System.now().epochSeconds
         return when {
             !isStarted -> "Не запущено"
+            startTime == null && endTime == null && isStarted -> "Активно"
             endTime != null && endTime < now -> "Завершено"
             startTime != null && endTime != null -> {
                 if (startTime < now && endTime > now) {

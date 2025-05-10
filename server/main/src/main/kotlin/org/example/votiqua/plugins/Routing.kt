@@ -7,7 +7,6 @@ import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.example.votiqua.server.feature.auth.routes.authRoute
-import org.example.votiqua.server.feature.profile.routes.notificationRoute
 import org.example.votiqua.server.feature.profile.routes.profileRoute
 import org.example.votiqua.server.feature.recom.routes.recommendationRoute
 import org.example.votiqua.server.feature.recom.routes.searchRoute
@@ -25,7 +24,6 @@ fun Application.configureRouting(config: ApplicationConfig) {
             pollMemberRoute()
             profileRoute()
             recommendationRoute()
-            notificationRoute()
             favoritePollRoute()
         }
     }

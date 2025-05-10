@@ -1,14 +1,15 @@
 package com.example.feature.auth.data.repository
 
-import com.example.feature.auth.data.network.SearchRecommendRemoteDataSource
+import com.example.feature.auth.data.network.RecomRemoteDataSource
 import com.example.feature.auth.domain.QueryRecommendModel
 import com.example.feature.auth.domain.QueryType
 import com.example.votiqua.datastore.search.SearchDataStore
 import kotlinx.coroutines.flow.first
+import org.example.votiqua.models.recom.MainScreenResponse
 import org.example.votiqua.models.search.PollSearchResponse
 
-class SearchRecommendRepository(
-    private val remoteDataSource: SearchRecommendRemoteDataSource,
+class RecomRepository(
+    private val remoteDataSource: RecomRemoteDataSource,
     private val localDataSource: SearchDataStore,
 ) {
     suspend fun getHistoryQueries(): List<QueryRecommendModel> {
@@ -40,5 +41,9 @@ class SearchRecommendRepository(
         localDataSource.addQuery(query)
 
         return emptyList()
+    }
+
+    suspend fun getMainScreenResponse(): Result<MainScreenResponse> {
+        return remoteDataSource.getMainScreenPolls()
     }
 }

@@ -9,9 +9,13 @@ import org.example.votiqua.server.feature.voting.database.PollParticipantTable
 import org.example.votiqua.server.feature.voting.database.PollTable
 import org.example.votiqua.server.feature.voting.database.VoteTable
 import org.example.votiqua.server.feature.voting.utils.pollLink
+import org.jetbrains.exposed.sql.Expression
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.insert
@@ -202,4 +206,61 @@ class PollRepository(
             return@dbQuery fillPollInfo(poll)
         }
     }
+
+    suspend fun getPolls(
+        limit: Int,
+        offset: Int = 0,
+        sortField: SortingType = SortingType.CreateDate,
+        sortOrder: SortOrder = SortOrder.DESC,
+        needIsOpen: Boolean = true,
+    ): List<Poll> {
+        return dbQuery {
+            val orderBy = when (sortField) {
+                SortingType.CreateDate -> PollTable.createdAt
+                SortingType.StartDate -> PollTable.startDate
+                SortingType.EndDate -> PollTable.endDate
+            }
+            
+            val polls = PollTable
+                .select { (PollTable.isStarted eq true) and (PollTable.isOpen eq needIsOpen) }
+                .orderBy(orderBy, sortOrder)
+                .limit(limit, offset.toLong())
+                .map { mapRowToPoll(it) }
+
+            fillPollsWithOptionsAndTags(polls)
+        }
+    }
+
+    suspend fun getPopularPolls(
+        limit: Int,
+        offset: Int = 0,
+        needIsOpen: Boolean = true,
+    ): List<Poll> {
+        return dbQuery {
+            val participantCount = PollParticipantTable.id.count().alias("pc")
+            val expressions: List<Expression<*>> = PollTable.columns.map { it as Expression<*> } + participantCount
+
+            val rows = PollTable
+                .join(
+                    PollParticipantTable,
+                    JoinType.INNER,
+                    additionalConstraint = { PollTable.id eq PollParticipantTable.pollId }
+                )
+                .slice(expressions)
+                .select { (PollTable.isStarted eq true) and (PollTable.isOpen eq needIsOpen) }
+                .groupBy(PollTable.id)
+                .orderBy(participantCount, SortOrder.DESC)
+                .limit(limit, offset.toLong())
+                .map { mapRowToPoll(it) }
+
+            fillPollsWithOptionsAndTags(rows)
+        }
+    }
+
+}
+
+enum class SortingType {
+    CreateDate,
+    StartDate,
+    EndDate,
 }

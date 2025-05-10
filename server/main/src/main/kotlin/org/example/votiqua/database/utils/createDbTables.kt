@@ -2,7 +2,7 @@ package org.example.votiqua.database.utils
 
 import org.example.votiqua.server.feature.auth.api.database.PasswordResetTable
 import org.example.votiqua.server.feature.auth.api.database.UserTable
-import org.example.votiqua.server.feature.profile.database.NotificationTable
+import org.example.votiqua.server.feature.recom.database.AdminMessageTable
 import org.example.votiqua.server.feature.recom.database.RecommendedFeedTable
 import org.example.votiqua.server.feature.recom.database.SearchHistoryTable
 import org.example.votiqua.server.feature.voting.database.FavoritePollTable
@@ -22,11 +22,11 @@ private val tables = arrayOf(
     PasswordResetTable,
     TagTable,
     PollTagTable,
-    NotificationTable,
     FavoritePollTable,
     RecommendedFeedTable,
     SearchHistoryTable,
-    PollParticipantTable
+    PollParticipantTable,
+    AdminMessageTable,
 )
 
 

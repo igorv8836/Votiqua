@@ -1,12 +1,14 @@
 package com.example.feature.auth.data.network
 
+import com.example.votiqua.network.util.safeApiCall
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import org.example.votiqua.models.recom.MainScreenResponse
 import org.example.votiqua.models.search.PollSearchResponse
 
-class SearchRecommendRemoteDataSource(
+class RecomRemoteDataSource(
     private val client: HttpClient,
 ) {
     private var _lastResponse: PollSearchResponse? = null
@@ -21,5 +23,11 @@ class SearchRecommendRemoteDataSource(
         _lastResponse = answer
 
         return answer
+    }
+
+    suspend fun getMainScreenPolls(): Result<MainScreenResponse> {
+        return safeApiCall {
+            client.get("main")
+        }
     }
 }
