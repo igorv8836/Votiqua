@@ -3,6 +3,7 @@ package com.example.feature.voting.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.example.feature.voting.ui.manage_poll_screen.ManagePollScreen
 import com.example.feature.voting.ui.manage_poll_screen.ManagePollViewModel
@@ -57,7 +58,12 @@ internal class VotingNavigatorImpl : VotingNavigator {
                 )
             }
 
-            composable<PollViewerRoute> {
+            composable<PollViewerRoute>(
+                deepLinks = listOf(
+                    navDeepLink { uriPattern = "votiqua://poll/{pollId}" },
+                    navDeepLink { uriPattern = "https://votiqua.quickqueues.tech/poll-link/{pollId}" }
+                )
+            ) {
                 val pollId = it.toRoute<PollViewerRoute>().pollId
                 val viewModel: PollViewerViewModel = koinViewModel(
                     parameters = {
